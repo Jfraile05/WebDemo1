@@ -199,18 +199,23 @@ const DEFAULT_DATA = {
 
 /* ============================================
    STORAGE
+   Key is FIXED — never bump it. User edits made through the website
+   always win. New top-level keys added to DEFAULT_DATA are merged in
+   automatically; existing user data is never overwritten by code.
    ============================================ */
-const STORAGE_KEY = 'portfolio_v11';
+const STORAGE_KEY = 'jorge_portfolio';
 
 function loadData() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const saved = JSON.parse(raw);
-      // Migrate: fill in any keys added after the save was created
-      if (!saved.leadership) saved.leadership = structuredClone(DEFAULT_DATA.leadership);
-      if (!saved.experience) saved.experience = structuredClone(DEFAULT_DATA.experience);
-      return saved;
+      // Merge: start from DEFAULT_DATA, overlay every key the user has saved.
+      // This means user edits are always preserved, while any new top-level
+      // keys added to DEFAULT_DATA in future code updates appear automatically.
+      const merged = structuredClone(DEFAULT_DATA);
+      Object.keys(saved).forEach(k => { merged[k] = saved[k]; });
+      return merged;
     }
   } catch (_) {}
   return structuredClone(DEFAULT_DATA);
