@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio — Jorge Fraile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav id="nav">
+    <div class="nav-inner">
+      <span class="nav-logo" id="nav-logo">JF</span>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#hobbies">Hobbies</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <section id="hero"></section>
+    <section id="about"></section>
+    <section id="projects"></section>
+    <section id="skills"></section>
+    <section id="hobbies"></section>
+    <section id="contact"></section>
+  </main>
+
+  <button id="edit-toggle" title="Toggle edit mode" aria-label="Toggle edit mode">
+    <span class="edit-icon">✏️</span>
+    <span class="lock-icon">🔒</span>
+  </button>
+
+  <div id="edit-toast" class="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
