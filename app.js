@@ -181,6 +181,18 @@ const DEFAULT_DATA = {
         "Configure and maintain systems and network settings to ensure uptime and reliable performance",
         "Perform root cause analysis on recurring technical issues and implement corrective actions to prevent recurrence"
       ]
+    },
+    {
+      id: 4,
+      role:     "AWS Student Builder Campus Leader",
+      org:      "Amazon Web Services",
+      period:   "Mar. 2026 – Present",
+      location: "Tallahassee, FL",
+      bullets: [
+        "Drive 500+ AWS Builder Center registrations via campus outreach, technical demos, and cloud education initiatives",
+        "Deliver 4+ AWS technical presentations introducing students to cloud tools, developer resources, and hands-on labs",
+        "Produce 24+ technical posts and 4 AWS Builder articles amplifying program awareness and engagement across campus"
+      ]
     }
   ]
 };
@@ -188,7 +200,7 @@ const DEFAULT_DATA = {
 /* ============================================
    STORAGE
    ============================================ */
-const STORAGE_KEY = 'portfolio_v9';
+const STORAGE_KEY = 'portfolio_v10';
 
 function loadData() {
   try {
@@ -263,6 +275,65 @@ function afterRender() {
   } else {
     setTimeout(initReveal, 50);
   }
+}
+
+/* ============================================
+   DRAG & DROP SORT
+   ============================================ */
+function makeSortable(container, arr, renderFn) {
+  let src = null;
+  container.querySelectorAll('[data-drag-idx]').forEach(item => {
+    item.draggable = true;
+
+    item.addEventListener('dragstart', e => {
+      if (!editMode) { e.preventDefault(); return; }
+      src = +item.dataset.dragIdx;
+      setTimeout(() => item.classList.add('is-dragging'), 0);
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', String(src));
+    });
+
+    item.addEventListener('dragend', () => {
+      item.classList.remove('is-dragging');
+      container.querySelectorAll('.drag-target').forEach(i => i.classList.remove('drag-target'));
+      src = null;
+    });
+
+    item.addEventListener('dragover', e => {
+      if (!editMode || src === null) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const tgt = +item.dataset.dragIdx;
+      if (src !== tgt) {
+        container.querySelectorAll('.drag-target').forEach(i => i.classList.remove('drag-target'));
+        item.classList.add('drag-target');
+      }
+    });
+
+    item.addEventListener('dragleave', e => {
+      if (!item.contains(e.relatedTarget)) item.classList.remove('drag-target');
+    });
+
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!editMode || src === null) return;
+      const tgt = +item.dataset.dragIdx;
+      if (src !== tgt) {
+        const moved = arr.splice(src, 1)[0];
+        arr.splice(tgt, 0, moved);
+        saveData();
+        renderFn();
+        afterRender();
+      }
+    });
+  });
+}
+
+function dragHandle() {
+  const h = el('span', 'drag-handle');
+  h.setAttribute('aria-hidden', 'true');
+  h.textContent = '\u2807'; /* ⠇ braille dots — universal drag icon */
+  return h;
 }
 
 /* ============================================
@@ -413,6 +484,7 @@ function renderExperience() {
 
   const list = el('div', 'leadership-list');
   data.experience.forEach((item, i) => list.append(buildExperienceCard(item, i)));
+  makeSortable(list, data.experience, renderExperience);
   section.append(list);
 
   const addBtn = el('button', 'add-btn');
@@ -435,7 +507,10 @@ function renderExperience() {
 
 function buildExperienceCard(item, idx) {
   const card = el('div', 'leadership-card reveal');
+  card.dataset.dragIdx = idx;
   card.style.transitionDelay = (idx * 0.08) + 's';
+
+  card.append(dragHandle());
 
   const delBtn = txt('button', 'delete-btn card-delete', '\u2715 Remove');
   delBtn.addEventListener('click', () => {
@@ -505,6 +580,7 @@ function renderProjects() {
 
   const grid = el('div', 'projects-grid');
   data.projects.forEach((proj, i) => grid.append(buildProjectCard(proj, i)));
+  makeSortable(grid, data.projects, renderProjects);
   section.append(grid);
 
   const addBtn = el('button', 'add-btn');
@@ -527,7 +603,10 @@ function renderProjects() {
 
 function buildProjectCard(proj, idx) {
   const card = el('div', 'project-card reveal');
+  card.dataset.dragIdx = idx;
   card.style.transitionDelay = (idx * 0.08) + 's';
+
+  card.append(dragHandle());
 
   const delBtn = txt('button', 'delete-btn card-delete', '\u2715 Remove');
   delBtn.addEventListener('click', () => {
@@ -609,6 +688,7 @@ function renderLeadership() {
 
   const list = el('div', 'leadership-list');
   data.leadership.forEach((item, i) => list.append(buildLeadershipCard(item, i)));
+  makeSortable(list, data.leadership, renderLeadership);
   section.append(list);
 
   const addBtn = el('button', 'add-btn');
@@ -631,7 +711,10 @@ function renderLeadership() {
 
 function buildLeadershipCard(item, idx) {
   const card = el('div', 'leadership-card reveal');
+  card.dataset.dragIdx = idx;
   card.style.transitionDelay = (idx * 0.08) + 's';
+
+  card.append(dragHandle());
 
   const delBtn = txt('button', 'delete-btn card-delete', '\u2715 Remove');
   delBtn.addEventListener('click', () => {
@@ -706,7 +789,10 @@ function renderSkills() {
 
   data.skills.forEach((group, gi) => {
     const card = el('div', 'skill-group reveal');
+    card.dataset.dragIdx = gi;
     card.style.transitionDelay = (gi * 0.07) + 's';
+
+    card.append(dragHandle());
 
     const delGroup = txt('button', 'delete-btn', '\u2715 Group');
     delGroup.style.cssText = 'float:right;margin-bottom:4px;';
@@ -760,6 +846,7 @@ function renderSkills() {
     afterRender();
   });
 
+  makeSortable(grid, data.skills, renderSkills);
   section.append(grid, addGroup);
 }
 
@@ -775,6 +862,7 @@ function renderHobbies() {
 
   data.hobbies.forEach((h, i) => {
     const chip = el('div', 'hobby-chip');
+    chip.dataset.dragIdx = i;
 
     const icon  = txt('span', 'hobby-icon',  h.icon);
     makeEditable(icon, v => { data.hobbies[i].icon = v.trim() || h.icon; });
@@ -803,6 +891,7 @@ function renderHobbies() {
     afterRender();
   });
 
+  makeSortable(grid, data.hobbies, renderHobbies);
   section.append(grid, addHobby);
 }
 

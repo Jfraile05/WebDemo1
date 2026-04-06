@@ -760,6 +760,50 @@ section {
 
 .ldr-bullet-text { flex: 1; }
 
+/* ============================================
+   DRAG & DROP
+   ============================================ */
+.drag-handle {
+  display: none;
+  position: absolute;
+  top: 0.85rem;
+  left: 0.7rem;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--text-muted);
+  opacity: 0.35;
+  user-select: none;
+  pointer-events: none;
+  letter-spacing: -0.05em;
+}
+
+body.edit-mode .drag-handle {
+  display: block;
+}
+
+body.edit-mode [data-drag-idx] {
+  cursor: grab;
+}
+
+body.edit-mode [data-drag-idx]:active {
+  cursor: grabbing;
+}
+
+body.edit-mode [contenteditable] {
+  cursor: text;
+}
+
+[data-drag-idx].is-dragging {
+  opacity: 0.25;
+  transform: scale(0.97) !important;
+}
+
+[data-drag-idx].drag-target {
+  outline: 1.5px dashed rgba(200, 255, 0, 0.5);
+  outline-offset: 3px;
+  background: rgba(200, 255, 0, 0.025) !important;
+}
+
 /* Resume URL edit field */
 .resume-url-row {
   display: none;
