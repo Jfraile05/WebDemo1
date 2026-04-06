@@ -72,9 +72,15 @@ const DEFAULT_DATA = {
     { icon: "🤝", label: "Community Impact" },
     { icon: "📈", label: "Quantitative Finance" },
     { icon: "🚀", label: "Hackathons" },
+    { icon: "🔧", label: "Hardware & Device Repair" },
+    { icon: "🖥️", label: "PC Building" },
+    { icon: "⚙️", label: "Engineering Problem Solving" },
+    { icon: "👥", label: "Team Projects" },
+    { icon: "🍳", label: "Cooking" },
+    { icon: "🏊", label: "Swimming" },
+    { icon: "💪", label: "Fitness" },
     { icon: "🏋️", label: "Weightlifting" },
     { icon: "♟️", label: "Chess" },
-    { icon: "📚", label: "Reading" },
     { icon: "🎮", label: "Game Development" }
   ],
   leadership: [
@@ -116,6 +122,17 @@ const DEFAULT_DATA = {
       ]
     },
     {
+      id: 5,
+      role:     "Member",
+      org:      "Association for Computing Machinery (ACM), FSU Chapter",
+      period:   "2025 – Present",
+      location: "Tallahassee, FL",
+      bullets: [
+        "Active member of ACM FSU Chapter, the umbrella organization housing the AWS Cloud Club and other technical student groups",
+        "Engage with the broader computing community through events, workshops, and collaborative technical initiatives"
+      ]
+    },
+    {
       id: 4,
       role:     "JROTC Officer",
       org:      "MAST Academy — U.S. Coast Guard JROTC",
@@ -127,13 +144,51 @@ const DEFAULT_DATA = {
         "Participated in drills, ceremonies, and community service initiatives representing the program"
       ]
     }
+  ],
+  experience: [
+    {
+      id: 1,
+      role:     "Undergraduate Systems Administrator",
+      org:      "Florida State University, Department of Computer Science",
+      period:   "Jan. 2026 – Present",
+      location: "Tallahassee, FL",
+      bullets: [
+        "Own reliability of 300+ node systems by diagnosing cross-layer failures and reducing downtime by 25%",
+        "Investigate incidents using logs/metrics and improve observability to accelerate debugging and reduce MTTR by 30%",
+        "Build Python automation and monitoring tools reducing detection time by 40% and improving system reliability",
+        "Review and validate automation scripts, documenting system configurations and incident resolutions to support team reliability"
+      ]
+    },
+    {
+      id: 2,
+      role:     "IT Support — Shadow Program",
+      org:      "Florida Auditor General",
+      period:   "Dec. 2025",
+      location: "Tallahassee, FL",
+      bullets: [
+        "Observed enterprise production support workflows including incident intake, prioritization, escalation, and resolution",
+        "Gained exposure to access controls, documentation standards, and procedures supporting mission-critical systems"
+      ]
+    },
+    {
+      id: 3,
+      role:     "Technical Support & Device Repair Technician",
+      org:      "Independent",
+      period:   "Jan. 2020 – Present",
+      location: "Miami, FL",
+      bullets: [
+        "Troubleshoot production issues across hardware, operating systems, and networked systems to restore service availability",
+        "Configure and maintain systems and network settings to ensure uptime and reliable performance",
+        "Perform root cause analysis on recurring technical issues and implement corrective actions to prevent recurrence"
+      ]
+    }
   ]
 };
 
 /* ============================================
    STORAGE
    ============================================ */
-const STORAGE_KEY = 'portfolio_v8';
+const STORAGE_KEY = 'portfolio_v9';
 
 function loadData() {
   try {
@@ -142,6 +197,7 @@ function loadData() {
       const saved = JSON.parse(raw);
       // Migrate: fill in any keys added after the save was created
       if (!saved.leadership) saved.leadership = structuredClone(DEFAULT_DATA.leadership);
+      if (!saved.experience) saved.experience = structuredClone(DEFAULT_DATA.experience);
       return saved;
     }
   } catch (_) {}
@@ -347,10 +403,105 @@ function renderAbout() {
 /* ============================================
    PROJECTS
    ============================================ */
+/* ============================================
+   EXPERIENCE
+   ============================================ */
+function renderExperience() {
+  const section = document.getElementById('experience');
+  section.innerHTML = '';
+  section.append(sectionHeader('02', 'Experience'));
+
+  const list = el('div', 'leadership-list');
+  data.experience.forEach((item, i) => list.append(buildExperienceCard(item, i)));
+  section.append(list);
+
+  const addBtn = el('button', 'add-btn');
+  addBtn.textContent = '+ Add Role';
+  addBtn.addEventListener('click', () => {
+    data.experience.push({
+      id: Date.now(),
+      role:     'Role Title',
+      org:      'Organization',
+      period:   'Year – Present',
+      location: 'Location',
+      bullets:  ['Describe your responsibilities and impact here.']
+    });
+    saveData();
+    renderExperience();
+    afterRender();
+  });
+  section.append(addBtn);
+}
+
+function buildExperienceCard(item, idx) {
+  const card = el('div', 'leadership-card reveal');
+  card.style.transitionDelay = (idx * 0.08) + 's';
+
+  const delBtn = txt('button', 'delete-btn card-delete', '\u2715 Remove');
+  delBtn.addEventListener('click', () => {
+    data.experience.splice(idx, 1);
+    saveData();
+    renderExperience();
+    afterRender();
+  });
+  card.append(delBtn);
+
+  const header = el('div', 'ldr-header');
+
+  const role = txt('h3', 'ldr-role', item.role);
+  makeEditable(role, v => { data.experience[idx].role = v; });
+
+  const meta = el('div', 'ldr-meta');
+  const org = txt('span', 'ldr-org', item.org);
+  makeEditable(org, v => { data.experience[idx].org = v; });
+  const period = txt('span', 'ldr-period', item.period);
+  makeEditable(period, v => { data.experience[idx].period = v; });
+  const location = txt('span', 'ldr-location', item.location);
+  makeEditable(location, v => { data.experience[idx].location = v; });
+
+  meta.append(org, period, location);
+  header.append(role, meta);
+  card.append(header);
+
+  const bulletsWrap = el('ul', 'ldr-bullets');
+  item.bullets.forEach((bullet, bi) => {
+    const li = el('li', 'ldr-bullet');
+    const bulletTxt = txt('span', 'ldr-bullet-text', bullet);
+    makeEditable(bulletTxt, v => { data.experience[idx].bullets[bi] = v; });
+
+    const delBullet = txt('button', 'delete-btn', '\u2715');
+    delBullet.style.cssText = 'margin-left:6px;padding:0 3px;font-size:0.55rem;flex-shrink:0;';
+    delBullet.addEventListener('click', e => {
+      e.stopPropagation();
+      data.experience[idx].bullets.splice(bi, 1);
+      saveData();
+      renderExperience();
+      afterRender();
+    });
+    li.append(bulletTxt, delBullet);
+    bulletsWrap.append(li);
+  });
+
+  const addBullet = txt('button', 'add-tag-btn', '+ bullet');
+  addBullet.style.marginTop = '0.6rem';
+  addBullet.addEventListener('click', () => {
+    data.experience[idx].bullets.push('New achievement.');
+    saveData();
+    renderExperience();
+    afterRender();
+  });
+
+  card.append(bulletsWrap, addBullet);
+  return card;
+}
+
+/* ============================================
+   PROJECTS
+   ============================================ */
 function renderProjects() {
   const section = document.getElementById('projects');
   section.innerHTML = '';
-  section.append(sectionHeader('02', 'Projects'));
+  section.append(sectionHeader('03', 'Projects'));
 
   const grid = el('div', 'projects-grid');
   data.projects.forEach((proj, i) => grid.append(buildProjectCard(proj, i)));
@@ -454,7 +605,7 @@ function buildProjectCard(proj, idx) {
 function renderLeadership() {
   const section = document.getElementById('leadership');
   section.innerHTML = '';
-  section.append(sectionHeader('03', 'Leadership'));
+  section.append(sectionHeader('04', 'Leadership'));
 
   const list = el('div', 'leadership-list');
   data.leadership.forEach((item, i) => list.append(buildLeadershipCard(item, i)));
@@ -549,7 +700,7 @@ function buildLeadershipCard(item, idx) {
 function renderSkills() {
   const section = document.getElementById('skills');
   section.innerHTML = '';
-  section.append(sectionHeader('04', 'Skills'));
+  section.append(sectionHeader('05', 'Skills'));
 
   const grid = el('div', 'skills-grid');
 
@@ -618,7 +769,7 @@ function renderSkills() {
 function renderHobbies() {
   const section = document.getElementById('hobbies');
   section.innerHTML = '';
-  section.append(sectionHeader('05', 'Interests'));
+  section.append(sectionHeader('06', 'Interests'));
 
   const grid = el('div', 'hobbies-grid reveal');
 
@@ -661,7 +812,7 @@ function renderHobbies() {
 function renderContact() {
   const section = document.getElementById('contact');
   section.innerHTML = '';
-  section.append(sectionHeader('06', 'Contact'));
+  section.append(sectionHeader('07', 'Contact'));
 
   const inner = el('div', 'contact-inner reveal');
 
@@ -805,6 +956,7 @@ function render() {
 
   renderHero();
   renderAbout();
+  renderExperience();
   renderProjects();
   renderLeadership();
   renderSkills();
