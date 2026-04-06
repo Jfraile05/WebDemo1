@@ -193,6 +193,18 @@ const DEFAULT_DATA = {
         "Deliver 4+ AWS technical presentations introducing students to cloud tools, developer resources, and hands-on labs",
         "Produce 24+ technical posts and 4 AWS Builder articles amplifying program awareness and engagement across campus"
       ]
+    },
+    {
+      id: 5,
+      role:     "Software Engineering Intern",
+      org:      "Drafted (USC Backed)",
+      period:   "Mar. 2026 – Present",
+      location: "Remote",
+      bullets: [
+        "Develop and ship features across application backend and UI on a live production platform used by real users",
+        "Pair with developers on code review and feature delivery in a collaborative engineering environment",
+        "Diagnose and resolve full stack bugs, presenting technical proposals to stakeholders with intensity and commitment"
+      ]
     }
   ]
 };
@@ -219,6 +231,16 @@ function loadData() {
       if (merged.resume && merged.resume.startsWith('file://')) {
         merged.resume = DEFAULT_DATA.resume;
       }
+      // Inject any new entries added to DEFAULT_DATA arrays that aren't in
+      // the user's saved data yet (matched by id). Preserves all existing edits.
+      ['experience', 'leadership', 'projects'].forEach(key => {
+        if (!Array.isArray(merged[key])) return;
+        DEFAULT_DATA[key].forEach(defaultItem => {
+          if (!merged[key].find(item => item.id === defaultItem.id)) {
+            merged[key].push(structuredClone(defaultItem));
+          }
+        });
+      });
       return merged;
     }
   } catch (_) {}
