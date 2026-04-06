@@ -19,32 +19,34 @@ const DEFAULT_DATA = {
       title:       "NoleQuest — AI Internship Marketplace",
       description: "AI-powered internship marketplace prototype built for the AWS Design Sprint Competition using Working Backwards methodology. Architected a serverless AWS backend handling 1K+ simulated requests at low latency. Integrated Amazon Bedrock and Claude Sonnet for AI features and optimized cloud costs by 20%.",
       tech:        ["React JS", "AWS", "Amazon Bedrock", "Claude Sonnet", "Figma"],
-      github:      "https://github.com/Jfraile05/AWS-NoleQuest",
-      demo:        "#"
+      github:      "https://github.com/Jfraile05/AWS-NoleQuest"
     },
     {
       id: 2,
-      title:       "Ret Mon v2.8 — Quantitative Trading System",
-      description: "Multi-factor quantitative trading system with regime-based allocation and risk-aware portfolio optimization. Achieved a Sharpe ratio of 3.8 with drawdowns capped at 5%, backtested across 20+ years of market data with a fully automated weekly signal pipeline.",
-      tech:        ["Python", "AWS", "Claude Sonnet"],
-      github:      "https://github.com/Jfraile05",
-      demo:        "#"
+      title:       "Cloud API — AWS EC2 REST Backend",
+      description: "Lightweight Python REST API deployed on AWS EC2 with production-style infrastructure. Runs a Flask application managed through Gunicorn and systemd with health monitoring, automated startup/recovery, and multi-worker concurrency for handling real traffic.",
+      tech:        ["Python", "Flask", "AWS EC2", "Gunicorn", "systemd", "Linux"],
+      github:      "https://github.com/Jfraile05/cloud-api"
     },
     {
       id: 3,
       title:       "FSU Systems — Automation & Observability",
       description: "Python automation and monitoring tooling for Florida State University's 300+ node CS department infrastructure. Reduced incident detection time by 40%, MTTR by 30%, and overall downtime by 25% through improved observability and automated cross-layer diagnostics.",
-      tech:        ["Python", "Linux", "Observability", "AWS CloudWatch"],
-      github:      "#",
-      demo:        "#"
+      tech:        ["Python", "Linux", "Observability", "AWS CloudWatch"]
     },
     {
       id: 4,
       title:       "Pokémon Battle Simulator",
       description: "Fully-interactive terminal-based Pokémon battle engine written in modern C++17. Features real-time combat logic, a complete type-effectiveness system, team management, and a CPU AI opponent — demonstrating systems-level programming, OOP design, and game state management.",
       tech:        ["C++17", "OOP", "Game AI", "CMake"],
-      github:      "https://github.com/Jfraile05/Pokemon-Battle-Simulator",
-      demo:        "#"
+      github:      "https://github.com/Jfraile05/Pokemon-Battle-Simulator"
+    },
+    {
+      id: 5,
+      title:       "Banking System",
+      description: "Console-based banking application in C++ with full account lifecycle management — create, deposit, withdraw, transfer, and delete accounts with persistent file storage. Demonstrates OOP design, STL vectors, file I/O, and input validation.",
+      tech:        ["C++", "OOP", "STL", "File I/O"],
+      github:      "https://github.com/Jfraile05/BankingSystem"
     }
   ],
   skills: [
@@ -109,7 +111,7 @@ const DEFAULT_DATA = {
 /* ============================================
    STORAGE
    ============================================ */
-const STORAGE_KEY = 'portfolio_v5';
+const STORAGE_KEY = 'portfolio_v6';
 
 function loadData() {
   try {
@@ -390,20 +392,15 @@ function buildProjectCard(proj, idx) {
   tagsWrap.append(addTagBtn);
   card.append(tagsWrap);
 
-  const links = el('div', 'project-links');
-
-  const ghLink = el('a', 'project-link');
-  ghLink.href = proj.github; ghLink.target = '_blank';
-  ghLink.textContent = '\u2325 GitHub';
-  makeEditable(ghLink, v => { data.projects[idx].github = v; });
-
-  const demoLink = el('a', 'project-link');
-  demoLink.href = proj.demo; demoLink.target = '_blank';
-  demoLink.textContent = '\u2197 Live Demo';
-  makeEditable(demoLink, v => { data.projects[idx].demo = v; });
-
-  links.append(ghLink, demoLink);
-  card.append(links);
+  if (proj.github) {
+    const links = el('div', 'project-links');
+    const ghLink = el('a', 'project-link');
+    ghLink.href = proj.github; ghLink.target = '_blank';
+    ghLink.textContent = '\u2325 GitHub';
+    makeEditable(ghLink, v => { data.projects[idx].github = v; });
+    links.append(ghLink);
+    card.append(links);
+  }
 
   card.addEventListener('mousemove', e => {
     if (editMode) return;
