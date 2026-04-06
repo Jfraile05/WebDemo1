@@ -147,11 +147,42 @@ body.edit-mode { cursor: auto; }
 .nav-logo {
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: 0.9rem;
+  font-size: 0.72rem;
   color: var(--lime);
-  letter-spacing: 0.06em;
-  cursor: default;
+  letter-spacing: 0.12em;
   flex-shrink: 0;
+  text-decoration: none;
+  cursor: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.28rem 0.75rem 0.28rem 0.6rem;
+  border: 1.5px solid rgba(200, 255, 0, 0.35);
+  border-radius: 3px;
+  position: relative;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease), box-shadow 0.2s;
+}
+
+.nav-logo::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--lime);
+  display: block;
+  flex-shrink: 0;
+  animation: statusPulse 2.8s ease-in-out infinite;
+}
+
+.nav-logo:hover {
+  background: var(--lime);
+  color: #0C0B09;
+  border-color: var(--lime);
+  box-shadow: 0 0 20px rgba(200, 255, 0, 0.2);
+}
+
+.nav-logo:hover::before {
+  background: #0C0B09;
 }
 
 .nav-links {
