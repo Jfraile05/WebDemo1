@@ -6,10 +6,13 @@
   <title>Portfolio — Jorge Fraile</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Manrope:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <div id="cursor-dot" aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
 
   <nav id="nav">
     <div class="nav-inner">
@@ -17,10 +20,15 @@
       <ul class="nav-links">
         <li><a href="#about">About</a></li>
         <li><a href="#projects">Projects</a></li>
+        <li><a href="#leadership">Leadership</a></li>
         <li><a href="#skills">Skills</a></li>
-        <li><a href="#hobbies">Hobbies</a></li>
+        <li><a href="#hobbies">Interests</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
+      <div class="nav-status">
+        <span class="status-dot"></span>
+        <span class="status-text">Available</span>
+      </div>
     </div>
   </nav>
 
@@ -28,6 +36,7 @@
     <section id="hero"></section>
     <section id="about"></section>
     <section id="projects"></section>
+    <section id="leadership"></section>
     <section id="skills"></section>
     <section id="hobbies"></section>
     <section id="contact"></section>
