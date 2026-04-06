@@ -61,27 +61,27 @@ const DEFAULT_DATA = {
   ],
   hobbies: [
     { icon: "🏗️", label: "System Design" },
-    { icon: "💻", label: "Software Engineering" },
-    { icon: "🎧", label: "Vibe Coding" },
     { icon: "☁️", label: "Cloud Architecture" },
+    { icon: "💻", label: "Software Engineering" },
+    { icon: "⚙️", label: "Engineering Problem Solving" },
     { icon: "🤖", label: "AI & Machine Learning" },
     { icon: "🔐", label: "Cryptography" },
-    { icon: "₿",  label: "Crypto & Blockchain" },
-    { icon: "💡", label: "Startups & Venture" },
-    { icon: "📣", label: "Tech Marketing" },
-    { icon: "🤝", label: "Community Impact" },
-    { icon: "📈", label: "Quantitative Finance" },
-    { icon: "🚀", label: "Hackathons" },
-    { icon: "🔧", label: "Hardware & Device Repair" },
     { icon: "🖥️", label: "PC Building" },
-    { icon: "⚙️", label: "Engineering Problem Solving" },
+    { icon: "🔧", label: "Hardware & Device Repair" },
+    { icon: "🎧", label: "Vibe Coding" },
     { icon: "👥", label: "Team Projects" },
+    { icon: "🚀", label: "Hackathons" },
+    { icon: "♟️", label: "Chess" },
+    { icon: "💡", label: "Startups & Venture" },
+    { icon: "📈", label: "Quantitative Finance" },
+    { icon: "₿",  label: "Crypto & Blockchain" },
+    { icon: "🎮", label: "Game Development" },
+    { icon: "🤝", label: "Community Impact" },
+    { icon: "📣", label: "Tech Marketing" },
     { icon: "🍳", label: "Cooking" },
     { icon: "🏊", label: "Swimming" },
     { icon: "💪", label: "Fitness" },
-    { icon: "🏋️", label: "Weightlifting" },
-    { icon: "♟️", label: "Chess" },
-    { icon: "🎮", label: "Game Development" }
+    { icon: "🏋️", label: "Weightlifting" }
   ],
   leadership: [
     {
@@ -200,7 +200,7 @@ const DEFAULT_DATA = {
 /* ============================================
    STORAGE
    ============================================ */
-const STORAGE_KEY = 'portfolio_v10';
+const STORAGE_KEY = 'portfolio_v11';
 
 function loadData() {
   try {
