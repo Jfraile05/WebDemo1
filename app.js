@@ -7,7 +7,7 @@ const DEFAULT_DATA = {
   initials:     "JF",
   title:        "SDE Intern Candidate · AWS Student Builder Campus Leader",
   tagline:      "CS student at FSU building distributed systems, cloud infrastructure, and AI-powered tools — from 300-node reliability pipelines to serverless architectures handling thousands of requests.",
-  resume:       "file:///Users/jorge/IT%20Resume/Top%20Resumes/Jorge_Fraile_Perez_Amazon_SDE_Resume.pdf",
+  resume:       "resume.pdf",
   about:        "I'm a Computer Science student at Florida State University (GPA 3.5, Dean's List, Bright Futures Scholar) with hands-on experience managing 300+ node systems infrastructure as an Undergraduate Systems Admin — cutting downtime 25% and MTTR 30%. As an AWS Student Builder Campus Leader for Amazon Web Services, I run cloud workshops for 500+ students, publish technical content on distributed systems, and have driven 500+ AWS Builder Center registrations. I build at the intersection of systems reliability, cloud engineering, and AI.",
   contactBlurb: "I'm actively seeking software engineering internship opportunities. Whether you have an opening or just want to connect — I'd love to hear from you.",
   email:        "Jorge@JorgeFraile.com",
