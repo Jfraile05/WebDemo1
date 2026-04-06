@@ -1092,5 +1092,136 @@ function render() {
   afterRender();
 }
 
+/* ============================================
+   DYNAMIC BACKGROUND — Particle Constellation
+   ============================================ */
+function initBackground() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const canvas = document.getElementById('bg-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  const COUNT      = 72;
+  const MAX_DIST   = 155;
+  const MOUSE_R    = 130;
+  const SPEED      = 0.28;
+
+  let W = 0, H = 0;
+  let mouseX = -9999, mouseY = -9999;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function makeParticle() {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = (Math.random() * 0.5 + 0.5) * SPEED;
+    return {
+      x:     Math.random() * W,
+      y:     Math.random() * H,
+      vx:    Math.cos(angle) * speed,
+      vy:    Math.sin(angle) * speed,
+      baseR: Math.random() * 1.1 + 0.5,
+      phase: Math.random() * Math.PI * 2
+    };
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+
+  let particles = Array.from({ length: COUNT }, makeParticle);
+
+  document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+  document.addEventListener('mouseleave', () => { mouseX = mouseY = -9999; });
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    /* Update positions */
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.phase += 0.016;
+
+      /* Mouse repulsion */
+      const mdx = p.x - mouseX;
+      const mdy = p.y - mouseY;
+      const md2 = mdx * mdx + mdy * mdy;
+      if (md2 < MOUSE_R * MOUSE_R && md2 > 0) {
+        const md   = Math.sqrt(md2);
+        const push = (1 - md / MOUSE_R) * 0.5;
+        p.vx += (mdx / md) * push;
+        p.vy += (mdy / md) * push;
+      }
+
+      /* Dampen & move */
+      p.vx *= 0.97;
+      p.vy *= 0.97;
+      /* Clamp velocity */
+      const spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+      if (spd > SPEED * 4) { p.vx = (p.vx / spd) * SPEED * 4; p.vy = (p.vy / spd) * SPEED * 4; }
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      /* Wrap edges with a soft margin */
+      if (p.x < -20) p.x = W + 20;
+      if (p.x > W + 20) p.x = -20;
+      if (p.y < -20) p.y = H + 20;
+      if (p.y > H + 20) p.y = -20;
+    }
+
+    /* Draw edges */
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx   = particles[i].x - particles[j].x;
+        const dy   = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < MAX_DIST) {
+          const a = (1 - dist / MAX_DIST) * 0.13;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(200,255,0,${a.toFixed(3)})`;
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
+      }
+    }
+
+    /* Draw nodes */
+    for (let i = 0; i < particles.length; i++) {
+      const p      = particles[i];
+      const pulse  = 0.45 + Math.sin(p.phase) * 0.2;
+      const mdx    = p.x - mouseX;
+      const mdy    = p.y - mouseY;
+      const near   = Math.sqrt(mdx * mdx + mdy * mdy) < MOUSE_R;
+      const bright = near ? Math.min(1, pulse + 0.35) : pulse;
+
+      /* Outer glow for near-mouse particles */
+      if (near) {
+        const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.baseR * 6);
+        grd.addColorStop(0, `rgba(200,255,0,${(bright * 0.25).toFixed(3)})`);
+        grd.addColorStop(1, 'rgba(200,255,0,0)');
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.baseR * 6, 0, Math.PI * 2);
+        ctx.fillStyle = grd;
+        ctx.fill();
+      }
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.baseR, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(200,255,0,${(bright * 0.75).toFixed(3)})`;
+      ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+}
+
 render();
 initCursor();
+initBackground();
