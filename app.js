@@ -104,6 +104,18 @@ const DEFAULT_DATA = {
       bullets: [
         "Support communications and outreach efforts to grow and engage the ColorStack community"
       ]
+    },
+    {
+      id: 4,
+      role:     "JROTC Officer",
+      org:      "MAST Academy — U.S. Coast Guard JROTC",
+      period:   "2019 – 2023",
+      location: "Miami, FL",
+      bullets: [
+        "Served as an officer in MAST Academy's Coast Guard JROTC program across four years of high school",
+        "Developed leadership, discipline, and teamwork skills through structured military training and unit responsibilities",
+        "Participated in drills, ceremonies, and community service initiatives representing the program"
+      ]
     }
   ]
 };
@@ -111,7 +123,7 @@ const DEFAULT_DATA = {
 /* ============================================
    STORAGE
    ============================================ */
-const STORAGE_KEY = 'portfolio_v6';
+const STORAGE_KEY = 'portfolio_v7';
 
 function loadData() {
   try {
