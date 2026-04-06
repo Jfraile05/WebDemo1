@@ -60,12 +60,20 @@ const DEFAULT_DATA = {
     { category: "Core",         items: ["System Reliability", "Fault Tolerance", "Scalability", "Root Cause Analysis", "Automation"] }
   ],
   hobbies: [
+    { icon: "🏗️", label: "System Design" },
+    { icon: "💻", label: "Software Engineering" },
+    { icon: "🎧", label: "Vibe Coding" },
     { icon: "☁️", label: "Cloud Architecture" },
-    { icon: "📈", label: "Quantitative Finance" },
     { icon: "🤖", label: "AI & Machine Learning" },
+    { icon: "🔐", label: "Cryptography" },
+    { icon: "₿",  label: "Crypto & Blockchain" },
+    { icon: "💡", label: "Startups & Venture" },
+    { icon: "📣", label: "Tech Marketing" },
+    { icon: "🤝", label: "Community Impact" },
+    { icon: "📈", label: "Quantitative Finance" },
+    { icon: "🚀", label: "Hackathons" },
     { icon: "🏋️", label: "Weightlifting" },
     { icon: "♟️", label: "Chess" },
-    { icon: "🚀", label: "Hackathons" },
     { icon: "📚", label: "Reading" },
     { icon: "🎮", label: "Game Development" }
   ],
@@ -102,7 +110,9 @@ const DEFAULT_DATA = {
       period:   "2025 – Present",
       location: "Remote",
       bullets: [
-        "Support communications and outreach efforts to grow and engage the ColorStack community"
+        "Support communications and outreach efforts to grow and engage the ColorStack community",
+        "Coordinate technical collaboration across engineering teams and project initiatives",
+        "Manage internal technical communication platforms and infrastructure tools"
       ]
     },
     {
@@ -123,7 +133,7 @@ const DEFAULT_DATA = {
 /* ============================================
    STORAGE
    ============================================ */
-const STORAGE_KEY = 'portfolio_v7';
+const STORAGE_KEY = 'portfolio_v8';
 
 function loadData() {
   try {
