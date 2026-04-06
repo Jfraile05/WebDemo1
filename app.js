@@ -187,6 +187,18 @@ function disableAllEditing() {
   });
 }
 
+/* Called after every section re-render (add/delete actions).
+   In edit mode: immediately make all cards visible and re-enable editing.
+   Otherwise: re-run the scroll-reveal observer for newly added elements. */
+function afterRender() {
+  if (editMode) {
+    document.querySelectorAll('.reveal').forEach(e => e.classList.add('visible'));
+    enableAllEditing();
+  } else {
+    setTimeout(initReveal, 50);
+  }
+}
+
 /* ============================================
    SECTION HEADER
    ============================================ */
@@ -347,7 +359,7 @@ function renderProjects() {
     });
     saveData();
     renderProjects();
-    if (editMode) enableAllEditing();
+    afterRender();
   });
   section.append(addBtn);
 }
@@ -361,7 +373,7 @@ function buildProjectCard(proj, idx) {
     data.projects.splice(idx, 1);
     saveData();
     renderProjects();
-    if (editMode) enableAllEditing();
+    afterRender();
   });
   card.append(delBtn);
 
@@ -388,7 +400,7 @@ function buildProjectCard(proj, idx) {
       data.projects[idx].tech.splice(ti, 1);
       saveData();
       renderProjects();
-      if (editMode) enableAllEditing();
+      afterRender();
     });
     tag.append(delTag);
     tagsWrap.append(tag);
@@ -399,7 +411,7 @@ function buildProjectCard(proj, idx) {
     data.projects[idx].tech.push('New');
     saveData();
     renderProjects();
-    if (editMode) enableAllEditing();
+    afterRender();
   });
   tagsWrap.append(addTagBtn);
   card.append(tagsWrap);
@@ -451,7 +463,7 @@ function renderLeadership() {
     });
     saveData();
     renderLeadership();
-    if (editMode) enableAllEditing();
+    afterRender();
   });
   section.append(addBtn);
 }
@@ -465,7 +477,7 @@ function buildLeadershipCard(item, idx) {
     data.leadership.splice(idx, 1);
     saveData();
     renderLeadership();
-    if (editMode) enableAllEditing();
+    afterRender();
   });
   card.append(delBtn);
 
@@ -502,7 +514,7 @@ function buildLeadershipCard(item, idx) {
       data.leadership[idx].bullets.splice(bi, 1);
       saveData();
       renderLeadership();
-      if (editMode) enableAllEditing();
+      afterRender();
     });
     li.append(bulletTxt, delBullet);
     bulletsWrap.append(li);
@@ -514,7 +526,7 @@ function buildLeadershipCard(item, idx) {
     data.leadership[idx].bullets.push('New achievement.');
     saveData();
     renderLeadership();
-    if (editMode) enableAllEditing();
+    afterRender();
   });
 
   card.append(bulletsWrap, addBullet);
@@ -541,7 +553,7 @@ function renderSkills() {
       data.skills.splice(gi, 1);
       saveData();
       renderSkills();
-      if (editMode) enableAllEditing();
+      afterRender();
     });
     card.append(delGroup);
 
@@ -561,7 +573,7 @@ function renderSkills() {
         data.skills[gi].items.splice(si, 1);
         saveData();
         renderSkills();
-        if (editMode) enableAllEditing();
+        afterRender();
       });
       chip.append(delChip);
       chipsWrap.append(chip);
@@ -572,7 +584,7 @@ function renderSkills() {
       data.skills[gi].items.push('New');
       saveData();
       renderSkills();
-      if (editMode) enableAllEditing();
+      afterRender();
     });
     chipsWrap.append(addChip);
     card.append(chipsWrap);
@@ -584,7 +596,7 @@ function renderSkills() {
     data.skills.push({ category: 'Category', items: ['Skill'] });
     saveData();
     renderSkills();
-    if (editMode) enableAllEditing();
+    afterRender();
   });
 
   section.append(grid, addGroup);
@@ -615,7 +627,7 @@ function renderHobbies() {
       data.hobbies.splice(i, 1);
       saveData();
       renderHobbies();
-      if (editMode) enableAllEditing();
+      afterRender();
     });
 
     chip.append(icon, label, delBtn);
@@ -627,7 +639,7 @@ function renderHobbies() {
     data.hobbies.push({ icon: '\u2b50', label: 'New Interest' });
     saveData();
     renderHobbies();
-    if (editMode) enableAllEditing();
+    afterRender();
   });
 
   section.append(grid, addHobby);
@@ -795,7 +807,7 @@ function render() {
   footer.innerHTML = '\u00a9 ' + new Date().getFullYear() + ' ' + data.name + ' &nbsp;\u00b7&nbsp; Built with HTML, CSS &amp; JS';
   document.querySelector('main').after(footer);
 
-  setTimeout(initReveal, 50);
+  afterRender();
 }
 
 render();
