@@ -52,13 +52,13 @@ const DEFAULT_DATA = {
   skills: [
     { category: "Programming",  items: ["Python", "C++", "Java", "SQL", "Bash", "JavaScript"] },
     { category: "Cloud & AWS",  items: ["Lambda", "EC2", "S3", "DynamoDB", "API Gateway", "Cognito", "Textract", "Personalize", "Serverless", "CI/CD"] },
-    { category: "Development",  items: ["React", "Node.js", "Vite"] },
     { category: "Systems",      items: ["Linux", "Ubuntu", "Active Directory", "Distributed Systems", "Multithreading", "Low-Latency"] },
-    { category: "Databases",    items: ["MySQL", "SQLite", "DynamoDB"] },
-    { category: "Tools",        items: ["Git", "GitHub", "ServiceNow", "SCCM"] },
+    { category: "Core",         items: ["System Reliability", "Fault Tolerance", "Scalability", "Root Cause Analysis", "Automation"] },
     { category: "AI/ML",        items: ["LLM Training & Development", "Model Fine-Tuning", "Prompt Engineering", "Amazon Bedrock", "Claude", "Generative AI"] },
     { category: "Networking",   items: ["TCP/IP", "Observability", "System Debugging", "Performance Analysis"] },
-    { category: "Core",         items: ["System Reliability", "Fault Tolerance", "Scalability", "Root Cause Analysis", "Automation"] }
+    { category: "Databases",    items: ["MySQL", "SQLite", "DynamoDB"] },
+    { category: "Development",  items: ["React", "Node.js", "Vite"] },
+    { category: "Tools",        items: ["Git", "GitHub", "ServiceNow", "SCCM"] }
   ],
   hobbies: [
     { icon: "🏗️", label: "System Design" },
@@ -66,19 +66,19 @@ const DEFAULT_DATA = {
     { icon: "💻", label: "Software Engineering" },
     { icon: "⚙️", label: "Engineering Problem Solving" },
     { icon: "🤖", label: "AI & Machine Learning" },
-    { icon: "🔐", label: "Cryptography" },
-    { icon: "🖥️", label: "PC Building" },
-    { icon: "🔧", label: "Hardware & Device Repair" },
-    { icon: "🎧", label: "Vibe Coding" },
-    { icon: "👥", label: "Team Projects" },
     { icon: "🚀", label: "Hackathons" },
-    { icon: "♟️", label: "Chess" },
+    { icon: "👥", label: "Team Projects" },
+    { icon: "🎧", label: "Vibe Coding" },
     { icon: "💡", label: "Startups & Venture" },
+    { icon: "🎮", label: "Game Development" },
+    { icon: "🔐", label: "Cryptography" },
     { icon: "📈", label: "Quantitative Finance" },
     { icon: "₿",  label: "Crypto & Blockchain" },
-    { icon: "🎮", label: "Game Development" },
-    { icon: "🤝", label: "Community Impact" },
     { icon: "📣", label: "Tech Marketing" },
+    { icon: "🖥️", label: "PC Building" },
+    { icon: "🔧", label: "Hardware & Device Repair" },
+    { icon: "♟️", label: "Chess" },
+    { icon: "🤝", label: "Community Impact" },
     { icon: "🍳", label: "Cooking" },
     { icon: "🏊", label: "Swimming" },
     { icon: "💪", label: "Fitness" },
@@ -248,6 +248,24 @@ function loadData() {
           if (!merged.skills.find(g => g.category === defaultGroup.category)) {
             merged.skills.push(structuredClone(defaultGroup));
           }
+        });
+      }
+      // Sort skills by priority order defined in DEFAULT_DATA
+      if (Array.isArray(merged.skills)) {
+        const skillOrder = DEFAULT_DATA.skills.map(g => g.category);
+        merged.skills.sort((a, b) => {
+          const ai = skillOrder.indexOf(a.category);
+          const bi = skillOrder.indexOf(b.category);
+          return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+        });
+      }
+      // Sort hobbies by priority order defined in DEFAULT_DATA
+      if (Array.isArray(merged.hobbies)) {
+        const hobbyOrder = DEFAULT_DATA.hobbies.map(h => h.label);
+        merged.hobbies.sort((a, b) => {
+          const ai = hobbyOrder.indexOf(a.label);
+          const bi = hobbyOrder.indexOf(b.label);
+          return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
         });
       }
       return merged;
