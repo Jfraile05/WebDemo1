@@ -460,24 +460,14 @@ function renderHero() {
   resumeUrlRow.append(resumeUrlLabel, resumeUrlSpan);
   left.append(badge, nameEl, titleRow, tagline, actions, resumeUrlRow);
 
-  /* Profile photo */
-  const photoWrap = el('div', 'hero-photo-wrap');
-  ['tl','tr','bl','br'].forEach(p => photoWrap.append(el('span', `pc pc-${p}`)));
-  const photoImg = document.createElement('img');
-  photoImg.className = 'hero-photo';
-  photoImg.src = 'jorge.jpg';
-  photoImg.alt = 'Jorge Fraile Perez';
-  photoImg.loading = 'eager';
-  photoWrap.append(photoImg);
+  /* Decorative element */
+  const deco = el('div', 'hero-deco');
+  const bracket = txt('div', 'hero-deco-bracket', '</>');
+  const lines   = el('div', 'hero-deco-lines');
+  for (let i = 0; i < 4; i++) lines.append(el('div', 'hero-deco-line'));
+  deco.append(bracket, lines);
 
-  const photoLabel = el('div', 'hero-photo-label');
-  photoLabel.append(
-    txt('span', 'hero-photo-name', 'Jorge Fraile Perez'),
-    txt('span', 'hero-photo-role', 'SDE Intern · AWS Builder · FSU CS')
-  );
-  photoWrap.append(photoLabel);
-
-  inner.append(left, photoWrap);
+  inner.append(left, deco);
   section.append(inner);
 }
 
