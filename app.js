@@ -228,8 +228,9 @@ function loadData() {
       // keys added to DEFAULT_DATA in future code updates appear automatically.
       const merged = structuredClone(DEFAULT_DATA);
       Object.keys(saved).forEach(k => { merged[k] = saved[k]; });
-      // Fix stale resume URLs (file:// paths set before PDF was hosted in repo)
-      if (!merged.resume || merged.resume.startsWith('file://') || merged.resume === 'Resume.pdf') {
+      // Fix any non-relative resume path (local filesystem paths, old filenames)
+      const r = merged.resume || '';
+      if (!r || r.startsWith('file://') || r.startsWith('/') || r.startsWith('C:\\') || !r.endsWith('.pdf')) {
         merged.resume = DEFAULT_DATA.resume;
       }
       // Inject any new entries added to DEFAULT_DATA arrays that aren't in
