@@ -485,17 +485,50 @@ function renderHero() {
     saveData();
   });
   resumeUrlRow.append(resumeUrlLabel, resumeUrlSpan);
-  left.append(badge, nameEl, titleRow, tagline, actions, resumeUrlRow);
+  /* Stats strip — compact data row below CTA */
+  const statsStrip = el('div', 'hero-stats-strip');
+  statsStrip.innerHTML =
+    '<span>300+ nodes managed</span>' +
+    '<span class="stats-sep">·</span>' +
+    '<span>500+ students reached</span>' +
+    '<span class="stats-sep">·</span>' +
+    '<span>GPA 3.5</span>' +
+    '<span class="stats-sep">·</span>' +
+    '<span>4+ yrs experience</span>';
 
-  /* Decorative element */
+  left.append(badge, nameEl, titleRow, tagline, actions, statsStrip, resumeUrlRow);
+
+  /* Terminal identity card */
   const deco = el('div', 'hero-deco');
-  const bracket = txt('div', 'hero-deco-bracket', '</>');
-  const lines   = el('div', 'hero-deco-lines');
-  for (let i = 0; i < 4; i++) lines.append(el('div', 'hero-deco-line'));
-  deco.append(bracket, lines);
+  const term = el('div', 'hero-terminal');
+  term.innerHTML =
+    '<div class="terminal-header">' +
+      '<span class="terminal-dot td-red"></span>' +
+      '<span class="terminal-dot td-yellow"></span>' +
+      '<span class="terminal-dot td-green"></span>' +
+      '<span class="terminal-filename">jorge.json</span>' +
+    '</div>' +
+    '<div class="terminal-body">' +
+      '<div class="term-row"><span class="term-brace">{</span></div>' +
+      '<div class="term-row term-indent"><span class="term-key">"role"</span><span class="term-op">: </span><span class="term-str">"SWE Intern Candidate"</span>,</div>' +
+      '<div class="term-row term-indent"><span class="term-key">"school"</span><span class="term-op">: </span><span class="term-str">"Florida State University"</span>,</div>' +
+      '<div class="term-row term-indent"><span class="term-key">"focus"</span><span class="term-op">: </span><span class="term-arr">["Cloud", "Systems", "AI"]</span>,</div>' +
+      '<div class="term-row term-indent"><span class="term-key">"gpa"</span><span class="term-op">: </span><span class="term-num">3.5</span>,</div>' +
+      '<div class="term-row term-indent"><span class="term-key">"base"</span><span class="term-op">: </span><span class="term-str">"Tallahassee, FL"</span>,</div>' +
+      '<div class="term-row term-indent"><span class="term-key">"status"</span><span class="term-op">: </span><span class="term-status">\u25cf available</span></div>' +
+      '<div class="term-row"><span class="term-brace">}</span></div>' +
+    '</div>';
+  deco.append(term);
 
   inner.append(left, deco);
   section.append(inner);
+
+  /* Scroll hint */
+  const scrollHint = el('div', 'scroll-hint');
+  scrollHint.innerHTML =
+    '<span class="scroll-hint-label">scroll</span>' +
+    '<div class="scroll-hint-chevron"></div>';
+  section.append(scrollHint);
 }
 
 /* ============================================
