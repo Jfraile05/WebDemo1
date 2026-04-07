@@ -38,13 +38,12 @@ html { scroll-behavior: smooth; font-size: 16px; }
 
 body {
   background-color: var(--bg);
-  /* Engineering graph-paper — major grid (144px) over minor grid (36px) */
+  /* Layered dot constellation — cobalt / teal / indigo at 3 frequencies */
   background-image:
-    linear-gradient(rgba(18, 30, 72, 0.075) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(18, 30, 72, 0.075) 1px, transparent 1px),
-    linear-gradient(rgba(18, 30, 72, 0.032) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(18, 30, 72, 0.032) 1px, transparent 1px);
-  background-size: 144px 144px, 144px 144px, 36px 36px, 36px 36px;
+    radial-gradient(circle, rgba(24, 66, 212, 0.18) 1px,   transparent 1px),
+    radial-gradient(circle, rgba(0,  168, 200, 0.11) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(118, 74, 232, 0.07) 2px,   transparent 2px);
+  background-size: 24px 24px, 72px 72px, 144px 144px;
   color: var(--text);
   font-family: var(--font-body);
   line-height: 1.6;
@@ -363,16 +362,12 @@ section {
   overflow: hidden;
 }
 
-/* Stronger grid accent in hero area */
+/* Hero luminous spotlight — brightens center, fades dot texture toward edges */
 #hero::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image:
-    linear-gradient(rgba(18, 30, 72, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(18, 30, 72, 0.07) 1px, transparent 1px);
-  background-size: 36px 36px;
-  mask-image: radial-gradient(ellipse 90% 90% at 40% 50%, black 0%, transparent 100%);
+  background: radial-gradient(ellipse 75% 85% at 38% 52%, rgba(255,255,255,0.52) 0%, transparent 70%);
   pointer-events: none;
 }
 
