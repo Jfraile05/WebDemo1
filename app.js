@@ -7,7 +7,7 @@ const DEFAULT_DATA = {
   initials:     "JF",
   title:        "SDE Intern Candidate · AWS Student Builder Campus Leader",
   tagline:      "CS student at FSU building distributed systems, cloud infrastructure, and AI-powered tools — from 300-node reliability pipelines to serverless architectures handling thousands of requests.",
-  resume:       "Resume.pdf",
+  resume:       "resume.pdf",
   about:        "I'm a Computer Science student at Florida State University (GPA 3.5, Dean's List, Bright Futures Scholar) with hands-on experience managing 300+ node systems infrastructure as an Undergraduate Systems Admin — cutting downtime 25% and MTTR 30%. As an AWS Student Builder Campus Leader for Amazon Web Services, I run cloud workshops for 500+ students, publish technical content on distributed systems, and have driven 500+ AWS Builder Center registrations. I build at the intersection of systems reliability, cloud engineering, and AI.",
   contactBlurb: "I'm actively seeking software engineering internship opportunities. Whether you have an opening or just want to connect — I'd love to hear from you.",
   email:        "Jorge@JorgeFraile.com",
@@ -228,8 +228,8 @@ function loadData() {
       // keys added to DEFAULT_DATA in future code updates appear automatically.
       const merged = structuredClone(DEFAULT_DATA);
       Object.keys(saved).forEach(k => { merged[k] = saved[k]; });
-      // Fix stale resume URLs (file:// or old filename)
-      if (!merged.resume || merged.resume.startsWith('file://') || merged.resume === 'resume.pdf') {
+      // Fix stale resume URLs (file:// paths set before PDF was hosted in repo)
+      if (!merged.resume || merged.resume.startsWith('file://') || merged.resume === 'Resume.pdf') {
         merged.resume = DEFAULT_DATA.resume;
       }
       // Inject any new entries added to DEFAULT_DATA arrays that aren't in
