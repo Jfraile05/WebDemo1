@@ -56,6 +56,7 @@ const DEFAULT_DATA = {
     { category: "Systems",      items: ["Linux", "Ubuntu", "Active Directory", "Distributed Systems", "Multithreading", "Low-Latency"] },
     { category: "Databases",    items: ["MySQL", "SQLite", "DynamoDB"] },
     { category: "Tools",        items: ["Git", "GitHub", "ServiceNow", "SCCM"] },
+    { category: "AI/ML",        items: ["LLM Training & Development", "Model Fine-Tuning", "Prompt Engineering", "Amazon Bedrock", "Claude", "Generative AI"] },
     { category: "Networking",   items: ["TCP/IP", "Observability", "System Debugging", "Performance Analysis"] },
     { category: "Core",         items: ["System Reliability", "Fault Tolerance", "Scalability", "Root Cause Analysis", "Automation"] }
   ],
@@ -241,6 +242,14 @@ function loadData() {
           }
         });
       });
+      // Inject new skill groups by category name
+      if (Array.isArray(merged.skills)) {
+        DEFAULT_DATA.skills.forEach(defaultGroup => {
+          if (!merged.skills.find(g => g.category === defaultGroup.category)) {
+            merged.skills.push(structuredClone(defaultGroup));
+          }
+        });
+      }
       return merged;
     }
   } catch (_) {}
@@ -487,7 +496,7 @@ function renderAbout() {
   const statsDiv = el('div', 'about-stats');
   const stats = [
     { value: data.projects.length, suffix: '+', label: 'Projects Built' },
-    { value: 3,                    suffix: '',  label: 'Years Coding' },
+    { value: 4,                    suffix: '',  label: 'Years Coding' },
     { value: data.skills.reduce((a, g) => a + g.items.length, 0), suffix: '+', label: 'Technologies' },
     { value: null,                 display: '\u221e', label: 'Curiosity' },
   ];
