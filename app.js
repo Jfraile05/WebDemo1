@@ -970,7 +970,7 @@ function renderContact() {
   const inner = el('div', 'contact-inner reveal');
 
   const cta = el('h2', 'contact-cta');
-  cta.innerHTML = "Let\u2019s build<br>something <span class=\"lime\">great.</span>";
+  cta.innerHTML = "Let\u2019s build<br>something <span class=\"accent\">great.</span>";
 
   const blurb = txt('p', 'contact-blurb', data.contactBlurb);
   makeEditable(blurb, v => { data.contactBlurb = v; });
@@ -1047,7 +1047,7 @@ function initCursor() {
     if (e.target.closest('a, button, [data-edit-target]')) {
       ring.style.width  = '48px';
       ring.style.height = '48px';
-      ring.style.borderColor = 'rgba(200,255,0,0.5)';
+      ring.style.borderColor = 'rgba(24,66,212,0.45)';
     }
   });
 
@@ -1055,7 +1055,7 @@ function initCursor() {
     if (e.target.closest('a, button, [data-edit-target]')) {
       ring.style.width  = '32px';
       ring.style.height = '32px';
-      ring.style.borderColor = 'rgba(200,255,0,0.35)';
+      ring.style.borderColor = 'rgba(24,66,212,0.28)';
     }
   });
 
@@ -1216,7 +1216,7 @@ function initBackground() {
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(200,255,0,${a.toFixed(3)})`;
+          ctx.strokeStyle = `rgba(24,66,212,${a.toFixed(3)})`;
           ctx.lineWidth = 0.6;
           ctx.stroke();
         }
@@ -1235,8 +1235,8 @@ function initBackground() {
       /* Outer glow for near-mouse particles */
       if (near) {
         const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.baseR * 6);
-        grd.addColorStop(0, `rgba(200,255,0,${(bright * 0.25).toFixed(3)})`);
-        grd.addColorStop(1, 'rgba(200,255,0,0)');
+        grd.addColorStop(0, `rgba(24,66,212,${(bright * 0.18).toFixed(3)})`);
+        grd.addColorStop(1, 'rgba(24,66,212,0)');
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.baseR * 6, 0, Math.PI * 2);
         ctx.fillStyle = grd;
@@ -1245,7 +1245,7 @@ function initBackground() {
 
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.baseR, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(200,255,0,${(bright * 0.75).toFixed(3)})`;
+      ctx.fillStyle = `rgba(24,66,212,${(bright * 0.55).toFixed(3)})`;
       ctx.fill();
     }
 
