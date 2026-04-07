@@ -460,14 +460,24 @@ function renderHero() {
   resumeUrlRow.append(resumeUrlLabel, resumeUrlSpan);
   left.append(badge, nameEl, titleRow, tagline, actions, resumeUrlRow);
 
-  /* Decorative element */
-  const deco = el('div', 'hero-deco');
-  const bracket = txt('div', 'hero-deco-bracket', '</>');
-  const lines   = el('div', 'hero-deco-lines');
-  for (let i = 0; i < 4; i++) lines.append(el('div', 'hero-deco-line'));
-  deco.append(bracket, lines);
+  /* Profile photo */
+  const photoWrap = el('div', 'hero-photo-wrap');
+  ['tl','tr','bl','br'].forEach(p => photoWrap.append(el('span', `pc pc-${p}`)));
+  const photoImg = document.createElement('img');
+  photoImg.className = 'hero-photo';
+  photoImg.src = 'jorge.jpg';
+  photoImg.alt = 'Jorge Fraile Perez';
+  photoImg.loading = 'eager';
+  photoWrap.append(photoImg);
 
-  inner.append(left, deco);
+  const photoLabel = el('div', 'hero-photo-label');
+  photoLabel.append(
+    txt('span', 'hero-photo-name', 'Jorge Fraile Perez'),
+    txt('span', 'hero-photo-role', 'SDE Intern · AWS Builder · FSU CS')
+  );
+  photoWrap.append(photoLabel);
+
+  inner.append(left, photoWrap);
   section.append(inner);
 }
 
@@ -486,15 +496,21 @@ function renderAbout() {
 
   const statsDiv = el('div', 'about-stats');
   const stats = [
-    { value: data.projects.length + '+', label: 'Projects Built' },
-    { value: '3',  label: 'Years Coding' },
-    { value: data.skills.reduce((a, g) => a + g.items.length, 0) + '+', label: 'Technologies' },
-    { value: '\u221e', label: 'Curiosity' },
+    { value: data.projects.length, suffix: '+', label: 'Projects Built' },
+    { value: 3,                    suffix: '',  label: 'Years Coding' },
+    { value: data.skills.reduce((a, g) => a + g.items.length, 0), suffix: '+', label: 'Technologies' },
+    { value: null,                 display: '\u221e', label: 'Curiosity' },
   ];
 
   stats.forEach(s => {
     const card = el('div', 'stat-card');
-    card.append(txt('div', 'stat-value', s.value), txt('div', 'stat-label', s.label));
+    const valEl = el('div', 'stat-value');
+    valEl.textContent = s.display || (s.value + s.suffix);
+    if (s.value !== null) {
+      valEl.dataset.target = s.value;
+      valEl.dataset.suffix = s.suffix;
+    }
+    card.append(valEl, txt('div', 'stat-label', s.label));
     statsDiv.append(card);
   });
 
@@ -1222,6 +1238,128 @@ function initBackground() {
   draw();
 }
 
+/* ============================================
+   SCROLL PROGRESS BAR
+   ============================================ */
+function initScrollProgress() {
+  const bar = document.getElementById('scroll-bar');
+  if (!bar) return;
+  window.addEventListener('scroll', () => {
+    const max = document.body.scrollHeight - window.innerHeight;
+    bar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+  }, { passive: true });
+}
+
+/* ============================================
+   ACTIVE NAV SECTION HIGHLIGHTING
+   ============================================ */
+function initActiveNav() {
+  const links = document.querySelectorAll('.nav-links a');
+  const sections = document.querySelectorAll('section[id]');
+  if (!sections.length) return;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(a => a.classList.toggle('nav-active', a.getAttribute('href') === '#' + entry.target.id));
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+
+  sections.forEach(s => obs.observe(s));
+}
+
+/* ============================================
+   TYPEWRITER EFFECT — hero tagline
+   ============================================ */
+let typewriterDone = false;
+function initTypewriter() {
+  if (typewriterDone) return;
+  const p = document.querySelector('.hero-tagline');
+  if (!p) return;
+  const fullText = p.textContent.trim();
+  if (!fullText) return;
+  typewriterDone = true;
+
+  p.textContent = '';
+  const cursor = el('span', 'type-cursor');
+  p.append(cursor);
+
+  let i = 0;
+  function type() {
+    if (editMode) { p.textContent = fullText; return; }
+    if (i < fullText.length) {
+      p.insertBefore(document.createTextNode(fullText[i++]), cursor);
+      setTimeout(type, 14 + Math.random() * 22);
+    } else {
+      setTimeout(() => {
+        cursor.style.transition = 'opacity 0.8s';
+        cursor.style.opacity = '0';
+        setTimeout(() => cursor.remove(), 900);
+      }, 1400);
+    }
+  }
+  setTimeout(type, 650);
+}
+
+/* ============================================
+   ANIMATED STAT COUNTERS
+   ============================================ */
+function initCounters() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      obs.unobserve(entry.target);
+      const el = entry.target;
+      const target = +el.dataset.target;
+      const suffix = el.dataset.suffix || '';
+      const dur = 1200;
+      const start = performance.now();
+      function step(now) {
+        const t = Math.min((now - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(eased * target) + suffix;
+        if (t < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }, { threshold: 0.6 });
+
+  document.querySelectorAll('.stat-value[data-target]').forEach(el => obs.observe(el));
+}
+
+/* ============================================
+   MAGNETIC BUTTONS
+   ============================================ */
+function initMagnetic() {
+  function bind() {
+    document.querySelectorAll('.btn-primary').forEach(btn => {
+      if (btn.dataset.magnetic) return;
+      btn.dataset.magnetic = '1';
+      btn.addEventListener('mousemove', e => {
+        if (editMode) return;
+        const r  = btn.getBoundingClientRect();
+        const dx = (e.clientX - (r.left + r.width  / 2)) * 0.22;
+        const dy = (e.clientY - (r.top  + r.height / 2)) * 0.22;
+        btn.style.transform = `translate(${dx}px,${dy}px) translateY(-2px)`;
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transition = 'transform 0.45s var(--spring), box-shadow 0.22s';
+        btn.style.transform  = '';
+        setTimeout(() => { btn.style.transition = ''; }, 450);
+      });
+    });
+  }
+  bind();
+  /* Re-bind after re-renders */
+  document.addEventListener('click', () => setTimeout(bind, 100));
+}
+
 render();
 initCursor();
 initBackground();
+initScrollProgress();
+initActiveNav();
+initTypewriter();
+initCounters();
+initMagnetic();

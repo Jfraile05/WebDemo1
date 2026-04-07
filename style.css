@@ -92,6 +92,21 @@ body::after {
 main { position: relative; z-index: 1; }
 
 /* ============================================
+   SCROLL PROGRESS BAR
+   ============================================ */
+#scroll-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--lime), rgba(200,255,0,0.4));
+  box-shadow: 0 0 10px rgba(200,255,0,0.55), 0 0 24px rgba(200,255,0,0.2);
+  z-index: 9999;
+  pointer-events: none;
+  transition: width 0.08s linear;
+}
+
+/* ============================================
    CUSTOM CURSOR
    ============================================ */
 #cursor-dot {
@@ -1209,6 +1224,131 @@ body.edit-mode .add-tag-btn { display: inline-flex; }
 }
 
 .toast.show { opacity: 1; transform: translateY(0); }
+
+/* ============================================
+   HERO PHOTO
+   ============================================ */
+.hero-photo-wrap {
+  position: relative;
+  width: 270px;
+  flex-shrink: 0;
+  animation: heroFadeIn 1.1s 0.45s var(--ease) both;
+}
+
+.hero-photo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: var(--radius);
+  display: block;
+  filter: grayscale(18%) contrast(1.06) brightness(0.88);
+  transition: filter 0.5s var(--ease), box-shadow 0.4s;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+}
+
+.hero-photo-wrap:hover .hero-photo {
+  filter: grayscale(0%) contrast(1.04) brightness(0.95);
+  box-shadow: 0 28px 72px rgba(0,0,0,0.55), 0 0 48px rgba(200,255,0,0.08);
+}
+
+/* Corner accent brackets */
+.pc {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: var(--lime);
+  border-style: solid;
+  opacity: 0.45;
+  transition: width 0.35s var(--spring), height 0.35s var(--spring), opacity 0.3s;
+  pointer-events: none;
+  z-index: 1;
+}
+.pc-tl { top: -7px; left: -7px; border-width: 2px 0 0 2px; }
+.pc-tr { top: -7px; right: -7px; border-width: 2px 2px 0 0; }
+.pc-bl { bottom: -7px; left: -7px; border-width: 0 0 2px 2px; }
+.pc-br { bottom: -7px; right: -7px; border-width: 0 2px 2px 0; }
+
+.hero-photo-wrap:hover .pc {
+  width: 32px;
+  height: 32px;
+  opacity: 1;
+}
+
+/* Label below photo */
+.hero-photo-label {
+  margin-top: 0.85rem;
+  text-align: center;
+}
+.hero-photo-name {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: block;
+}
+.hero-photo-role {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: rgba(200,255,0,0.5);
+  letter-spacing: 0.1em;
+  display: block;
+  margin-top: 0.2rem;
+}
+
+/* ============================================
+   ACTIVE NAV
+   ============================================ */
+.nav-links a.nav-active {
+  color: var(--text);
+}
+.nav-links a.nav-active::after {
+  right: 0;
+}
+
+/* ============================================
+   TYPEWRITER CURSOR
+   ============================================ */
+.type-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--lime);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: cursorBlink 0.9s step-end infinite;
+}
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ============================================
+   HERO NAME GLITCH ON HOVER
+   ============================================ */
+.hero-name {
+  cursor: default;
+}
+.hero-name:hover {
+  animation: heroFadeIn 0s, glitch 0.55s var(--ease);
+}
+@keyframes glitch {
+  0%   { transform: none; clip-path: none; }
+  15%  { transform: translate(-2px, 1px) skew(-0.4deg); filter: hue-rotate(8deg); }
+  30%  { transform: translate(2px, -1px); clip-path: inset(10% 0 85% 0); filter: hue-rotate(-6deg); }
+  45%  { transform: translate(-1px, 2px) skew(0.3deg); clip-path: none; }
+  60%  { transform: translate(2px, -2px); filter: hue-rotate(0deg); }
+  75%  { transform: translate(-1px, 1px); }
+  100% { transform: none; }
+}
+
+/* ============================================
+   STAT COUNTERS
+   ============================================ */
+.stat-value[data-target] {
+  transition: color 0.3s;
+}
 
 /* ============================================
    RESPONSIVE
