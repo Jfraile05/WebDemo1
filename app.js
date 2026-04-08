@@ -259,13 +259,14 @@ function loadData() {
           return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
         });
       }
-      // Sort hobbies by priority order defined in DEFAULT_DATA
+      // Filter + sort hobbies — only keep entries that exist in DEFAULT_DATA
       if (Array.isArray(merged.hobbies)) {
         const hobbyOrder = DEFAULT_DATA.hobbies.map(h => h.label);
+        merged.hobbies = merged.hobbies.filter(h => hobbyOrder.includes(h.label));
         merged.hobbies.sort((a, b) => {
           const ai = hobbyOrder.indexOf(a.label);
           const bi = hobbyOrder.indexOf(b.label);
-          return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+          return ai - bi;
         });
       }
       return merged;
