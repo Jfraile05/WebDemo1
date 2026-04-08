@@ -539,6 +539,7 @@ section {
   box-shadow: var(--shadow-card), 0 0 40px rgba(77, 159, 255, 0.06);
   overflow: hidden;
   width: 310px;
+  max-width: 100%;
   flex-shrink: 0;
 }
 
@@ -1817,7 +1818,7 @@ body.edit-mode .add-tag-btn { display: inline-flex; }
   .hero-inner {
     grid-template-columns: 1fr;
   }
-  .hero-deco   { display: none; }
+  .hero-deco   { align-items: flex-start; margin-top: 2rem; }
   .scroll-hint { display: none; }
   .about-layout {
     grid-template-columns: 1fr;
