@@ -184,44 +184,58 @@ body.edit-mode { cursor: auto; }
 }
 
 .nav-logo {
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: 0.72rem;
-  color: var(--accent);
-  letter-spacing: 0.12em;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
   flex-shrink: 0;
   text-decoration: none;
   cursor: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.28rem 0.75rem 0.28rem 0.6rem;
-  border: 1.5px solid rgba(77, 159, 255, 0.32);
+  gap: 0.12rem;
+  padding: 0.32rem 0.9rem;
+  border: 1px solid rgba(77, 159, 255, 0.25);
   border-radius: 3px;
-  position: relative;
-  transition: background 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease), box-shadow 0.2s;
-}
-
-.nav-logo::before {
-  content: '';
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--accent);
-  display: block;
-  flex-shrink: 0;
-  animation: statusPulse 2.8s ease-in-out infinite;
+  background: rgba(77, 159, 255, 0.04);
+  transition: background 0.2s var(--ease), border-color 0.2s var(--ease), box-shadow 0.2s;
 }
 
 .nav-logo:hover {
-  background: var(--accent);
-  color: #080C14;
-  border-color: var(--accent);
-  box-shadow: 0 0 24px rgba(77, 159, 255, 0.35);
+  background: rgba(77, 159, 255, 0.10);
+  border-color: rgba(77, 159, 255, 0.5);
+  box-shadow: 0 0 20px rgba(77, 159, 255, 0.18);
 }
 
-.nav-logo:hover::before {
-  background: #080C14;
+/* Terminal prompt logo parts */
+.logo-prompt {
+  color: var(--accent);
+  font-weight: 400;
+  font-size: 0.82rem;
+  margin-right: 0.15rem;
+  transition: text-shadow 0.2s;
+}
+
+.nav-logo:hover .logo-prompt {
+  text-shadow: 0 0 10px rgba(77, 159, 255, 0.9);
+}
+
+.logo-initials {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.7rem;
+  color: var(--text);
+  letter-spacing: 0.1em;
+}
+
+.logo-cursor {
+  color: var(--accent);
+  font-weight: 400;
+  animation: logoCursorBlink 1.1s step-end infinite;
+  margin-left: 1px;
+}
+
+@keyframes logoCursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
 }
 
 .nav-links {
@@ -1159,6 +1173,99 @@ body.edit-mode .resume-url-row {
   color: var(--text);
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
+}
+
+/* ============================================
+   CONTACT FORM
+   ============================================ */
+.contact-form-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-card);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.form-field:last-of-type { margin-bottom: 0; }
+
+.form-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--accent);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.form-input,
+.form-textarea {
+  background: var(--surface-2);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  width: 100%;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder { color: var(--text-dim); }
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: rgba(77, 159, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(77, 159, 255, 0.09);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 130px;
+  line-height: 1.6;
+}
+
+.form-footer-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.form-msg {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.form-success-msg { color: #50FA7B; }
+.form-error-msg   { color: #FF6B6B; }
+
+@media (max-width: 640px) {
+  .form-row { grid-template-columns: 1fr; }
+  .contact-form-wrap { padding: 1.25rem; }
 }
 
 /* ============================================

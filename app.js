@@ -444,7 +444,7 @@ function renderHero() {
     const val = nameEl.textContent.trim();
     data.name = val;
     data.initials = val.split(' ').map(w => w[0] || '').join('').slice(0, 2).toUpperCase();
-    document.getElementById('nav-logo').textContent = data.initials;
+    setLogoHTML(data.initials);
     saveData();
   });
 
@@ -1029,8 +1029,74 @@ function renderContact() {
   liLink.textContent = '\u2B21 LinkedIn';
   makeEditable(liLink, v => { data.linkedin = v; liLink.href = v; });
 
+  /* ── Formspree contact form ── */
+  const formWrap = el('div', 'contact-form-wrap reveal');
+  formWrap.innerHTML =
+    '<div class="form-row">' +
+      '<div class="form-field"><label class="form-label">// name</label>' +
+        '<input type="text" name="name" class="form-input" placeholder="Your name" required /></div>' +
+      '<div class="form-field"><label class="form-label">// email</label>' +
+        '<input type="email" name="email" class="form-input" placeholder="your@email.com" required /></div>' +
+    '</div>' +
+    '<div class="form-field"><label class="form-label">// message</label>' +
+      '<textarea name="message" class="form-textarea" placeholder="What\'s on your mind?" required></textarea></div>' +
+    '<div class="form-footer-row">' +
+      '<button type="submit" class="btn btn-primary form-submit-btn">' +
+        '<span class="submit-idle">\u2197 Send Message</span>' +
+        '<span class="submit-busy" style="display:none">Sending\u2026</span>' +
+      '</button>' +
+      '<div class="form-msg form-success-msg" style="display:none">\u2713 Sent\u2014I\'ll be in touch soon.</div>' +
+      '<div class="form-msg form-error-msg" style="display:none">Something went wrong \u2014 email me directly.</div>' +
+    '</div>';
+
+  const form       = formWrap.querySelector('.form-footer-row').closest('.contact-form-wrap');
+  const submitBtn  = formWrap.querySelector('.form-submit-btn');
+  const idleText   = formWrap.querySelector('.submit-idle');
+  const busyText   = formWrap.querySelector('.submit-busy');
+  const successMsg = formWrap.querySelector('.form-success-msg');
+  const errorMsg   = formWrap.querySelector('.form-error-msg');
+  const footerRow  = formWrap.querySelector('.form-footer-row');
+
+  submitBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const nameVal  = formWrap.querySelector('[name="name"]').value.trim();
+    const emailVal = formWrap.querySelector('[name="email"]').value.trim();
+    const msgVal   = formWrap.querySelector('[name="message"]').value.trim();
+    if (!nameVal || !emailVal || !msgVal) return;
+
+    submitBtn.disabled = true;
+    idleText.style.display  = 'none';
+    busyText.style.display  = 'inline';
+    successMsg.style.display = 'none';
+    errorMsg.style.display   = 'none';
+
+    try {
+      const fd = new FormData();
+      fd.append('name', nameVal);
+      fd.append('email', emailVal);
+      fd.append('message', msgVal);
+      const res = await fetch('https://formspree.io/f/xlgovanz', {
+        method: 'POST',
+        headers: { Accept: 'application/json' },
+        body: fd
+      });
+      if (res.ok) {
+        formWrap.querySelector('[name="name"]').value = '';
+        formWrap.querySelector('[name="email"]').value = '';
+        formWrap.querySelector('[name="message"]').value = '';
+        submitBtn.style.display = 'none';
+        successMsg.style.display = 'flex';
+      } else { throw new Error(); }
+    } catch (_) {
+      errorMsg.style.display = 'flex';
+      submitBtn.disabled = false;
+      idleText.style.display = 'inline';
+      busyText.style.display = 'none';
+    }
+  });
+
   links.append(emailLink, ghLink, liLink);
-  inner.append(cta, blurb, links);
+  inner.append(cta, blurb, formWrap, links);
   section.append(inner);
 }
 
@@ -1137,9 +1203,16 @@ window.addEventListener('scroll', () => {
 /* ============================================
    RENDER ALL
    ============================================ */
+function setLogoHTML(initials) {
+  document.getElementById('nav-logo').innerHTML =
+    '<span class="logo-prompt">&gt;</span>' +
+    '<span class="logo-initials">' + initials + '</span>' +
+    '<span class="logo-cursor">_</span>';
+}
+
 function render() {
   const initials = data.initials || data.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  document.getElementById('nav-logo').textContent = initials;
+  setLogoHTML(initials);
 
   renderHero();
   renderAbout();
