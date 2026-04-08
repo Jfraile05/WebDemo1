@@ -1049,13 +1049,11 @@ function renderContact() {
       '<div class="form-msg form-error-msg" style="display:none">Something went wrong \u2014 email me directly.</div>' +
     '</div>';
 
-  const form       = formWrap.querySelector('.form-footer-row').closest('.contact-form-wrap');
   const submitBtn  = formWrap.querySelector('.form-submit-btn');
   const idleText   = formWrap.querySelector('.submit-idle');
   const busyText   = formWrap.querySelector('.submit-busy');
   const successMsg = formWrap.querySelector('.form-success-msg');
   const errorMsg   = formWrap.querySelector('.form-error-msg');
-  const footerRow  = formWrap.querySelector('.form-footer-row');
 
   submitBtn.addEventListener('click', async (e) => {
     e.preventDefault();
