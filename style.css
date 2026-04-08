@@ -532,7 +532,8 @@ section {
 
 .hero-deco .hero-actions {
   animation: none;
-  margin-top: 2.75rem;
+  margin-top: 1.4rem;
+  align-self: flex-start;
 }
 
 /* Terminal identity card */
