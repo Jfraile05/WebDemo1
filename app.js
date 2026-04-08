@@ -478,9 +478,9 @@ function renderHero() {
   });
   resumeUrlRow.append(resumeUrlLabel, resumeUrlSpan);
   /* Stats strip — compact data row below CTA */
-  left.append(nameEl, titleRow, tagline, actions, resumeUrlRow);
+  left.append(nameEl, titleRow, tagline);
 
-  /* Terminal identity card */
+  /* Terminal identity card + buttons */
   const deco = el('div', 'hero-deco');
   const term = el('div', 'hero-terminal');
   term.innerHTML =
@@ -499,7 +499,7 @@ function renderHero() {
       '<div class="term-row term-indent"><span class="term-key">"base"</span><span class="term-op">: </span><span class="term-str">"Tallahassee, FL"</span></div>' +
       '<div class="term-row"><span class="term-brace">}</span></div>' +
     '</div>';
-  deco.append(term);
+  deco.append(term, actions, resumeUrlRow);
 
   inner.append(left, deco);
   section.append(inner);

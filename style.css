@@ -524,10 +524,14 @@ section {
 .hero-deco {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: stretch;
   gap: 1rem;
   user-select: none;
   animation: heroFadeIn 1.1s 0.4s var(--ease) both;
+}
+
+.hero-deco .hero-actions {
+  animation: none; /* inherits deco animation */
 }
 
 /* Terminal identity card */
