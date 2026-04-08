@@ -531,7 +531,8 @@ section {
 }
 
 .hero-deco .hero-actions {
-  animation: none; /* inherits deco animation */
+  animation: none;
+  margin-top: 2.75rem;
 }
 
 /* Terminal identity card */
