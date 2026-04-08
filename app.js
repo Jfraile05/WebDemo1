@@ -557,72 +557,51 @@ function renderAbout() {
    PROJECTS
    ============================================ */
 /* ============================================
-   EXPERIENCE — HORIZONTAL CAROUSEL
+   SHARED CAROUSEL UTILITY
+   mountCarousel(container, cardEls, interval)
+   Appends [outer + progress + dots] into container.
+   Returns a cleanup fn that clears the auto-advance timer.
    ============================================ */
-let _expTimer = null;
+function mountCarousel(container, cardEls, interval) {
+  interval = interval || 5000;
+  const total = cardEls.length;
+  if (!total) return function(){};
 
-function renderExperience() {
-  if (_expTimer) { clearInterval(_expTimer); _expTimer = null; }
+  const svgPrev = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
+  const svgNext = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
 
-  const section = document.getElementById('experience');
-  section.innerHTML = '';
-  section.append(sectionHeader('02', 'Experience'));
-
-  const total = data.experience.length;
-  if (!total) return;
-
-  /* Outer flex row: [prev] [track-wrap] [next] */
-  const outer = el('div', 'exp-outer');
-
-  const prevBtn = el('button', 'exp-nav exp-nav-prev');
-  prevBtn.setAttribute('aria-label', 'Previous');
-  prevBtn.innerHTML =
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-    '<polyline points="15 18 9 12 15 6"/></svg>';
-
-  const nextBtn = el('button', 'exp-nav exp-nav-next');
-  nextBtn.setAttribute('aria-label', 'Next');
-  nextBtn.innerHTML =
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-    '<polyline points="9 18 15 12 9 6"/></svg>';
-
+  const outer     = el('div', 'exp-outer');
+  const prevBtn   = el('button', 'exp-nav exp-nav-prev');
+  const nextBtn   = el('button', 'exp-nav exp-nav-next');
   const trackWrap = el('div', 'exp-track-wrap');
   const track     = el('div', 'exp-track');
+
+  prevBtn.setAttribute('aria-label', 'Previous'); prevBtn.innerHTML = svgPrev;
+  nextBtn.setAttribute('aria-label', 'Next');     nextBtn.innerHTML = svgNext;
+
+  cardEls.forEach(c => track.append(c));
   trackWrap.append(track);
-
-  const cards = data.experience.map((item, i) => {
-    const c = buildExpCard(item, i);
-    c.addEventListener('click', () => { if (i !== current) goTo(i); });
-    track.append(c);
-    return c;
-  });
-
   outer.append(prevBtn, trackWrap, nextBtn);
 
-  /* Progress bar */
   const progressWrap = el('div', 'exp-progress-wrap');
   const progressBar  = el('div', 'exp-progress-bar');
   progressWrap.append(progressBar);
 
-  /* Dots */
   const dotsWrap = el('div', 'exp-dots');
-  const dotEls = Array.from({ length: total }, (_, i) => {
+  const dotEls = Array.from({ length: total }, function(_, i) {
     const d = el('button', 'exp-dot');
     d.setAttribute('aria-label', 'Slide ' + (i + 1));
-    d.addEventListener('click', () => goTo(i));
+    d.addEventListener('click', function(){ goTo(i); });
     dotsWrap.append(d);
     return d;
   });
 
-  section.append(outer, progressWrap, dotsWrap);
+  container.append(outer, progressWrap, dotsWrap);
 
-  /* ---- Carousel state ---- */
-  let current = 0;
-  let paused  = false;
-  const GAP   = 24; /* must match CSS gap */
-  const INTERVAL = 5000;
+  var current = 0, paused = false;
+  const GAP = 24;
 
-  function cardW() { return cards[0] ? cards[0].offsetWidth : 500; }
+  function cardW() { return cardEls[0] ? cardEls[0].offsetWidth : 500; }
 
   function syncPadding() {
     const pad = Math.max(0, (trackWrap.offsetWidth - cardW()) / 2);
@@ -632,67 +611,67 @@ function renderExperience() {
 
   function goTo(n) {
     current = ((n % total) + total) % total;
-    const cw = cardW();
-    track.style.transform = `translateX(${-(current * (cw + GAP))}px)`;
+    track.style.transform = 'translateX(' + (-(current * (cardW() + GAP))) + 'px)';
 
-    cards.forEach((c, i) => {
-      const d = Math.abs(i - current);
+    cardEls.forEach(function(c, i) {
+      var d = Math.abs(i - current);
       c.classList.toggle('exp-active', d === 0);
       c.classList.toggle('exp-adj',    d === 1);
-      c.classList.toggle('exp-far',    d > 1);
+      c.classList.toggle('exp-far',    d  > 1);
     });
+    dotEls.forEach(function(d, i) { d.classList.toggle('exp-dot-on', i === current); });
 
-    dotEls.forEach((d, i) => d.classList.toggle('exp-dot-on', i === current));
-
-    /* restart progress bar animation */
     progressBar.style.transition = 'none';
     progressBar.style.width = '0%';
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        progressBar.style.transition = `width ${INTERVAL}ms linear`;
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        progressBar.style.transition = 'width ' + interval + 'ms linear';
         progressBar.style.width = paused ? '0%' : '100%';
       });
     });
   }
 
-  function startProgress() {
-    progressBar.style.transition = `width ${INTERVAL}ms linear`;
-    progressBar.style.width = '100%';
-  }
-
-  /* Auto-advance */
-  function startTimer() {
-    _expTimer = setInterval(() => { if (!paused) goTo(current + 1); }, INTERVAL);
-  }
-
-  outer.addEventListener('mouseenter', () => {
+  outer.addEventListener('mouseenter', function() {
     paused = true;
     progressBar.style.transition = 'none';
-    progressBar.style.width = progressBar.offsetWidth / progressWrap.offsetWidth * 100 + '%';
+    var pct = progressBar.offsetWidth / (progressWrap.offsetWidth || 1) * 100;
+    progressBar.style.width = pct + '%';
   });
-  outer.addEventListener('mouseleave', () => {
-    paused = false;
-    goTo(current); /* restart bar */
-  });
+  outer.addEventListener('mouseleave', function() { paused = false; goTo(current); });
 
-  /* Touch swipe */
-  let tx0 = 0;
-  trackWrap.addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, { passive: true });
-  trackWrap.addEventListener('touchend',   e => {
-    const dx = e.changedTouches[0].clientX - tx0;
+  var tx0 = 0;
+  trackWrap.addEventListener('touchstart', function(e){ tx0 = e.touches[0].clientX; }, { passive: true });
+  trackWrap.addEventListener('touchend',   function(e){
+    var dx = e.changedTouches[0].clientX - tx0;
     if (Math.abs(dx) > 40) goTo(current + (dx < 0 ? 1 : -1));
   }, { passive: true });
 
-  prevBtn.addEventListener('click', () => goTo(current - 1));
-  nextBtn.addEventListener('click', () => goTo(current + 1));
+  prevBtn.addEventListener('click', function(){ goTo(current - 1); });
+  nextBtn.addEventListener('click', function(){ goTo(current + 1); });
+  cardEls.forEach(function(c, i) {
+    c.addEventListener('click', function(){ if (i !== current) goTo(i); });
+  });
 
-  /* Init after paint so offsetWidth is valid */
-  requestAnimationFrame(() => {
+  const timer = setInterval(function(){ if (!paused) goTo(current + 1); }, interval);
+
+  requestAnimationFrame(function() {
     syncPadding();
     goTo(0);
-    startTimer();
-    window.addEventListener('resize', () => { syncPadding(); goTo(current); }, { passive: true });
+    window.addEventListener('resize', function(){ syncPadding(); goTo(current); }, { passive: true });
   });
+
+  return function(){ clearInterval(timer); };
+}
+
+/* ============================================
+   EXPERIENCE
+   ============================================ */
+function renderExperience() {
+  const section = document.getElementById('experience');
+  section.innerHTML = '';
+  section.append(sectionHeader('02', 'Experience'));
+  const cards = data.experience.map(function(item, i){ return buildExpCard(item, i); });
+  mountCarousel(section, cards, 5000);
 }
 
 function buildExpCard(item, idx) {
@@ -740,103 +719,35 @@ function renderProjects() {
   const section = document.getElementById('projects');
   section.innerHTML = '';
   section.append(sectionHeader('03', 'Projects'));
-
-  const grid = el('div', 'projects-grid');
-  data.projects.forEach((proj, i) => grid.append(buildProjectCard(proj, i)));
-  makeSortable(grid, data.projects, renderProjects);
-  section.append(grid);
-
-  const addBtn = el('button', 'add-btn');
-  addBtn.textContent = '+ Add Project';
-  addBtn.addEventListener('click', () => {
-    data.projects.push({
-      id: Date.now(),
-      title:       'New Project',
-      description: 'Describe your project here.',
-      tech:        ['Tech'],
-      github:      '#',
-      demo:        '#'
-    });
-    saveData();
-    renderProjects();
-    afterRender();
-  });
-  section.append(addBtn);
+  const cards = data.projects.map(function(proj, i){ return buildProjectCard(proj, i); });
+  mountCarousel(section, cards, 5500);
 }
 
 function buildProjectCard(proj, idx) {
-  const card = el('div', 'project-card reveal');
-  card.dataset.dragIdx = idx;
-  card.style.transitionDelay = (idx * 0.08) + 's';
+  const card = el('div', 'exp-card proj-card');
 
-  card.append(dragHandle());
-
-  const delBtn = txt('button', 'delete-btn card-delete', '\u2715 Remove');
-  delBtn.addEventListener('click', () => {
-    data.projects.splice(idx, 1);
-    saveData();
-    renderProjects();
-    afterRender();
-  });
-  card.append(delBtn);
-
-  const num = txt('div', 'project-num', String(idx + 1).padStart(2, '0'));
-  card.append(num);
-
-  const title = txt('h3', 'project-title', proj.title);
-  makeEditable(title, v => { data.projects[idx].title = v; });
-  card.append(title);
-
-  const desc = txt('p', 'project-desc', proj.description);
-  makeEditable(desc, v => { data.projects[idx].description = v; });
-  card.append(desc);
-
-  const tagsWrap = el('div', 'tech-tags');
-  proj.tech.forEach((t, ti) => {
-    const tag = txt('span', 'tech-tag', t);
-    makeEditable(tag, v => { data.projects[idx].tech[ti] = v; });
-
-    const delTag = txt('button', 'delete-btn', '\u2715');
-    delTag.style.cssText = 'margin-left:4px;padding:0 3px;font-size:0.55rem;';
-    delTag.addEventListener('click', e => {
-      e.stopPropagation();
-      data.projects[idx].tech.splice(ti, 1);
-      saveData();
-      renderProjects();
-      afterRender();
-    });
-    tag.append(delTag);
-    tagsWrap.append(tag);
-  });
-
-  const addTagBtn = txt('button', 'add-tag-btn', '+ tag');
-  addTagBtn.addEventListener('click', () => {
-    data.projects[idx].tech.push('New');
-    saveData();
-    renderProjects();
-    afterRender();
-  });
-  tagsWrap.append(addTagBtn);
-  card.append(tagsWrap);
-
+  /* Top row: index + github link */
+  const top = el('div', 'exp-card-top');
+  top.append(txt('span', 'exp-card-idx', String(idx + 1).padStart(2, '0')));
   if (proj.github) {
-    const links = el('div', 'project-links');
-    const ghLink = el('a', 'project-link');
-    ghLink.href = proj.github; ghLink.target = '_blank';
-    ghLink.textContent = '\u2325 GitHub';
-    makeEditable(ghLink, v => { data.projects[idx].github = v; });
-    links.append(ghLink);
-    card.append(links);
+    const gh = el('a', 'proj-gh-link');
+    gh.href = proj.github; gh.target = '_blank';
+    gh.textContent = '↗ GitHub';
+    gh.addEventListener('click', function(e){ e.stopPropagation(); });
+    top.append(gh);
   }
+  card.append(top);
 
-  card.addEventListener('mousemove', e => {
-    if (editMode) return;
-    const r = card.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width  - 0.5;
-    const y = (e.clientY - r.top)  / r.height - 0.5;
-    card.style.transform = 'translateY(-4px) rotateX(' + (-y * 6) + 'deg) rotateY(' + (x * 6) + 'deg)';
-  });
-  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+  card.append(txt('h3', 'exp-card-role', proj.title));
+
+  card.append(el('div', 'exp-card-divider'));
+
+  card.append(txt('p', 'proj-desc', proj.description));
+
+  /* Tech tags */
+  const tagsWrap = el('div', 'tech-tags proj-tags');
+  proj.tech.forEach(function(t){ tagsWrap.append(txt('span', 'tech-tag', t)); });
+  card.append(tagsWrap);
 
   return card;
 }
@@ -848,96 +759,8 @@ function renderLeadership() {
   const section = document.getElementById('leadership');
   section.innerHTML = '';
   section.append(sectionHeader('04', 'Leadership'));
-
-  const list = el('div', 'leadership-list');
-  data.leadership.forEach((item, i) => list.append(buildLeadershipCard(item, i)));
-  makeSortable(list, data.leadership, renderLeadership);
-  section.append(list);
-
-  const addBtn = el('button', 'add-btn');
-  addBtn.textContent = '+ Add Role';
-  addBtn.addEventListener('click', () => {
-    data.leadership.push({
-      id: Date.now(),
-      role:     'Role Title',
-      org:      'Organization',
-      period:   'Year – Present',
-      location: 'Location',
-      bullets:  ['Describe your contributions and impact here.']
-    });
-    saveData();
-    renderLeadership();
-    afterRender();
-  });
-  section.append(addBtn);
-}
-
-function buildLeadershipCard(item, idx) {
-  const card = el('div', 'leadership-card reveal');
-  card.dataset.dragIdx = idx;
-  card.style.transitionDelay = (idx * 0.08) + 's';
-
-  card.append(dragHandle());
-
-  const delBtn = txt('button', 'delete-btn card-delete', '\u2715 Remove');
-  delBtn.addEventListener('click', () => {
-    data.leadership.splice(idx, 1);
-    saveData();
-    renderLeadership();
-    afterRender();
-  });
-  card.append(delBtn);
-
-  const header = el('div', 'ldr-header');
-
-  const role = txt('h3', 'ldr-role', item.role);
-  makeEditable(role, v => { data.leadership[idx].role = v; });
-
-  const meta = el('div', 'ldr-meta');
-
-  const org = txt('span', 'ldr-org', item.org);
-  makeEditable(org, v => { data.leadership[idx].org = v; });
-
-  const period = txt('span', 'ldr-period', item.period);
-  makeEditable(period, v => { data.leadership[idx].period = v; });
-
-  const location = txt('span', 'ldr-location', item.location);
-  makeEditable(location, v => { data.leadership[idx].location = v; });
-
-  meta.append(org, period, location);
-  header.append(role, meta);
-  card.append(header);
-
-  const bulletsWrap = el('ul', 'ldr-bullets');
-  item.bullets.forEach((bullet, bi) => {
-    const li = el('li', 'ldr-bullet');
-    const bulletTxt = txt('span', 'ldr-bullet-text', bullet);
-    makeEditable(bulletTxt, v => { data.leadership[idx].bullets[bi] = v; });
-
-    const delBullet = txt('button', 'delete-btn', '\u2715');
-    delBullet.style.cssText = 'margin-left:6px;padding:0 3px;font-size:0.55rem;flex-shrink:0;';
-    delBullet.addEventListener('click', e => {
-      e.stopPropagation();
-      data.leadership[idx].bullets.splice(bi, 1);
-      saveData();
-      renderLeadership();
-      afterRender();
-    });
-    li.append(bulletTxt, delBullet);
-    bulletsWrap.append(li);
-  });
-
-  const addBullet = txt('button', 'add-tag-btn', '+ bullet');
-  addBullet.style.marginTop = '0.6rem';
-  addBullet.addEventListener('click', () => {
-    data.leadership[idx].bullets.push('New achievement.');
-    saveData();
-    renderLeadership();
-    afterRender();
-  });
-
-  card.append(bulletsWrap, addBullet);
-  return card;
+  const cards = data.leadership.map(function(item, i){ return buildExpCard(item, i); });
+  mountCarousel(section, cards, 6000);
 }
 
 /* ============================================

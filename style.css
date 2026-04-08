@@ -953,6 +953,33 @@ section {
   box-shadow: 0 0 8px rgba(77, 159, 255, 0.55);
 }
 
+/* Project card extras */
+.proj-desc {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.82;
+  flex: 1;
+  margin-bottom: 1.25rem;
+}
+
+.proj-tags { margin-top: auto; }
+
+.proj-gh-link {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: rgba(77, 159, 255, 0.65);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  transition: color 0.2s;
+  cursor: pointer;
+}
+.proj-gh-link:hover { color: var(--accent); }
+
+.proj-card {
+  display: flex;
+  flex-direction: column;
+}
+
 /* Mobile: hide arrows, rely on swipe */
 @media (max-width: 640px) {
   .exp-nav      { display: none; }
