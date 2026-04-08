@@ -418,11 +418,6 @@ function renderHero() {
   const inner = el('div', 'hero-inner');
   const left  = el('div', 'hero-left');
 
-  /* Available badge */
-  const badge = el('div', 'hero-badge');
-  const dot   = el('span', 'hero-badge-dot');
-  badge.append(dot, document.createTextNode('Available for Work'));
-
   /* Name split into two lines */
   const nameParts = data.name.trim().split(' ');
   const firstName = nameParts[0] || 'Your';
@@ -497,7 +492,7 @@ function renderHero() {
     '<span class="stats-sep">·</span>' +
     '<span>4+ yrs experience</span>';
 
-  left.append(badge, nameEl, titleRow, tagline, actions, statsStrip, resumeUrlRow);
+  left.append(nameEl, titleRow, tagline, actions, statsStrip, resumeUrlRow);
 
   /* Terminal identity card */
   const deco = el('div', 'hero-deco');
@@ -515,8 +510,7 @@ function renderHero() {
       '<div class="term-row term-indent"><span class="term-key">"school"</span><span class="term-op">: </span><span class="term-str">"Florida State University"</span>,</div>' +
       '<div class="term-row term-indent"><span class="term-key">"focus"</span><span class="term-op">: </span><span class="term-arr">["Cloud", "Systems", "AI"]</span>,</div>' +
       '<div class="term-row term-indent"><span class="term-key">"gpa"</span><span class="term-op">: </span><span class="term-num">3.5</span>,</div>' +
-      '<div class="term-row term-indent"><span class="term-key">"base"</span><span class="term-op">: </span><span class="term-str">"Tallahassee, FL"</span>,</div>' +
-      '<div class="term-row term-indent"><span class="term-key">"status"</span><span class="term-op">: </span><span class="term-status">\u25cf available</span></div>' +
+      '<div class="term-row term-indent"><span class="term-key">"base"</span><span class="term-op">: </span><span class="term-str">"Tallahassee, FL"</span></div>' +
       '<div class="term-row"><span class="term-brace">}</span></div>' +
     '</div>';
   deco.append(term);
@@ -1166,29 +1160,6 @@ function initCursor() {
     ring.style.opacity = '1';
   });
 }
-
-/* ============================================
-   EDIT MODE TOGGLE
-   ============================================ */
-function showToast(msg) {
-  const toast = document.getElementById('edit-toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  clearTimeout(toast._timer);
-  toast._timer = setTimeout(() => toast.classList.remove('show'), 3800);
-}
-
-document.getElementById('edit-toggle').addEventListener('click', () => {
-  editMode = !editMode;
-  document.body.classList.toggle('edit-mode', editMode);
-  if (editMode) {
-    enableAllEditing();
-    showToast('\u270f\ufe0f  Edit mode on — click any text to edit.');
-  } else {
-    disableAllEditing();
-    showToast('\ud83d\udd12  Saved.');
-  }
-});
 
 /* ============================================
    NAVBAR SCROLL

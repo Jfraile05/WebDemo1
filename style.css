@@ -391,7 +391,7 @@ section {
   gap: 5rem;
   align-items: center;
   width: 100%;
-  padding: 7rem 0 6rem;
+  padding: 3rem 0 4rem;
 }
 
 .hero-badge {
@@ -643,8 +643,8 @@ section {
    ABOUT
    ============================================ */
 #about {
-  padding-top: 9rem;
-  padding-bottom: 9rem;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
 }
 
 .about-layout {
@@ -708,8 +708,8 @@ section {
    PROJECTS
    ============================================ */
 #projects {
-  padding-top: 9rem;
-  padding-bottom: 9rem;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
 }
 
 .projects-grid {
@@ -818,8 +818,8 @@ section {
    LEADERSHIP
    ============================================ */
 #leadership {
-  padding-top: 9rem;
-  padding-bottom: 9rem;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
 }
 
 .leadership-list {
@@ -998,8 +998,8 @@ body.edit-mode .resume-url-row {
    SKILLS
    ============================================ */
 #skills {
-  padding-top: 9rem;
-  padding-bottom: 9rem;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
 }
 
 .skills-grid {
@@ -1076,8 +1076,8 @@ body.edit-mode .resume-url-row {
    HOBBIES
    ============================================ */
 #hobbies {
-  padding-top: 9rem;
-  padding-bottom: 9rem;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
 }
 
 .hobbies-grid {
@@ -1118,8 +1118,8 @@ body.edit-mode .resume-url-row {
    CONTACT
    ============================================ */
 #contact {
-  padding-top: 9rem;
-  padding-bottom: 11rem;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
 }
 
 .contact-cta {
