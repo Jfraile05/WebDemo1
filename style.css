@@ -538,7 +538,7 @@ section {
   border-radius: var(--radius);
   box-shadow: var(--shadow-card), 0 0 40px rgba(77, 159, 255, 0.06);
   overflow: hidden;
-  width: 290px;
+  width: 310px;
   flex-shrink: 0;
 }
 
@@ -576,7 +576,7 @@ section {
   line-height: 1.75;
 }
 
-.term-row   { display: block; }
+.term-row   { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .term-indent { padding-left: 1.1rem; }
 .term-brace  { color: var(--text-muted); }
 .term-key    { color: var(--accent); }
