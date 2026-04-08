@@ -56,8 +56,7 @@ const DEFAULT_DATA = {
     { category: "Core",         items: ["System Reliability", "Fault Tolerance", "Scalability", "Root Cause Analysis", "Automation"] },
     { category: "AI/ML",        items: ["LLM Training & Development", "Model Fine-Tuning", "Prompt Engineering", "Amazon Bedrock", "Claude", "Generative AI"] },
     { category: "Networking",   items: ["TCP/IP", "Observability", "System Debugging", "Performance Analysis"] },
-    { category: "Databases",    items: ["MySQL", "SQLite", "DynamoDB"] },
-    { category: "Development",  items: ["React", "Node.js", "Vite"] },
+    { category: "Dev & Data",   items: ["React", "Node.js", "Vite", "MySQL", "SQLite"] },
     { category: "Tools",        items: ["Git", "GitHub", "ServiceNow", "SCCM"] }
   ],
   hobbies: [
@@ -250,14 +249,11 @@ function loadData() {
           }
         });
       }
-      // Sort skills by priority order defined in DEFAULT_DATA
+      // Filter + sort skills — only keep categories present in DEFAULT_DATA
       if (Array.isArray(merged.skills)) {
         const skillOrder = DEFAULT_DATA.skills.map(g => g.category);
-        merged.skills.sort((a, b) => {
-          const ai = skillOrder.indexOf(a.category);
-          const bi = skillOrder.indexOf(b.category);
-          return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
-        });
+        merged.skills = merged.skills.filter(g => skillOrder.includes(g.category));
+        merged.skills.sort((a, b) => skillOrder.indexOf(a.category) - skillOrder.indexOf(b.category));
       }
       // Filter + sort hobbies — only keep entries that exist in DEFAULT_DATA
       if (Array.isArray(merged.hobbies)) {
