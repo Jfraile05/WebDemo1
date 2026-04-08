@@ -6,7 +6,7 @@ const DEFAULT_DATA = {
   name:         "Jorge Fraile Perez",
   initials:     "JF",
   title:        "SDE Intern Candidate · AWS Student Builder Campus Leader",
-  tagline:      "CS student at FSU building distributed systems, cloud infrastructure, and AI-powered tools — from 300-node reliability pipelines to serverless architectures handling thousands of requests.",
+  tagline:      "CS student at FSU maintaining and building on distributed infrastructure at scale — 300-node clusters, cloud deployments, and AI-powered automation pipelines.",
   resume:       "resume.pdf",
   about:        "I'm a Computer Science student at Florida State University (GPA 3.5, Dean's List, Bright Futures Scholar) with hands-on experience managing 300+ node systems infrastructure as an Undergraduate Systems Admin — cutting downtime 25% and MTTR 30%. As an AWS Student Builder Campus Leader for Amazon Web Services, I run cloud workshops for 500+ students, publish technical content on distributed systems, and have driven 500+ AWS Builder Center registrations. I build at the intersection of systems reliability, cloud engineering, and AI.",
   contactBlurb: "I'm actively seeking software engineering internship opportunities. Whether you have an opening or just want to connect — I'd love to hear from you.",
@@ -77,7 +77,6 @@ const DEFAULT_DATA = {
     { icon: "📣", label: "Tech Marketing" },
     { icon: "🖥️", label: "PC Building" },
     { icon: "🔧", label: "Hardware & Device Repair" },
-    { icon: "♟️", label: "Chess" },
     { icon: "🤝", label: "Community Impact" },
     { icon: "🍳", label: "Cooking" },
     { icon: "🏊", label: "Swimming" },
@@ -482,17 +481,7 @@ function renderHero() {
   });
   resumeUrlRow.append(resumeUrlLabel, resumeUrlSpan);
   /* Stats strip — compact data row below CTA */
-  const statsStrip = el('div', 'hero-stats-strip');
-  statsStrip.innerHTML =
-    '<span>300+ nodes managed</span>' +
-    '<span class="stats-sep">·</span>' +
-    '<span>500+ students reached</span>' +
-    '<span class="stats-sep">·</span>' +
-    '<span>GPA 3.5</span>' +
-    '<span class="stats-sep">·</span>' +
-    '<span>4+ yrs experience</span>';
-
-  left.append(nameEl, titleRow, tagline, actions, statsStrip, resumeUrlRow);
+  left.append(nameEl, titleRow, tagline, actions, resumeUrlRow);
 
   /* Terminal identity card */
   const deco = el('div', 'hero-deco');
