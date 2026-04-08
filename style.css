@@ -285,21 +285,21 @@ body.edit-mode { cursor: auto; }
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--accent);
+  background: #28C840;
   display: block;
   flex-shrink: 0;
   animation: statusPulse 2.8s ease-in-out infinite;
 }
 
 @keyframes statusPulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(77, 159, 255, 0.6); }
-  60%       { opacity: 0.75; box-shadow: 0 0 0 5px rgba(77, 159, 255, 0); }
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(40, 200, 64, 0.7); }
+  60%       { opacity: 0.75; box-shadow: 0 0 0 5px rgba(40, 200, 64, 0); }
 }
 
 .status-text {
   font-family: var(--font-mono);
   font-size: 0.63rem;
-  color: rgba(77, 159, 255, 0.7);
+  color: rgba(40, 200, 64, 0.85);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
