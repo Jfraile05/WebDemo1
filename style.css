@@ -705,6 +705,263 @@ section {
 }
 
 /* ============================================
+   EXPERIENCE CAROUSEL
+   ============================================ */
+#experience {
+  padding-top: 5rem;
+  padding-bottom: 4rem;
+}
+
+/* Outer: [prev-btn] [track] [next-btn] */
+.exp-outer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 -2.5rem;        /* break out of section horizontal padding */
+  padding: 0 0.5rem;
+}
+
+.exp-track-wrap {
+  flex: 1;
+  overflow: hidden;
+  padding: 2.5rem 0;        /* vertical room so scale-up cards don't clip */
+}
+
+.exp-track {
+  display: flex;
+  gap: 1.5rem;
+  will-change: transform;
+  transition: transform 0.65s cubic-bezier(0.32, 0, 0.15, 1);
+}
+
+/* ---- Individual card ---- */
+.exp-card {
+  flex: 0 0 min(540px, calc(88vw - 4rem));
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid rgba(77, 159, 255, 0.1);
+  border-radius: var(--radius);
+  padding: 2rem 2rem 1.75rem;
+  box-shadow: var(--shadow-card);
+  will-change: transform, opacity;
+  transition:
+    transform     0.6s cubic-bezier(0.32, 0, 0.15, 1),
+    opacity       0.6s ease,
+    filter        0.6s ease,
+    border-color  0.4s ease,
+    box-shadow    0.4s ease;
+  /* default state — off-center / far */
+  transform: scale(0.86) translateY(24px);
+  opacity: 0.28;
+  filter: brightness(0.5);
+  cursor: pointer;
+  user-select: none;
+}
+
+.exp-card.exp-adj {
+  transform: scale(0.93) translateY(10px);
+  opacity: 0.58;
+  filter: brightness(0.72);
+  cursor: pointer;
+}
+
+.exp-card.exp-active {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  filter: none;
+  border-left-color: var(--accent);
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow-hover), 0 0 60px rgba(77, 159, 255, 0.09);
+  cursor: default;
+}
+
+/* Card internals */
+.exp-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.35rem;
+}
+
+.exp-card-idx {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  padding: 0.18rem 0.5rem;
+  border: 1px solid rgba(77, 159, 255, 0.25);
+  border-radius: 2px;
+  background: var(--accent-dim);
+}
+
+.exp-card-period {
+  font-family: var(--font-mono);
+  font-size: 0.63rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.exp-card-role {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1.22;
+  margin-bottom: 0.85rem;
+}
+
+.exp-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+/* Animated pulse dot */
+.exp-card-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  animation: statusPulse 2.8s ease-in-out infinite;
+}
+
+.exp-card:not(.exp-active) .exp-card-pulse {
+  animation: none;
+  opacity: 0.4;
+}
+
+.exp-card-org {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+.exp-card-sep {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-dim);
+}
+
+.exp-card-loc {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+}
+
+.exp-card-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 1.25rem;
+}
+
+.exp-card-bullets {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.exp-card-bullet {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.78;
+  padding-left: 1.1rem;
+  position: relative;
+}
+
+.exp-card-bullet::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  top: -0.02em;
+  color: var(--accent);
+  opacity: 0.6;
+  font-size: 1.05rem;
+}
+
+/* Nav arrows */
+.exp-nav {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: none;
+  transition: all 0.2s var(--ease);
+  z-index: 2;
+}
+
+.exp-nav svg { width: 17px; height: 17px; }
+
+.exp-nav:hover {
+  border-color: var(--accent-border);
+  color: var(--accent);
+  background: var(--accent-dim);
+  box-shadow: 0 0 18px rgba(77, 159, 255, 0.15);
+}
+
+/* Progress bar */
+.exp-progress-wrap {
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  margin: 0.85rem 0 0;
+  overflow: hidden;
+}
+
+.exp-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), rgba(77, 159, 255, 0.45));
+  border-radius: 1px;
+  box-shadow: 0 0 8px rgba(77, 159, 255, 0.5);
+}
+
+/* Dots */
+.exp-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-top: 1.35rem;
+}
+
+.exp-dot {
+  width: 20px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--text-dim);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: width 0.3s var(--ease), background 0.3s var(--ease), box-shadow 0.3s;
+}
+
+.exp-dot.exp-dot-on {
+  width: 32px;
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(77, 159, 255, 0.55);
+}
+
+/* Mobile: hide arrows, rely on swipe */
+@media (max-width: 640px) {
+  .exp-nav      { display: none; }
+  .exp-outer    { margin: 0 -1.25rem; padding: 0; }
+  .exp-card     { flex: 0 0 calc(88vw - 1rem); padding: 1.5rem; }
+  .exp-card-role { font-size: 1.05rem; }
+}
+
+/* ============================================
    PROJECTS
    ============================================ */
 #projects {

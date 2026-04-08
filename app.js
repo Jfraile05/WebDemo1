@@ -557,98 +557,179 @@ function renderAbout() {
    PROJECTS
    ============================================ */
 /* ============================================
-   EXPERIENCE
+   EXPERIENCE — HORIZONTAL CAROUSEL
    ============================================ */
+let _expTimer = null;
+
 function renderExperience() {
+  if (_expTimer) { clearInterval(_expTimer); _expTimer = null; }
+
   const section = document.getElementById('experience');
   section.innerHTML = '';
   section.append(sectionHeader('02', 'Experience'));
 
-  const list = el('div', 'leadership-list');
-  data.experience.forEach((item, i) => list.append(buildExperienceCard(item, i)));
-  makeSortable(list, data.experience, renderExperience);
-  section.append(list);
+  const total = data.experience.length;
+  if (!total) return;
 
-  const addBtn = el('button', 'add-btn');
-  addBtn.textContent = '+ Add Role';
-  addBtn.addEventListener('click', () => {
-    data.experience.push({
-      id: Date.now(),
-      role:     'Role Title',
-      org:      'Organization',
-      period:   'Year – Present',
-      location: 'Location',
-      bullets:  ['Describe your responsibilities and impact here.']
-    });
-    saveData();
-    renderExperience();
-    afterRender();
+  /* Outer flex row: [prev] [track-wrap] [next] */
+  const outer = el('div', 'exp-outer');
+
+  const prevBtn = el('button', 'exp-nav exp-nav-prev');
+  prevBtn.setAttribute('aria-label', 'Previous');
+  prevBtn.innerHTML =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+    '<polyline points="15 18 9 12 15 6"/></svg>';
+
+  const nextBtn = el('button', 'exp-nav exp-nav-next');
+  nextBtn.setAttribute('aria-label', 'Next');
+  nextBtn.innerHTML =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+    '<polyline points="9 18 15 12 9 6"/></svg>';
+
+  const trackWrap = el('div', 'exp-track-wrap');
+  const track     = el('div', 'exp-track');
+  trackWrap.append(track);
+
+  const cards = data.experience.map((item, i) => {
+    const c = buildExpCard(item, i);
+    c.addEventListener('click', () => { if (i !== current) goTo(i); });
+    track.append(c);
+    return c;
   });
-  section.append(addBtn);
+
+  outer.append(prevBtn, trackWrap, nextBtn);
+
+  /* Progress bar */
+  const progressWrap = el('div', 'exp-progress-wrap');
+  const progressBar  = el('div', 'exp-progress-bar');
+  progressWrap.append(progressBar);
+
+  /* Dots */
+  const dotsWrap = el('div', 'exp-dots');
+  const dotEls = Array.from({ length: total }, (_, i) => {
+    const d = el('button', 'exp-dot');
+    d.setAttribute('aria-label', 'Slide ' + (i + 1));
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.append(d);
+    return d;
+  });
+
+  section.append(outer, progressWrap, dotsWrap);
+
+  /* ---- Carousel state ---- */
+  let current = 0;
+  let paused  = false;
+  const GAP   = 24; /* must match CSS gap */
+  const INTERVAL = 5000;
+
+  function cardW() { return cards[0] ? cards[0].offsetWidth : 500; }
+
+  function syncPadding() {
+    const pad = Math.max(0, (trackWrap.offsetWidth - cardW()) / 2);
+    track.style.paddingLeft  = pad + 'px';
+    track.style.paddingRight = pad + 'px';
+  }
+
+  function goTo(n) {
+    current = ((n % total) + total) % total;
+    const cw = cardW();
+    track.style.transform = `translateX(${-(current * (cw + GAP))}px)`;
+
+    cards.forEach((c, i) => {
+      const d = Math.abs(i - current);
+      c.classList.toggle('exp-active', d === 0);
+      c.classList.toggle('exp-adj',    d === 1);
+      c.classList.toggle('exp-far',    d > 1);
+    });
+
+    dotEls.forEach((d, i) => d.classList.toggle('exp-dot-on', i === current));
+
+    /* restart progress bar animation */
+    progressBar.style.transition = 'none';
+    progressBar.style.width = '0%';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        progressBar.style.transition = `width ${INTERVAL}ms linear`;
+        progressBar.style.width = paused ? '0%' : '100%';
+      });
+    });
+  }
+
+  function startProgress() {
+    progressBar.style.transition = `width ${INTERVAL}ms linear`;
+    progressBar.style.width = '100%';
+  }
+
+  /* Auto-advance */
+  function startTimer() {
+    _expTimer = setInterval(() => { if (!paused) goTo(current + 1); }, INTERVAL);
+  }
+
+  outer.addEventListener('mouseenter', () => {
+    paused = true;
+    progressBar.style.transition = 'none';
+    progressBar.style.width = progressBar.offsetWidth / progressWrap.offsetWidth * 100 + '%';
+  });
+  outer.addEventListener('mouseleave', () => {
+    paused = false;
+    goTo(current); /* restart bar */
+  });
+
+  /* Touch swipe */
+  let tx0 = 0;
+  trackWrap.addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, { passive: true });
+  trackWrap.addEventListener('touchend',   e => {
+    const dx = e.changedTouches[0].clientX - tx0;
+    if (Math.abs(dx) > 40) goTo(current + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+
+  /* Init after paint so offsetWidth is valid */
+  requestAnimationFrame(() => {
+    syncPadding();
+    goTo(0);
+    startTimer();
+    window.addEventListener('resize', () => { syncPadding(); goTo(current); }, { passive: true });
+  });
 }
 
-function buildExperienceCard(item, idx) {
-  const card = el('div', 'leadership-card reveal');
-  card.dataset.dragIdx = idx;
-  card.style.transitionDelay = (idx * 0.08) + 's';
+function buildExpCard(item, idx) {
+  const card = el('div', 'exp-card');
 
-  card.append(dragHandle());
+  /* Top row: index badge + period */
+  const top = el('div', 'exp-card-top');
+  top.append(
+    txt('span', 'exp-card-idx', String(idx + 1).padStart(2, '0')),
+    txt('span', 'exp-card-period', item.period)
+  );
+  card.append(top);
 
-  const delBtn = txt('button', 'delete-btn card-delete', '\u2715 Remove');
-  delBtn.addEventListener('click', () => {
-    data.experience.splice(idx, 1);
-    saveData();
-    renderExperience();
-    afterRender();
+  /* Role */
+  card.append(txt('h3', 'exp-card-role', item.role));
+
+  /* Org + location */
+  const meta = el('div', 'exp-card-meta');
+  const pulse = el('span', 'exp-card-pulse');
+  meta.append(
+    pulse,
+    txt('span', 'exp-card-org',  item.org),
+    txt('span', 'exp-card-sep',  '·'),
+    txt('span', 'exp-card-loc',  item.location)
+  );
+  card.append(meta);
+
+  card.append(el('div', 'exp-card-divider'));
+
+  /* Bullets */
+  const ul = el('ul', 'exp-card-bullets');
+  item.bullets.forEach(b => {
+    const li = txt('li', 'exp-card-bullet', b);
+    ul.append(li);
   });
-  card.append(delBtn);
+  card.append(ul);
 
-  const header = el('div', 'ldr-header');
-
-  const role = txt('h3', 'ldr-role', item.role);
-  makeEditable(role, v => { data.experience[idx].role = v; });
-
-  const meta = el('div', 'ldr-meta');
-  const org = txt('span', 'ldr-org', item.org);
-  makeEditable(org, v => { data.experience[idx].org = v; });
-  const period = txt('span', 'ldr-period', item.period);
-  makeEditable(period, v => { data.experience[idx].period = v; });
-  const location = txt('span', 'ldr-location', item.location);
-  makeEditable(location, v => { data.experience[idx].location = v; });
-
-  meta.append(org, period, location);
-  header.append(role, meta);
-  card.append(header);
-
-  const bulletsWrap = el('ul', 'ldr-bullets');
-  item.bullets.forEach((bullet, bi) => {
-    const li = el('li', 'ldr-bullet');
-    const bulletTxt = txt('span', 'ldr-bullet-text', bullet);
-    makeEditable(bulletTxt, v => { data.experience[idx].bullets[bi] = v; });
-
-    const delBullet = txt('button', 'delete-btn', '\u2715');
-    delBullet.style.cssText = 'margin-left:6px;padding:0 3px;font-size:0.55rem;flex-shrink:0;';
-    delBullet.addEventListener('click', e => {
-      e.stopPropagation();
-      data.experience[idx].bullets.splice(bi, 1);
-      saveData();
-      renderExperience();
-      afterRender();
-    });
-    li.append(bulletTxt, delBullet);
-    bulletsWrap.append(li);
-  });
-
-  const addBullet = txt('button', 'add-tag-btn', '+ bullet');
-  addBullet.style.marginTop = '0.6rem';
-  addBullet.addEventListener('click', () => {
-    data.experience[idx].bullets.push('New achievement.');
-    saveData();
-    renderExperience();
-    afterRender();
-  });
-
-  card.append(bulletsWrap, addBullet);
   return card;
 }
 
