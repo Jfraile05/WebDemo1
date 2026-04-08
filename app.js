@@ -1081,7 +1081,7 @@ function initCursor() {
     if (e.target.closest('a, button, [data-edit-target]')) {
       ring.style.width  = '48px';
       ring.style.height = '48px';
-      ring.style.borderColor = 'rgba(24,66,212,0.45)';
+      ring.style.borderColor = 'rgba(77,159,255,0.5)';
     }
   });
 
@@ -1089,7 +1089,7 @@ function initCursor() {
     if (e.target.closest('a, button, [data-edit-target]')) {
       ring.style.width  = '32px';
       ring.style.height = '32px';
-      ring.style.borderColor = 'rgba(24,66,212,0.28)';
+      ring.style.borderColor = 'rgba(77,159,255,0.32)';
     }
   });
 
@@ -1250,7 +1250,7 @@ function initBackground() {
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(24,66,212,${a.toFixed(3)})`;
+          ctx.strokeStyle = `rgba(77,159,255,${a.toFixed(3)})`;
           ctx.lineWidth = 0.6;
           ctx.stroke();
         }
@@ -1269,8 +1269,8 @@ function initBackground() {
       /* Outer glow for near-mouse particles */
       if (near) {
         const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.baseR * 6);
-        grd.addColorStop(0, `rgba(24,66,212,${(bright * 0.18).toFixed(3)})`);
-        grd.addColorStop(1, 'rgba(24,66,212,0)');
+        grd.addColorStop(0, `rgba(77,159,255,${(bright * 0.22).toFixed(3)})`);
+        grd.addColorStop(1, 'rgba(77,159,255,0)');
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.baseR * 6, 0, Math.PI * 2);
         ctx.fillStyle = grd;
@@ -1279,7 +1279,7 @@ function initBackground() {
 
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.baseR, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(24,66,212,${(bright * 0.55).toFixed(3)})`;
+      ctx.fillStyle = `rgba(77,159,255,${(bright * 0.7).toFixed(3)})`;
       ctx.fill();
     }
 
