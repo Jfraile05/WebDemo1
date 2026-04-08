@@ -1364,6 +1364,11 @@ function initTypewriter() {
   if (!fullText) return;
   typewriterDone = true;
 
+  /* Lock the paragraph's current rendered height before clearing its text.
+     Without this, emptying textContent collapses the element to 0px,
+     which causes everything above (name, terminal card) to jump down/up. */
+  p.style.minHeight = p.offsetHeight + 'px';
+
   p.textContent = '';
   const cursor = el('span', 'type-cursor');
   p.append(cursor);
