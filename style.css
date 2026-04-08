@@ -370,8 +370,8 @@ section {
 #hero {
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  padding-top: 60px;
+  align-items: flex-start;
+  padding-top: calc(60px + 10vh);
   position: relative;
   overflow: hidden;
 }
@@ -1577,7 +1577,8 @@ body.edit-mode .add-tag-btn { display: inline-flex; }
   .section-line   { display: none; }
 
   /* Hero */
-  .hero-inner        { padding: 2.5rem 0 3rem; }
+  #hero { padding-top: calc(60px + 5vh); }
+  .hero-inner        { padding: 0 0 3rem; }
   .hero-name         { font-size: clamp(2.6rem, 13vw, 4rem); margin-bottom: 0.35rem; }
   .hero-name-sub     { font-size: clamp(2rem, 11vw, 3.2rem); }
   .hero-title-row    { font-size: 0.68rem; margin-bottom: 1rem; flex-wrap: wrap; }
