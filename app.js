@@ -492,7 +492,7 @@ function renderHero() {
     '</div>' +
     '<div class="terminal-body">' +
       '<div class="term-row"><span class="term-brace">{</span></div>' +
-      '<div class="term-row term-indent"><span class="term-key">"role"</span><span class="term-op">: </span><span class="term-str">"SWE Intern Candidate"</span>,</div>' +
+      '<div class="term-row term-indent"><span class="term-key">"role"</span><span class="term-op">: </span><span class="term-str">"intern.exe --focus=cloud,systems,ai"</span>,</div>' +
       '<div class="term-row term-indent"><span class="term-key">"school"</span><span class="term-op">: </span><span class="term-str">"FSU"</span>,</div>' +
       '<div class="term-row term-indent"><span class="term-key">"focus"</span><span class="term-op">: </span><span class="term-arr">["Cloud", "Systems", "AI"]</span>,</div>' +
       '<div class="term-row term-indent"><span class="term-key">"gpa"</span><span class="term-op">: </span><span class="term-num">3.5</span>,</div>' +
