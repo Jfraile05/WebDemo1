@@ -32,7 +32,7 @@ const DEFAULT_DATA = {
       id: 3,
       title:       "FSU Systems — Automation & Observability",
       description: "Python automation and monitoring tooling for Florida State University's 300+ node CS department infrastructure. Reduced incident detection time by 40%, MTTR by 30%, and overall downtime by 25% through improved observability and automated cross-layer diagnostics.",
-      tech:        ["Python", "Linux", "Observability", "AWS CloudWatch"]
+      tech:        ["Python", "Linux", "Observability"]
     },
     {
       id: 4,
@@ -146,6 +146,18 @@ const DEFAULT_DATA = {
   ],
   experience: [
     {
+      id: 5,
+      role:     "Software Engineering Intern",
+      org:      "Drafted (USC Backed)",
+      period:   "Mar. 2026 – Present",
+      location: "Remote",
+      bullets: [
+        "Develop and ship features across application backend and UI on a live production platform used by real users",
+        "Pair with developers on code review and feature delivery in a collaborative engineering environment",
+        "Diagnose and resolve full stack bugs, presenting technical proposals to stakeholders with intensity and commitment"
+      ]
+    },
+    {
       id: 1,
       role:     "Undergraduate Systems Administrator",
       org:      "Florida State University, Department of Computer Science",
@@ -156,29 +168,6 @@ const DEFAULT_DATA = {
         "Investigate incidents using logs/metrics and improve observability to accelerate debugging and reduce MTTR by 30%",
         "Build Python automation and monitoring tools reducing detection time by 40% and improving system reliability",
         "Review and validate automation scripts, documenting system configurations and incident resolutions to support team reliability"
-      ]
-    },
-    {
-      id: 2,
-      role:     "IT Support — Shadow Program",
-      org:      "Florida Auditor General",
-      period:   "Dec. 2025",
-      location: "Tallahassee, FL",
-      bullets: [
-        "Observed enterprise production support workflows including incident intake, prioritization, escalation, and resolution",
-        "Gained exposure to access controls, documentation standards, and procedures supporting mission-critical systems"
-      ]
-    },
-    {
-      id: 3,
-      role:     "Technical Support & Device Repair Technician",
-      org:      "Independent",
-      period:   "Jan. 2020 – Present",
-      location: "Miami, FL",
-      bullets: [
-        "Troubleshoot production issues across hardware, operating systems, and networked systems to restore service availability",
-        "Configure and maintain systems and network settings to ensure uptime and reliable performance",
-        "Perform root cause analysis on recurring technical issues and implement corrective actions to prevent recurrence"
       ]
     },
     {
@@ -194,15 +183,26 @@ const DEFAULT_DATA = {
       ]
     },
     {
-      id: 5,
-      role:     "Software Engineering Intern",
-      org:      "Drafted (USC Backed)",
-      period:   "Mar. 2026 – Present",
-      location: "Remote",
+      id: 3,
+      role:     "Technical Support & Device Repair Technician",
+      org:      "Independent",
+      period:   "Jan. 2020 – Present",
+      location: "Miami, FL",
       bullets: [
-        "Develop and ship features across application backend and UI on a live production platform used by real users",
-        "Pair with developers on code review and feature delivery in a collaborative engineering environment",
-        "Diagnose and resolve full stack bugs, presenting technical proposals to stakeholders with intensity and commitment"
+        "Troubleshoot production issues across hardware, operating systems, and networked systems to restore service availability",
+        "Configure and maintain systems and network settings to ensure uptime and reliable performance",
+        "Perform root cause analysis on recurring technical issues and implement corrective actions to prevent recurrence"
+      ]
+    },
+    {
+      id: 2,
+      role:     "IT Support — Shadow Program",
+      org:      "Florida Auditor General",
+      period:   "Dec. 2025",
+      location: "Tallahassee, FL",
+      bullets: [
+        "Observed enterprise production support workflows including incident intake, prioritization, escalation, and resolution",
+        "Gained exposure to access controls, documentation standards, and procedures supporting mission-critical systems"
       ]
     }
   ]
@@ -239,6 +239,12 @@ function loadData() {
           if (!merged[key].find(item => item.id === defaultItem.id)) {
             merged[key].push(structuredClone(defaultItem));
           }
+        });
+        // Re-sort to match DEFAULT_DATA order
+        const order = DEFAULT_DATA[key].map(item => item.id);
+        merged[key].sort((a, b) => {
+          const ai = order.indexOf(a.id), bi = order.indexOf(b.id);
+          return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
         });
       });
       // Inject new skill groups by category name
