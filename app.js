@@ -572,7 +572,17 @@ function mountCarousel(container, cardEls, interval) {
   prevBtn.setAttribute('aria-label', 'Previous'); prevBtn.innerHTML = svgPrev;
   nextBtn.setAttribute('aria-label', 'Next');     nextBtn.innerHTML = svgNext;
 
+  // Clone first & last cards for seamless infinite loop.
+  // Track layout: [cloneLast | card0 | card1 | … | cardN-1 | cloneFirst]
+  // trackIdx:          0     |   1   |   2   | … |    N    |    N+1
+  const cloneFirst = cardEls[0].cloneNode(true);
+  const cloneLast  = cardEls[total - 1].cloneNode(true);
+  cloneFirst.classList.add('exp-clone');
+  cloneLast.classList.add('exp-clone');
+
+  track.append(cloneLast);
   cardEls.forEach(c => track.append(c));
+  track.append(cloneFirst);
   trackWrap.append(track);
   outer.append(prevBtn, trackWrap, nextBtn);
 
@@ -584,14 +594,17 @@ function mountCarousel(container, cardEls, interval) {
   const dotEls = Array.from({ length: total }, function(_, i) {
     const d = el('button', 'exp-dot');
     d.setAttribute('aria-label', 'Slide ' + (i + 1));
-    d.addEventListener('click', function(){ goTo(i); });
     dotsWrap.append(d);
     return d;
   });
 
   container.append(outer, progressWrap, dotsWrap);
 
-  var current = 0, paused = false;
+  var realIdx      = 0;    // 0-indexed real card shown
+  var trackIdx     = 1;    // position in track array (1 = card0)
+  var paused       = false;
+  var transitioning = false;
+  var timer        = null;
   const GAP = 24;
 
   function cardW() { return cardEls[0] ? cardEls[0].offsetWidth : 500; }
@@ -602,58 +615,179 @@ function mountCarousel(container, cardEls, interval) {
     track.style.paddingRight = pad + 'px';
   }
 
-  function goTo(n) {
-    current = ((n % total) + total) % total;
-    track.style.transform = 'translateX(' + (-(current * (cardW() + GAP))) + 'px)';
+  // Move track. animate=false for instant snap (no CSS transition).
+  function translate(tIdx, animate) {
+    const x = -(tIdx * (cardW() + GAP));
+    if (!animate) {
+      track.style.transition = 'none';
+      track.style.transform  = 'translateX(' + x + 'px)';
+      void track.getBoundingClientRect(); // flush layout so next animation triggers cleanly
+    } else {
+      track.style.transition = '';  // restore stylesheet transition
+      track.style.transform  = 'translateX(' + x + 'px)';
+    }
+  }
 
+  // Update depth / opacity classes on real cards and clones.
+  function updateClasses(rIdx) {
     cardEls.forEach(function(c, i) {
-      var d = Math.abs(i - current);
+      var d = Math.abs(i - rIdx);
       c.classList.toggle('exp-active', d === 0);
       c.classList.toggle('exp-adj',    d === 1);
       c.classList.toggle('exp-far',    d  > 1);
     });
-    dotEls.forEach(function(d, i) { d.classList.toggle('exp-dot-on', i === current); });
+    // cloneLast sits just before card0 → adjacent when rIdx=0
+    cloneLast.classList.toggle('exp-active', false);
+    cloneLast.classList.toggle('exp-adj',    rIdx === 0);
+    cloneLast.classList.toggle('exp-far',    rIdx !== 0);
+    // cloneFirst sits just after cardN-1 → adjacent when rIdx=N-1
+    cloneFirst.classList.toggle('exp-active', false);
+    cloneFirst.classList.toggle('exp-adj',    rIdx === total - 1);
+    cloneFirst.classList.toggle('exp-far',    rIdx !== total - 1);
+    dotEls.forEach(function(d, i) { d.classList.toggle('exp-dot-on', i === rIdx); });
+  }
 
+  function startProgress() {
     progressBar.style.transition = 'none';
     progressBar.style.width = '0%';
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
         progressBar.style.transition = 'width ' + interval + 'ms linear';
-        progressBar.style.width = paused ? '0%' : '100%';
+        progressBar.style.width = '100%';
       });
     });
   }
 
+  function freezeProgress() {
+    var w     = progressBar.getBoundingClientRect().width;
+    var wrapW = progressWrap.getBoundingClientRect().width || 1;
+    progressBar.style.transition = 'none';
+    progressBar.style.width = (w / wrapW * 100) + '%';
+  }
+
+  // Always reset the timer from scratch — no drift.
+  function scheduleNext() {
+    clearTimeout(timer);
+    if (!paused) {
+      timer = setTimeout(function() { step(1); }, interval);
+    }
+  }
+
+  // Step forward (+1) or back (-1) one slide with animation.
+  function step(dir) {
+    if (transitioning) return;
+    transitioning = true;
+    clearTimeout(timer);
+
+    var newTrack = trackIdx + dir;
+    var visualReal;
+
+    if (newTrack === 0) {
+      // Going to cloneLast → visually shows last real card
+      visualReal = total - 1;
+      cloneLast.classList.remove('exp-adj', 'exp-far');
+      cloneLast.classList.add('exp-active');
+      cardEls.forEach(function(c, i) {
+        var d = Math.abs(i - (total - 1));
+        c.classList.toggle('exp-active', false);
+        c.classList.toggle('exp-adj',    d === 1);
+        c.classList.toggle('exp-far',    d  > 1);
+      });
+      cloneFirst.classList.remove('exp-active'); cloneFirst.classList.add('exp-far');
+    } else if (newTrack === total + 1) {
+      // Going to cloneFirst → visually shows first real card
+      visualReal = 0;
+      cloneFirst.classList.remove('exp-adj', 'exp-far');
+      cloneFirst.classList.add('exp-active');
+      cardEls.forEach(function(c, i) {
+        var d = Math.abs(i - 0);
+        c.classList.toggle('exp-active', false);
+        c.classList.toggle('exp-adj',    d === 1);
+        c.classList.toggle('exp-far',    d  > 1);
+      });
+      cloneLast.classList.remove('exp-active'); cloneLast.classList.add('exp-far');
+    } else {
+      visualReal = ((newTrack - 1 + total) % total); // newTrack - 1 since real cards start at trackIdx=1
+      updateClasses(visualReal);
+    }
+
+    dotEls.forEach(function(d, i) { d.classList.toggle('exp-dot-on', i === visualReal); });
+    realIdx  = visualReal;
+    trackIdx = newTrack;
+    translate(trackIdx, true);
+    // timer + progress restart in transitionend handler
+  }
+
+  // After CSS transition: snap clones to real positions, then restart timer + progress.
+  track.addEventListener('transitionend', function(e) {
+    if (e.propertyName !== 'transform') return;
+
+    if (trackIdx === total + 1) {
+      // Snapped to cloneFirst → jump instantly to real card0
+      trackIdx = 1; realIdx = 0;
+      translate(trackIdx, false);
+      updateClasses(0);
+    } else if (trackIdx === 0) {
+      // Snapped to cloneLast → jump instantly to real last card
+      trackIdx = total; realIdx = total - 1;
+      translate(trackIdx, false);
+      updateClasses(total - 1);
+    }
+
+    transitioning = false;
+    if (!paused) { startProgress(); scheduleNext(); }
+  });
+
+  // Jump directly to a real card index (used by dots / card clicks).
+  function goTo(rIdx) {
+    if (transitioning) return;
+    transitioning = true;
+    clearTimeout(timer);
+    realIdx  = ((rIdx % total) + total) % total;
+    trackIdx = realIdx + 1;
+    updateClasses(realIdx);
+    translate(trackIdx, true);
+    // timer + progress restart in transitionend
+  }
+
+  // Hover: pause timer + freeze progress bar mid-animation.
   outer.addEventListener('mouseenter', function() {
     paused = true;
-    progressBar.style.transition = 'none';
-    var pct = progressBar.offsetWidth / (progressWrap.offsetWidth || 1) * 100;
-    progressBar.style.width = pct + '%';
+    clearTimeout(timer);
+    freezeProgress();
   });
-  outer.addEventListener('mouseleave', function() { paused = false; goTo(current); });
+  outer.addEventListener('mouseleave', function() {
+    paused = false;
+    if (!transitioning) { startProgress(); scheduleNext(); }
+  });
 
+  // Touch swipe
   var tx0 = 0;
-  trackWrap.addEventListener('touchstart', function(e){ tx0 = e.touches[0].clientX; }, { passive: true });
-  trackWrap.addEventListener('touchend',   function(e){
+  trackWrap.addEventListener('touchstart', function(e) { tx0 = e.touches[0].clientX; }, { passive: true });
+  trackWrap.addEventListener('touchend',   function(e) {
     var dx = e.changedTouches[0].clientX - tx0;
-    if (Math.abs(dx) > 40) goTo(current + (dx < 0 ? 1 : -1));
+    if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
   }, { passive: true });
 
-  prevBtn.addEventListener('click', function(){ goTo(current - 1); });
-  nextBtn.addEventListener('click', function(){ goTo(current + 1); });
+  prevBtn.addEventListener('click', function() { step(-1); });
+  nextBtn.addEventListener('click', function() { step(1); });
   cardEls.forEach(function(c, i) {
-    c.addEventListener('click', function(){ if (i !== current) goTo(i); });
+    c.addEventListener('click', function() { if (i !== realIdx) goTo(i); });
+  });
+  dotEls.forEach(function(d, i) {
+    d.addEventListener('click', function() { goTo(i); });
   });
 
-  const timer = setInterval(function(){ if (!paused) goTo(current + 1); }, interval);
-
+  // Init: position track, set classes, then start timer after layout settles.
   requestAnimationFrame(function() {
     syncPadding();
-    goTo(0);
-    window.addEventListener('resize', function(){ syncPadding(); goTo(current); }, { passive: true });
+    translate(trackIdx, false);
+    updateClasses(realIdx);
+    setTimeout(function() { startProgress(); scheduleNext(); }, 150);
+    window.addEventListener('resize', function() { syncPadding(); translate(trackIdx, false); }, { passive: true });
   });
 
-  return function(){ clearInterval(timer); };
+  return function() { clearTimeout(timer); };
 }
 
 /* ============================================
