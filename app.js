@@ -147,7 +147,7 @@ const DEFAULT_DATA = {
   experience: [
     {
       id: 5,
-      role:     "Software Engineering Intern",
+      role:     "Software Engineer Intern",
       org:      "Drafted Labs",
       period:   "Mar. 2026 – Present",
       location: "Remote",
@@ -233,21 +233,10 @@ function loadData() {
       if (!r || r.startsWith('file://') || r.startsWith('/') || r.startsWith('C:\\') || !r.endsWith('.pdf')) {
         merged.resume = DEFAULT_DATA.resume;
       }
-      // Inject any new entries added to DEFAULT_DATA arrays that aren't in
-      // the user's saved data yet (matched by id). Preserves all existing edits.
+      // Edit mode is removed — always use DEFAULT_DATA content for cards.
+      // This prevents stale cached bullets/titles from overriding source updates.
       ['experience', 'leadership', 'projects'].forEach(key => {
-        if (!Array.isArray(merged[key])) return;
-        DEFAULT_DATA[key].forEach(defaultItem => {
-          if (!merged[key].find(item => item.id === defaultItem.id)) {
-            merged[key].push(structuredClone(defaultItem));
-          }
-        });
-        // Re-sort to match DEFAULT_DATA order
-        const order = DEFAULT_DATA[key].map(item => item.id);
-        merged[key].sort((a, b) => {
-          const ai = order.indexOf(a.id), bi = order.indexOf(b.id);
-          return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
-        });
+        merged[key] = structuredClone(DEFAULT_DATA[key]);
       });
       // Inject new skill groups by category name
       if (Array.isArray(merged.skills)) {
