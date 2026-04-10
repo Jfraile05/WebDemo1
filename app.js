@@ -188,12 +188,12 @@ const DEFAULT_DATA = {
       id: 3,
       role:     "Technical Support & Device Repair Technician",
       org:      "Independent",
-      period:   "Jan. 2020 – Present",
+      period:   "Jan. 2020 – Aug. 2023",
       location: "Miami, FL",
       bullets: [
-        "Troubleshoot production issues across hardware, operating systems, and networked systems to restore service availability",
-        "Configure and maintain systems and network settings to ensure uptime and reliable performance",
-        "Perform root cause analysis on recurring technical issues and implement corrective actions to prevent recurrence"
+        "Troubleshot production issues across hardware, operating systems, and networked systems to restore service availability",
+        "Configured and maintained systems and network settings to ensure uptime and reliable performance",
+        "Performed root cause analysis on recurring technical issues and implemented corrective actions to prevent recurrence"
       ]
     },
     {
