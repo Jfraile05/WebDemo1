@@ -17,7 +17,7 @@ const DEFAULT_DATA = {
     {
       id: 1,
       title:       "NoleQuest — AI Internship Marketplace",
-      description: "AI-powered internship marketplace prototype built for the AWS Design Sprint Competition using Working Backwards methodology. Architected a serverless AWS backend handling 1K+ simulated requests at low latency. Integrated Amazon Bedrock and Claude Sonnet for AI features and optimized cloud costs by 20%.",
+      description: "AI-powered internship marketplace prototype built for the AWS Design Sprint Competition. Architected AWS network infrastructure with VPC, routing, and IP management supporting 1,000+ reliable user requests. Deployed serverless backend with DNS, access controls, and monitoring for zero-disruption service delivery.",
       tech:        ["React JS", "AWS", "Amazon Bedrock", "Claude Sonnet", "Figma"],
       github:      "https://github.com/Jfraile05/AWS-NoleQuest"
     },
@@ -51,11 +51,11 @@ const DEFAULT_DATA = {
   ],
   skills: [
     { category: "Programming",  items: ["Python", "C++", "Java", "SQL", "Bash", "JavaScript"] },
-    { category: "Cloud & AWS",  items: ["Lambda", "EC2", "S3", "DynamoDB", "API Gateway", "Cognito", "Textract", "Personalize", "Serverless", "CI/CD"] },
+    { category: "Cloud & AWS",  items: ["Lambda", "EC2", "S3", "DynamoDB", "API Gateway", "IAM", "VPC", "Azure", "Serverless", "CI/CD"] },
     { category: "Systems",      items: ["Linux", "Ubuntu", "Active Directory", "Distributed Systems", "Multithreading", "Low-Latency"] },
     { category: "Core",         items: ["System Reliability", "Fault Tolerance", "Scalability", "Root Cause Analysis", "Automation"] },
     { category: "AI/ML",        items: ["LLM Training & Development", "Model Fine-Tuning", "Prompt Engineering", "Amazon Bedrock", "Claude", "Generative AI"] },
-    { category: "Networking",   items: ["TCP/IP", "Observability", "System Debugging", "Performance Analysis"] },
+    { category: "Networking",   items: ["TCP/IP", "DNS", "BGP", "OSPF", "VPC", "Routing", "Observability", "Network Troubleshooting"] },
     { category: "Dev & Data",   items: ["React", "Node.js", "Vite", "MySQL", "SQLite"] },
     { category: "Tools",        items: ["Git", "GitHub", "ServiceNow", "SCCM"] }
   ],
@@ -103,9 +103,9 @@ const DEFAULT_DATA = {
       period:   "Jan. 2026 – Present",
       location: "Tallahassee, FL",
       bullets: [
-        "Build CI/CD pipelines reducing deployment time by 50% and improving release reliability",
-        "Monitor cloud systems to detect issues early and improve system availability",
-        "Debug AWS infrastructure issues improving system availability and performance"
+        "Built and maintained CI/CD pipelines on AWS, improving deployment speed by 50% with repeatable standards",
+        "Monitored distributed cloud systems, analyzed logs and metrics, resolving alerts to maintain high availability",
+        "Led root cause analysis on AWS infrastructure failures, reducing recurring issues by 40% through structured debugging"
       ]
     },
     {
@@ -148,26 +148,27 @@ const DEFAULT_DATA = {
     {
       id: 5,
       role:     "Software Engineering Intern",
-      org:      "Drafted (USC Backed)",
+      org:      "Drafted Labs",
       period:   "Mar. 2026 – Present",
       location: "Remote",
       bullets: [
-        "Develop and ship features across application backend and UI on a live production platform used by real users",
-        "Pair with developers on code review and feature delivery in a collaborative engineering environment",
-        "Diagnose and resolve full stack bugs, presenting technical proposals to stakeholders with intensity and commitment"
+        "Developing annotation infrastructure for RLHF preference ranking, trajectory recording, and process supervision",
+        "Building tooling that captures browser task trajectories as structured training data for AI lab pipelines",
+        "Designing and deploying annotation workflows at scale across 100K+ verified students across university campuses",
+        "Integrating large language model APIs into the core platform for candidate matching and semantic search"
       ]
     },
     {
       id: 1,
-      role:     "Undergraduate Systems Administrator",
+      role:     "Systems Administrator",
       org:      "Florida State University, Department of Computer Science",
       period:   "Jan. 2026 – Present",
       location: "Tallahassee, FL",
       bullets: [
-        "Own reliability of 300+ node systems by diagnosing cross-layer failures and reducing downtime by 25%",
-        "Investigate incidents using logs/metrics and improve observability to accelerate debugging and reduce MTTR by 30%",
-        "Build Python automation and monitoring tools reducing detection time by 40% and improving system reliability",
-        "Review and validate automation scripts, documenting system configurations and incident resolutions to support team reliability"
+        "Administering Linux and Windows Server environments across 300+ nodes, maintaining network uptime above 99.5%",
+        "Building Python automation for system monitoring and alerting, reducing incident detection time by 40%",
+        "Diagnosing TCP/IP, DNS, BGP, and OSPF routing failures using log analysis and metrics, cutting MTTR by 30%",
+        "Managing Active Directory accounts and enforcing secure access controls, ensuring configuration compliance"
       ]
     },
     {
@@ -177,9 +178,10 @@ const DEFAULT_DATA = {
       period:   "Mar. 2026 – Present",
       location: "Tallahassee, FL",
       bullets: [
-        "Drive 500+ AWS Builder Center registrations via campus outreach, technical demos, and cloud education initiatives",
-        "Deliver 4+ AWS technical presentations introducing students to cloud tools, developer resources, and hands-on labs",
-        "Produce 24+ technical posts and 4 AWS Builder articles amplifying program awareness and engagement across campus"
+        "Deploying AWS network infrastructure labs covering VPC, subnets, routing tables, and IP management for 500+ students",
+        "Teaching AWS services across majors, showing students how to turn ideas into modern solutions using cloud infrastructure",
+        "Automating deployment workflows via Python and Bash scripting, reducing lab setup time by 35% and expanding reach",
+        "Collaborating with 7 PMs to coordinate 33 developers, delivering 3 workshops and a semester-long AWS cloud project"
       ]
     },
     {
