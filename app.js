@@ -612,23 +612,16 @@ function mountCarousel(container, cardEls, interval) {
   var paused       = false;
   var transitioning = false;
   var timer        = null;
-  const GAP = 24;
-
-  function cardW() { return cardEls[0] ? cardEls[0].offsetWidth : 500; }
-
-  function syncPadding() {
-    const pad = Math.max(0, (trackWrap.offsetWidth - cardW()) / 2);
-    track.style.paddingLeft  = pad + 'px';
-    track.style.paddingRight = pad + 'px';
-  }
-
-  // Move track. animate=false for instant snap (no CSS transition).
+  // Move track. Uses actual DOM offsetLeft so the math is always exact —
+  // no hardcoded gap constant, no separate padding sync needed.
   function translate(tIdx, animate) {
-    const x = -(tIdx * (cardW() + GAP));
+    var card = track.children[tIdx];
+    if (!card) return;
+    var x = trackWrap.offsetWidth / 2 - card.offsetLeft - card.offsetWidth / 2;
     if (!animate) {
       track.style.transition = 'none';
       track.style.transform  = 'translateX(' + x + 'px)';
-      void track.getBoundingClientRect(); // flush layout so next animation triggers cleanly
+      void track.getBoundingClientRect(); // flush so next transition triggers cleanly
     } else {
       track.style.transition = '';  // restore stylesheet transition
       track.style.transform  = 'translateX(' + x + 'px)';
@@ -787,11 +780,10 @@ function mountCarousel(container, cardEls, interval) {
 
   // Init: position track, set classes, then start timer after layout settles.
   requestAnimationFrame(function() {
-    syncPadding();
     translate(trackIdx, false);
     updateClasses(realIdx);
     setTimeout(function() { startProgress(); scheduleNext(); }, 150);
-    window.addEventListener('resize', function() { syncPadding(); translate(trackIdx, false); }, { passive: true });
+    window.addEventListener('resize', function() { translate(trackIdx, false); }, { passive: true });
   });
 
   return function() { clearTimeout(timer); };
