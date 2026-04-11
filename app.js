@@ -16,33 +16,40 @@ const DEFAULT_DATA = {
   projects: [
     {
       id: 1,
+      title:       "SmartGallery — AWS Cloud Club @ FSU",
+      description: "Serverless image recognition and management web app built collaboratively by 40 developers across 5 teams. Users upload images that are automatically tagged using Amazon Rekognition, with tags stored in DynamoDB for browsing, filtering, and searching personal galleries.",
+      tech:        ["React", "AWS SAM", "Lambda", "Amazon Rekognition", "DynamoDB", "S3", "API Gateway", "AWS Cognito"],
+      github:      "https://github.com/Jfraile05/CloudClub-Spring26-ImageManagementWebApp"
+    },
+    {
+      id: 2,
       title:       "NoleQuest — AI Internship Marketplace",
       description: "AI-powered internship marketplace prototype built for the AWS Design Sprint Competition. Architected AWS network infrastructure with VPC, routing, and IP management supporting 1,000+ reliable user requests. Deployed serverless backend with DNS, access controls, and monitoring for zero-disruption service delivery.",
       tech:        ["React JS", "AWS", "Amazon Bedrock", "Claude Sonnet", "Figma"],
       github:      "https://github.com/Jfraile05/AWS-NoleQuest"
     },
     {
-      id: 2,
+      id: 3,
       title:       "Cloud API — AWS EC2 REST Backend",
       description: "Lightweight Python REST API deployed on AWS EC2 with production-style infrastructure. Runs a Flask application managed through Gunicorn and systemd with health monitoring, automated startup/recovery, and multi-worker concurrency for handling real traffic.",
       tech:        ["Python", "Flask", "AWS EC2", "Gunicorn", "systemd", "Linux"],
       github:      "https://github.com/Jfraile05/cloud-api"
     },
     {
-      id: 3,
+      id: 4,
       title:       "FSU Systems — Automation & Observability",
       description: "Python automation and monitoring tooling for Florida State University's 300+ node CS department infrastructure. Reduced incident detection time by 40%, MTTR by 30%, and overall downtime by 25% through improved observability and automated cross-layer diagnostics.",
       tech:        ["Python", "Linux", "Observability"]
     },
     {
-      id: 4,
+      id: 5,
       title:       "Pokémon Battle Simulator",
       description: "Fully-interactive terminal-based Pokémon battle engine written in modern C++17. Features real-time combat logic, a complete type-effectiveness system, team management, and a CPU AI opponent — demonstrating systems-level programming, OOP design, and game state management.",
       tech:        ["C++17", "OOP", "Game AI", "CMake"],
       github:      "https://github.com/Jfraile05/Pokemon-Battle-Simulator"
     },
     {
-      id: 5,
+      id: 6,
       title:       "Banking System",
       description: "Console-based banking application in C++ with full account lifecycle management — create, deposit, withdraw, transfer, and delete accounts with persistent file storage. Demonstrates OOP design, STL vectors, file I/O, and input validation.",
       tech:        ["C++", "OOP", "STL", "File I/O"],
