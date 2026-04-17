@@ -9,7 +9,7 @@ const DEFAULT_DATA = {
   tagline:      "CS student at FSU maintaining and building on distributed infrastructure at scale — 300-node clusters, cloud deployments, and AI-powered automation pipelines.",
   resume:       "resume.pdf",
   about:        "Junior at FSU pursuing a B.S. in Computer Science, focused on cloud infrastructure, DevOps, and systems engineering. Currently a Software Engineer Intern at Drafted Labs, AWS Student Builder Campus Leader, Undergraduate Systems Administrator at FSU CS, DevOps Project Manager with the FSU AWS Cloud Club, and Vice President of ColorStack at FSU. Always glad to connect.",
-  contactBlurb: "I'm actively seeking software engineering internship opportunities. Whether you have an opening or just want to connect — I'd love to hear from you.",
+  contactBlurb: "Always open to new opportunities — whether that's internships, research, collaborations, or just a good conversation. Feel free to reach out.",
   email:        "Jorge@JorgeFraile.com",
   github:       "https://github.com/Jfraile05",
   linkedin:     "https://linkedin.com/in/jorge-fraile",
