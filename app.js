@@ -67,11 +67,14 @@ const DEFAULT_DATA = {
     { category: "Tools",        items: ["Git", "GitHub", "ServiceNow", "SCCM"] }
   ],
   hobbies: [
-    { label: "Camping" },
     { label: "Cooking" },
+    { label: "Finances" },
     { label: "Gaming" },
+    { label: "Hiking" },
+    { label: "Sci-Fi Films" },
     { label: "Skateboarding" },
-    { label: "Surfing" }
+    { label: "Surfing" },
+    { label: "Trading" }
   ],
   leadership: [
     {

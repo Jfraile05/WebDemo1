@@ -92,8 +92,10 @@ a { color: inherit; text-decoration: none; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 18%;
+  object-position: center 28%;
   display: block;
+  transform: scale(1.05);
+  transform-origin: center 28%;
 }
 
 .profile-name {
@@ -102,7 +104,8 @@ a { color: inherit; text-decoration: none; }
   font-weight: 700;
   color: var(--text);
   letter-spacing: -0.015em;
-  line-height: 1.25;
+  line-height: 1.4;
+  padding-bottom: 2px;
   margin-bottom: 0.5rem;
 }
 
