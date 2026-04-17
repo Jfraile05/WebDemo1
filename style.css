@@ -2,17 +2,18 @@
    VARIABLES
    ============================================ */
 :root {
-  --bg:           #191919;
+  --bg:           #1a1a1a;
+  --sidebar-bg:   #111111;
   --border:       rgba(255, 255, 255, 0.09);
-  --text:         #ffffff;
-  --text-body:    #c8c8c8;
-  --text-muted:   #aaaaaa;
+  --text:         #e0e0e0;
+  --text-body:    #a0a0a0;
+  --text-muted:   #a0a0a0;
   --text-dim:     #555555;
   --accent:       #4d9fff;
   --green:        #4caf7d;
 
-  --font-display: 'Syne', sans-serif;
-  --font-body:    'Mulish', sans-serif;
+  --font-display: 'Inter', sans-serif;
+  --font-body:    'Inter', sans-serif;
   --font-mono:    'JetBrains Mono', monospace;
 
   --sidebar-w: 340px;
@@ -56,6 +57,7 @@ a { color: inherit; text-decoration: none; }
   top: 0;
   left: 0;
   height: 100vh;
+  background: var(--sidebar-bg);
   border-right: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -80,11 +82,11 @@ a { color: inherit; text-decoration: none; }
 }
 
 .photo-ring {
-  width: 120px;
-  height: 120px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   overflow: hidden;
-  margin-bottom: 1.35rem;
+  margin-bottom: 1rem;
   flex-shrink: 0;
 }
 
@@ -92,29 +94,28 @@ a { color: inherit; text-decoration: none; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 42%;
+  object-position: center 32%;
   display: block;
-  transform: scale(1.65);
-  transform-origin: center 42%;
+  transform: scale(1.2);
+  transform-origin: center 32%;
 }
 
 .profile-name {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--text);
-  letter-spacing: -0.015em;
-  line-height: 1.4;
-  padding-bottom: 2px;
-  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin-bottom: 0.35rem;
 }
 
 .profile-desc {
   font-family: var(--font-body);
-  font-size: 0.82rem;
+  font-size: 0.875rem;
   font-weight: 400;
   color: var(--text-muted);
-  line-height: 1.65;
+  line-height: 1.6;
   text-align: center;
 }
 
@@ -123,24 +124,23 @@ a { color: inherit; text-decoration: none; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.9rem;
+  gap: 0.75rem;
   width: 100%;
 }
 
 .nav-link {
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 400;
   color: var(--text-muted);
   text-decoration: none;
-  transition: color 0.15s var(--ease);
+  transition: color 0.3s;
   line-height: 1;
-  padding: 0.1rem 0;
   cursor: pointer;
 }
 
-.nav-link:hover  { color: var(--text); }
-.nav-link.active { color: var(--text); font-weight: 600; }
+.nav-link:hover  { color: #ffffff; }
+.nav-link.active { color: #ffffff; }
 
 /* ============================================
    CONTENT AREA
@@ -574,7 +574,7 @@ a { color: inherit; text-decoration: none; }
     gap: 1.5rem;
   }
 
-  .photo-ring { width: 90px; height: 90px; }
+  .photo-ring { width: 80px; height: 80px; }
 
   .sidebar-nav {
     flex-direction: row;
