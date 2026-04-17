@@ -8,7 +8,7 @@ const DEFAULT_DATA = {
   title:        "SDE Intern Candidate · AWS Student Builder Campus Leader",
   tagline:      "CS student at FSU maintaining and building on distributed infrastructure at scale — 300-node clusters, cloud deployments, and AI-powered automation pipelines.",
   resume:       "resume.pdf",
-  about:        "I'm a Computer Science student at Florida State University (GPA 3.5, Dean's List, Bright Futures Scholar) with hands-on experience managing 300+ node systems infrastructure as an Undergraduate Systems Admin — cutting downtime 25% and MTTR 30%. As an AWS Student Builder Campus Leader for Amazon Web Services, I run cloud workshops for 500+ students, publish technical content on distributed systems, and have driven 500+ AWS Builder Center registrations. I build at the intersection of systems reliability, cloud engineering, and AI.",
+  about:        "Junior at FSU pursuing a B.S. in Computer Science, focused on cloud infrastructure, DevOps, and systems engineering. Currently a Software Engineer Intern at Drafted Labs, AWS Student Builder Campus Leader, Undergraduate Systems Administrator at FSU CS, DevOps Project Manager with the FSU AWS Cloud Club, and Vice President of ColorStack at FSU. Always glad to connect.",
   contactBlurb: "I'm actively seeking software engineering internship opportunities. Whether you have an opening or just want to connect — I'd love to hear from you.",
   email:        "Jorge@JorgeFraile.com",
   github:       "https://github.com/Jfraile05",
@@ -67,27 +67,11 @@ const DEFAULT_DATA = {
     { category: "Tools",        items: ["Git", "GitHub", "ServiceNow", "SCCM"] }
   ],
   hobbies: [
-    { icon: "🏗️", label: "System Design" },
-    { icon: "☁️", label: "Cloud Architecture" },
-    { icon: "💻", label: "Software Engineering" },
-    { icon: "⚙️", label: "Engineering Problem Solving" },
-    { icon: "🤖", label: "AI & Machine Learning" },
-    { icon: "🚀", label: "Hackathons" },
-    { icon: "👥", label: "Team Projects" },
-    { icon: "🎧", label: "Vibe Coding" },
-    { icon: "💡", label: "Startups & Venture" },
-    { icon: "🎮", label: "Game Development" },
-    { icon: "🔐", label: "Cryptography" },
-    { icon: "📈", label: "Quantitative Finance" },
-    { icon: "₿",  label: "Crypto & Blockchain" },
-    { icon: "📣", label: "Tech Marketing" },
-    { icon: "🖥️", label: "PC Building" },
-    { icon: "🔧", label: "Hardware & Device Repair" },
-    { icon: "🤝", label: "Community Impact" },
-    { icon: "🍳", label: "Cooking" },
-    { icon: "🏊", label: "Swimming" },
-    { icon: "💪", label: "Fitness" },
-    { icon: "🏋️", label: "Weightlifting" }
+    { label: "Camping" },
+    { label: "Cooking" },
+    { label: "Gaming" },
+    { label: "Skateboarding" },
+    { label: "Surfing" }
   ],
   leadership: [
     {
@@ -239,18 +223,12 @@ function esc(str) {
    ============================================ */
 function renderAbout(container) {
   const d = data;
-  const techCount = d.skills.reduce((a, g) => a + g.items.length, 0);
 
   container.classList.add('is-about');
   container.innerHTML =
     '<div class="about-body">' +
       '<h2 class="section-title">About</h2>' +
       '<p class="about-text">' + esc(d.about) + '</p>' +
-      '<div class="about-stats">' +
-        '<div class="stat"><span class="stat-n">' + d.projects.length + '</span><span class="stat-l">Projects</span></div>' +
-        '<div class="stat"><span class="stat-n">4</span><span class="stat-l">Years Coding</span></div>' +
-        '<div class="stat"><span class="stat-n">' + techCount + '+</span><span class="stat-l">Technologies</span></div>' +
-      '</div>' +
       '<div class="about-actions">' +
         '<a href="' + esc(d.resume) + '" target="_blank" rel="noopener" class="btn">Resume \u2197</a>' +
         '<a href="' + esc(d.github) + '" target="_blank" rel="noopener" class="text-link">GitHub \u2197</a>' +
@@ -356,7 +334,7 @@ function renderSkills(container) {
    ============================================ */
 function renderInterests(container) {
   const interestsHtml = data.hobbies.map(function(h) {
-    return '<p class="interest">' + h.icon + ' ' + esc(h.label) + '</p>';
+    return '<p class="interest">' + esc(h.label) + '</p>';
   }).join('');
 
   container.innerHTML =
