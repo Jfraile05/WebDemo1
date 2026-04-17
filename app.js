@@ -1,6 +1,6 @@
 /* ============================================
-   PORTFOLIO DATA MODEL
-   Edit this object or use the ✏️ button on the page.
+   PORTFOLIO DATA
+   Edit this object to update site content.
    ============================================ */
 const DEFAULT_DATA = {
   name:         "Jorge Fraile Perez",
@@ -218,1266 +218,358 @@ const DEFAULT_DATA = {
 };
 
 /* ============================================
-   STORAGE
-   Key is FIXED — never bump it. User edits made through the website
-   always win. New top-level keys added to DEFAULT_DATA are merged in
-   automatically; existing user data is never overwritten by code.
-   ============================================ */
-const STORAGE_KEY = 'jorge_portfolio';
-
-function loadData() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const saved = JSON.parse(raw);
-      // Merge: start from DEFAULT_DATA, overlay every key the user has saved.
-      // This means user edits are always preserved, while any new top-level
-      // keys added to DEFAULT_DATA in future code updates appear automatically.
-      const merged = structuredClone(DEFAULT_DATA);
-      Object.keys(saved).forEach(k => { merged[k] = saved[k]; });
-      // Fix any non-relative resume path (local filesystem paths, old filenames)
-      const r = merged.resume || '';
-      if (!r || r.startsWith('file://') || r.startsWith('/') || r.startsWith('C:\\') || !r.endsWith('.pdf')) {
-        merged.resume = DEFAULT_DATA.resume;
-      }
-      // Edit mode is removed — always use DEFAULT_DATA content for cards.
-      // This prevents stale cached bullets/titles from overriding source updates.
-      ['experience', 'leadership', 'projects'].forEach(key => {
-        merged[key] = structuredClone(DEFAULT_DATA[key]);
-      });
-      // Inject new skill groups by category name
-      if (Array.isArray(merged.skills)) {
-        DEFAULT_DATA.skills.forEach(defaultGroup => {
-          if (!merged.skills.find(g => g.category === defaultGroup.category)) {
-            merged.skills.push(structuredClone(defaultGroup));
-          }
-        });
-      }
-      // Filter + sort skills — only keep categories present in DEFAULT_DATA
-      if (Array.isArray(merged.skills)) {
-        const skillOrder = DEFAULT_DATA.skills.map(g => g.category);
-        merged.skills = merged.skills.filter(g => skillOrder.includes(g.category));
-        merged.skills.sort((a, b) => skillOrder.indexOf(a.category) - skillOrder.indexOf(b.category));
-      }
-      // Filter + sort hobbies — only keep entries that exist in DEFAULT_DATA
-      if (Array.isArray(merged.hobbies)) {
-        const hobbyOrder = DEFAULT_DATA.hobbies.map(h => h.label);
-        merged.hobbies = merged.hobbies.filter(h => hobbyOrder.includes(h.label));
-        merged.hobbies.sort((a, b) => {
-          const ai = hobbyOrder.indexOf(a.label);
-          const bi = hobbyOrder.indexOf(b.label);
-          return ai - bi;
-        });
-      }
-      return merged;
-    }
-  } catch (_) {}
-  return structuredClone(DEFAULT_DATA);
-}
-
-function saveData() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (_) {}
-}
-
-/* ============================================
    STATE
    ============================================ */
-let data = loadData();
-let editMode = false;
+const data = DEFAULT_DATA;
+let currentSection = null;
 
 /* ============================================
-   DOM HELPERS
+   HELPERS
    ============================================ */
-function el(tag, cls) {
-  const e = document.createElement(tag);
-  if (cls) e.className = cls;
-  return e;
-}
-
-function txt(tag, cls, text) {
-  const e = el(tag, cls);
-  e.textContent = text;
-  return e;
-}
-
-function makeEditable(element, saver) {
-  element.dataset.editTarget = '1';
-  element.addEventListener('blur', () => {
-    if (!editMode) return;
-    saver(element.textContent.trim());
-    saveData();
-  });
-  if (element.tagName === 'A') {
-    element.addEventListener('click', e => { if (editMode) e.preventDefault(); });
-  }
-}
-
-function enableAllEditing() {
-  document.querySelectorAll('[data-edit-target]').forEach(e => {
-    e.contentEditable = 'true';
-  });
-}
-
-function disableAllEditing() {
-  document.querySelectorAll('[contenteditable]').forEach(e => {
-    e.removeAttribute('contenteditable');
-  });
-}
-
-/* Called after every section re-render (add/delete actions).
-   In edit mode: immediately make all cards visible and re-enable editing.
-   Otherwise: re-run the scroll-reveal observer for newly added elements. */
-function afterRender() {
-  if (editMode) {
-    document.querySelectorAll('.reveal').forEach(e => e.classList.add('visible'));
-    enableAllEditing();
-  } else {
-    setTimeout(initReveal, 50);
-  }
+function esc(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 /* ============================================
-   DRAG & DROP SORT
+   RENDER — ABOUT
    ============================================ */
-function makeSortable(container, arr, renderFn) {
-  let src = null;
-  container.querySelectorAll('[data-drag-idx]').forEach(item => {
-    item.draggable = true;
+function renderAbout(container) {
+  const d = data;
+  const techCount = d.skills.reduce((a, g) => a + g.items.length, 0);
 
-    item.addEventListener('dragstart', e => {
-      if (!editMode) { e.preventDefault(); return; }
-      src = +item.dataset.dragIdx;
-      setTimeout(() => item.classList.add('is-dragging'), 0);
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', String(src));
-    });
-
-    item.addEventListener('dragend', () => {
-      item.classList.remove('is-dragging');
-      container.querySelectorAll('.drag-target').forEach(i => i.classList.remove('drag-target'));
-      src = null;
-    });
-
-    item.addEventListener('dragover', e => {
-      if (!editMode || src === null) return;
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      const tgt = +item.dataset.dragIdx;
-      if (src !== tgt) {
-        container.querySelectorAll('.drag-target').forEach(i => i.classList.remove('drag-target'));
-        item.classList.add('drag-target');
-      }
-    });
-
-    item.addEventListener('dragleave', e => {
-      if (!item.contains(e.relatedTarget)) item.classList.remove('drag-target');
-    });
-
-    item.addEventListener('drop', e => {
-      e.preventDefault();
-      if (!editMode || src === null) return;
-      const tgt = +item.dataset.dragIdx;
-      if (src !== tgt) {
-        const moved = arr.splice(src, 1)[0];
-        arr.splice(tgt, 0, moved);
-        saveData();
-        renderFn();
-        afterRender();
-      }
-    });
-  });
-}
-
-function dragHandle() {
-  const h = el('span', 'drag-handle');
-  h.setAttribute('aria-hidden', 'true');
-  h.textContent = '\u2807'; /* ⠇ braille dots — universal drag icon */
-  return h;
-}
-
-/* ============================================
-   SECTION HEADER
-   ============================================ */
-function sectionHeader(num, title) {
-  const h = el('div', 'section-header');
-  h.append(
-    txt('span', 'section-num', num),
-    txt('h2',   'section-title', title),
-    el('div',   'section-line')
-  );
-  return h;
-}
-
-/* ============================================
-   HERO
-   ============================================ */
-function renderHero() {
-  const section = document.getElementById('hero');
-  section.innerHTML = '';
-
-  const inner = el('div', 'hero-inner');
-  const left  = el('div', 'hero-left');
-
-  /* Name split into two lines */
-  const nameParts = data.name.trim().split(' ');
-  const firstName = nameParts[0] || 'Your';
-  const lastName  = nameParts.slice(1).join(' ') || 'Name';
-
-  const nameEl = el('h1', 'hero-name');
-  nameEl.dataset.editTarget = '1';
-
-  const firstSpan = document.createElement('span');
-  firstSpan.textContent = firstName;
-
-  const lastSpan = el('span', 'hero-name-sub');
-  lastSpan.textContent = lastName;
-
-  nameEl.append(firstSpan, document.createTextNode(' '), lastSpan);
-
-  nameEl.addEventListener('blur', () => {
-    if (!editMode) return;
-    const val = nameEl.textContent.trim();
-    data.name = val;
-    data.initials = val.split(' ').map(w => w[0] || '').join('').slice(0, 2).toUpperCase();
-    setLogoHTML(data.initials);
-    saveData();
-  });
-
-  /* Title row */
-  const titleRow = el('div', 'hero-title-row');
-  const arrow    = txt('span', 'hero-title-arrow', '>');
-  const titleTxt = txt('span', 'hero-title-text', data.title);
-  makeEditable(titleTxt, v => { data.title = v; });
-  titleRow.append(arrow, titleTxt);
-
-  /* Tagline */
-  const tagline = txt('p', 'hero-tagline', data.tagline);
-  makeEditable(tagline, v => { data.tagline = v; });
-
-  /* Actions */
-  const actions = el('div', 'hero-actions');
-
-  const resumeBtn = el('a', 'btn btn-primary');
-  resumeBtn.href = data.resume || '#';
-  resumeBtn.target = '_blank';
-  resumeBtn.textContent = '\u2197 Resume';
-
-  const contactBtn = el('a', 'btn btn-outline');
-  contactBtn.href = '#contact';
-  contactBtn.textContent = 'Get in Touch';
-
-  actions.append(resumeBtn, contactBtn);
-
-  /* Resume URL edit field — only visible in edit mode */
-  const resumeUrlRow = el('div', 'resume-url-row');
-  const resumeUrlLabel = txt('span', 'resume-url-label', 'Resume URL:');
-  const resumeUrlSpan = txt('span', 'resume-url-field', data.resume || '#');
-  resumeUrlSpan.dataset.editTarget = '1';
-  resumeUrlSpan.addEventListener('blur', () => {
-    if (!editMode) return;
-    const v = resumeUrlSpan.textContent.trim();
-    data.resume = v;
-    resumeBtn.href = v;
-    saveData();
-  });
-  resumeUrlRow.append(resumeUrlLabel, resumeUrlSpan);
-  /* Stats strip — compact data row below CTA */
-  left.append(nameEl, titleRow, tagline);
-
-  /* Terminal identity card + buttons */
-  const deco = el('div', 'hero-deco');
-  const term = el('div', 'hero-terminal');
-  term.innerHTML =
-    '<div class="terminal-header">' +
-      '<span class="terminal-dot td-red"></span>' +
-      '<span class="terminal-dot td-yellow"></span>' +
-      '<span class="terminal-dot td-green"></span>' +
-      '<span class="terminal-filename">jorge.json</span>' +
-    '</div>' +
-    '<div class="terminal-body">' +
-      '<div class="term-row"><span class="term-brace">{</span></div>' +
-      '<div class="term-row term-indent"><span class="term-key">"role"</span><span class="term-op">: </span><span class="term-str">"intern.exe --focus=cloud,systems,ai"</span>,</div>' +
-      '<div class="term-row term-indent"><span class="term-key">"school"</span><span class="term-op">: </span><span class="term-str">"FSU"</span>,</div>' +
-      '<div class="term-row term-indent"><span class="term-key">"focus"</span><span class="term-op">: </span><span class="term-arr">["Cloud", "Systems", "AI"]</span>,</div>' +
-      '<div class="term-row term-indent"><span class="term-key">"gpa"</span><span class="term-op">: </span><span class="term-num">3.5</span>,</div>' +
-      '<div class="term-row term-indent"><span class="term-key">"base"</span><span class="term-op">: </span><span class="term-str">"Tallahassee, FL"</span></div>' +
-      '<div class="term-row"><span class="term-brace">}</span></div>' +
+  container.innerHTML =
+    '<div class="about-layout">' +
+      '<div class="about-body">' +
+        '<p class="about-bio">' + esc(d.about) + '</p>' +
+        '<div class="about-stats">' +
+          '<div class="stat"><span class="stat-n">' + d.projects.length + '</span><span class="stat-l">Projects</span></div>' +
+          '<div class="stat"><span class="stat-n">4</span><span class="stat-l">Years Coding</span></div>' +
+          '<div class="stat"><span class="stat-n">' + techCount + '+</span><span class="stat-l">Technologies</span></div>' +
+        '</div>' +
+        '<div class="about-actions">' +
+          '<a href="' + esc(d.resume) + '" target="_blank" rel="noopener" class="btn">Resume \u2197</a>' +
+          '<a href="' + esc(d.github) + '" target="_blank" rel="noopener" class="text-link">GitHub \u2197</a>' +
+          '<a href="' + esc(d.linkedin) + '" target="_blank" rel="noopener" class="text-link">LinkedIn \u2197</a>' +
+          '<a href="mailto:' + esc(d.email) + '" class="text-link">Email</a>' +
+        '</div>' +
+      '</div>' +
+      '<div class="about-photo-wrap">' +
+        '<img src="jorge.jpeg" alt="Jorge Fraile Perez" class="about-photo" />' +
+        '<div class="about-photo-caption">' +
+          '<span class="about-photo-name">Jorge Fraile Perez</span>' +
+          '<span class="about-photo-role">FSU · Computer Science</span>' +
+        '</div>' +
+      '</div>' +
     '</div>';
-  deco.append(term, actions, resumeUrlRow);
-
-  inner.append(left, deco);
-  section.append(inner);
-
-  /* Scroll hint */
-  const scrollHint = el('div', 'scroll-hint');
-  scrollHint.innerHTML =
-    '<span class="scroll-hint-label">scroll</span>' +
-    '<div class="scroll-hint-chevron"></div>';
-  section.append(scrollHint);
 }
 
 /* ============================================
-   ABOUT
+   RENDER — EXPERIENCE
    ============================================ */
-function renderAbout() {
-  const section = document.getElementById('about');
-  section.innerHTML = '';
-  section.append(sectionHeader('01', 'About'));
+function renderExperience(container) {
+  const items = data.experience;
 
-  const layout = el('div', 'about-layout reveal');
+  const entriesHtml = items.map(function(item) {
+    const bulletsHtml = item.bullets.map(function(b) {
+      return '<li>' + esc(b) + '</li>';
+    }).join('');
 
-  const p = txt('p', 'about-text', data.about);
-  makeEditable(p, v => { data.about = v; });
+    return '<div class="entry">' +
+      '<div class="entry-header">' +
+        '<div class="entry-left">' +
+          '<h3 class="entry-role">' + esc(item.role) + '</h3>' +
+          '<p class="entry-meta">' + esc(item.org) + '<span class="entry-sep">\u00b7</span>' + esc(item.location) + '</p>' +
+        '</div>' +
+        '<span class="entry-period">' + esc(item.period) + '</span>' +
+      '</div>' +
+      '<div class="entry-divider"></div>' +
+      '<ul class="entry-bullets">' + bulletsHtml + '</ul>' +
+    '</div>';
+  }).join('');
 
-  const statsDiv = el('div', 'about-stats');
-  const stats = [
-    { value: data.projects.length, suffix: '+', label: 'Projects Built' },
-    { value: 4,                    suffix: '',  label: 'Years Coding' },
-    { value: data.skills.reduce((a, g) => a + g.items.length, 0), suffix: '+', label: 'Technologies' },
-    { value: null,                 display: '\u221e', label: 'Curiosity' },
-  ];
-
-  stats.forEach(s => {
-    const card = el('div', 'stat-card');
-    const valEl = el('div', 'stat-value');
-    valEl.textContent = s.display || (s.value + s.suffix);
-    if (s.value !== null) {
-      valEl.dataset.target = s.value;
-      valEl.dataset.suffix = s.suffix;
-    }
-    card.append(valEl, txt('div', 'stat-label', s.label));
-    statsDiv.append(card);
-  });
-
-  layout.append(p, statsDiv);
-  section.append(layout);
+  container.innerHTML =
+    '<p class="section-heading">Experience</p>' +
+    '<div class="entries">' + entriesHtml + '</div>';
 }
 
 /* ============================================
-   PROJECTS
+   RENDER — PROJECTS
    ============================================ */
-/* ============================================
-   SHARED CAROUSEL UTILITY
-   mountCarousel(container, cardEls, interval)
-   Appends [outer + progress + dots] into container.
-   Returns a cleanup fn that clears the auto-advance timer.
-   ============================================ */
-function mountCarousel(container, cardEls, interval) {
-  interval = interval || 5000;
-  const total = cardEls.length;
-  if (!total) return function(){};
+function renderProjects(container) {
+  const projs = data.projects;
 
-  const svgPrev = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
-  const svgNext = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  const projectsHtml = projs.map(function(proj) {
+    const ghLink = proj.github
+      ? '<a href="' + esc(proj.github) + '" target="_blank" rel="noopener" class="project-gh">\u2197 GitHub</a>'
+      : '';
 
-  const outer     = el('div', 'exp-outer');
-  const prevBtn   = el('button', 'exp-nav exp-nav-prev');
-  const nextBtn   = el('button', 'exp-nav exp-nav-next');
-  const trackWrap = el('div', 'exp-track-wrap');
-  const track     = el('div', 'exp-track');
+    const tagsHtml = proj.tech.map(function(t) {
+      return '<span class="tag">' + esc(t) + '</span>';
+    }).join('');
 
-  prevBtn.setAttribute('aria-label', 'Previous'); prevBtn.innerHTML = svgPrev;
-  nextBtn.setAttribute('aria-label', 'Next');     nextBtn.innerHTML = svgNext;
+    return '<div class="project">' +
+      '<div class="project-header">' +
+        '<h3 class="project-title">' + esc(proj.title) + '</h3>' +
+        ghLink +
+      '</div>' +
+      '<p class="project-desc">' + esc(proj.description) + '</p>' +
+      '<div class="tags">' + tagsHtml + '</div>' +
+    '</div>';
+  }).join('');
 
-  // Clone first & last cards for seamless infinite loop.
-  // Track layout: [cloneLast | card0 | card1 | … | cardN-1 | cloneFirst]
-  // trackIdx:          0     |   1   |   2   | … |    N    |    N+1
-  const cloneFirst = cardEls[0].cloneNode(true);
-  const cloneLast  = cardEls[total - 1].cloneNode(true);
-  cloneFirst.classList.add('exp-clone');
-  cloneLast.classList.add('exp-clone');
-
-  track.append(cloneLast);
-  cardEls.forEach(c => track.append(c));
-  track.append(cloneFirst);
-  trackWrap.append(track);
-  outer.append(prevBtn, trackWrap, nextBtn);
-
-  const progressWrap = el('div', 'exp-progress-wrap');
-  const progressBar  = el('div', 'exp-progress-bar');
-  progressWrap.append(progressBar);
-
-  const dotsWrap = el('div', 'exp-dots');
-  const dotEls = Array.from({ length: total }, function(_, i) {
-    const d = el('button', 'exp-dot');
-    d.setAttribute('aria-label', 'Slide ' + (i + 1));
-    dotsWrap.append(d);
-    return d;
-  });
-
-  container.append(outer, progressWrap, dotsWrap);
-
-  var realIdx      = 0;    // 0-indexed real card shown
-  var trackIdx     = 1;    // position in track array (1 = card0)
-  var paused       = false;
-  var transitioning = false;
-  var timer        = null;
-  // Move track. Uses actual DOM offsetLeft so the math is always exact —
-  // no hardcoded gap constant, no separate padding sync needed.
-  function translate(tIdx, animate) {
-    var card = track.children[tIdx];
-    if (!card) return;
-    var x = trackWrap.offsetWidth / 2 - card.offsetLeft - card.offsetWidth / 2;
-    if (!animate) {
-      track.style.transition = 'none';
-      track.style.transform  = 'translateX(' + x + 'px)';
-      void track.getBoundingClientRect(); // flush so next transition triggers cleanly
-    } else {
-      track.style.transition = '';  // restore stylesheet transition
-      track.style.transform  = 'translateX(' + x + 'px)';
-    }
-  }
-
-  // Update depth / opacity classes on real cards and clones.
-  function updateClasses(rIdx) {
-    cardEls.forEach(function(c, i) {
-      var d = Math.abs(i - rIdx);
-      c.classList.toggle('exp-active', d === 0);
-      c.classList.toggle('exp-adj',    d === 1);
-      c.classList.toggle('exp-far',    d  > 1);
-    });
-    // cloneLast sits just before card0 → adjacent when rIdx=0
-    cloneLast.classList.toggle('exp-active', false);
-    cloneLast.classList.toggle('exp-adj',    rIdx === 0);
-    cloneLast.classList.toggle('exp-far',    rIdx !== 0);
-    // cloneFirst sits just after cardN-1 → adjacent when rIdx=N-1
-    cloneFirst.classList.toggle('exp-active', false);
-    cloneFirst.classList.toggle('exp-adj',    rIdx === total - 1);
-    cloneFirst.classList.toggle('exp-far',    rIdx !== total - 1);
-    dotEls.forEach(function(d, i) { d.classList.toggle('exp-dot-on', i === rIdx); });
-  }
-
-  function startProgress() {
-    progressBar.style.transition = 'none';
-    progressBar.style.width = '0%';
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        progressBar.style.transition = 'width ' + interval + 'ms linear';
-        progressBar.style.width = '100%';
-      });
-    });
-  }
-
-  function freezeProgress() {
-    var w     = progressBar.getBoundingClientRect().width;
-    var wrapW = progressWrap.getBoundingClientRect().width || 1;
-    progressBar.style.transition = 'none';
-    progressBar.style.width = (w / wrapW * 100) + '%';
-  }
-
-  // Always reset the timer from scratch — no drift.
-  function scheduleNext() {
-    clearTimeout(timer);
-    if (!paused) {
-      timer = setTimeout(function() { step(1); }, interval);
-    }
-  }
-
-  // Step forward (+1) or back (-1) one slide with animation.
-  function step(dir) {
-    if (transitioning) return;
-    transitioning = true;
-    clearTimeout(timer);
-
-    var newTrack = trackIdx + dir;
-    var visualReal;
-
-    if (newTrack === 0) {
-      // Going to cloneLast → visually shows last real card
-      visualReal = total - 1;
-      cloneLast.classList.remove('exp-adj', 'exp-far');
-      cloneLast.classList.add('exp-active');
-      cardEls.forEach(function(c, i) {
-        var d = Math.abs(i - (total - 1));
-        c.classList.toggle('exp-active', false);
-        c.classList.toggle('exp-adj',    d === 1);
-        c.classList.toggle('exp-far',    d  > 1);
-      });
-      cloneFirst.classList.remove('exp-active'); cloneFirst.classList.add('exp-far');
-    } else if (newTrack === total + 1) {
-      // Going to cloneFirst → visually shows first real card
-      visualReal = 0;
-      cloneFirst.classList.remove('exp-adj', 'exp-far');
-      cloneFirst.classList.add('exp-active');
-      cardEls.forEach(function(c, i) {
-        var d = Math.abs(i - 0);
-        c.classList.toggle('exp-active', false);
-        c.classList.toggle('exp-adj',    d === 1);
-        c.classList.toggle('exp-far',    d  > 1);
-      });
-      cloneLast.classList.remove('exp-active'); cloneLast.classList.add('exp-far');
-    } else {
-      visualReal = ((newTrack - 1 + total) % total); // newTrack - 1 since real cards start at trackIdx=1
-      updateClasses(visualReal);
-    }
-
-    dotEls.forEach(function(d, i) { d.classList.toggle('exp-dot-on', i === visualReal); });
-    realIdx  = visualReal;
-    trackIdx = newTrack;
-    translate(trackIdx, true);
-    // timer + progress restart in transitionend handler
-  }
-
-  // After CSS transition: snap clones to real positions, then restart timer + progress.
-  track.addEventListener('transitionend', function(e) {
-    if (e.propertyName !== 'transform') return;
-
-    if (trackIdx === total + 1) {
-      // Snapped to cloneFirst → jump instantly to real card0
-      trackIdx = 1; realIdx = 0;
-      translate(trackIdx, false);
-      updateClasses(0);
-    } else if (trackIdx === 0) {
-      // Snapped to cloneLast → jump instantly to real last card
-      trackIdx = total; realIdx = total - 1;
-      translate(trackIdx, false);
-      updateClasses(total - 1);
-    }
-
-    transitioning = false;
-    if (!paused) { startProgress(); scheduleNext(); }
-  });
-
-  // Jump directly to a real card index (used by dots / card clicks).
-  function goTo(rIdx) {
-    if (transitioning) return;
-    transitioning = true;
-    clearTimeout(timer);
-    realIdx  = ((rIdx % total) + total) % total;
-    trackIdx = realIdx + 1;
-    updateClasses(realIdx);
-    translate(trackIdx, true);
-    // timer + progress restart in transitionend
-  }
-
-  // Hover: pause timer + freeze progress bar mid-animation.
-  outer.addEventListener('mouseenter', function() {
-    paused = true;
-    clearTimeout(timer);
-    freezeProgress();
-  });
-  outer.addEventListener('mouseleave', function() {
-    paused = false;
-    if (!transitioning) { startProgress(); scheduleNext(); }
-  });
-
-  // Touch swipe
-  var tx0 = 0;
-  trackWrap.addEventListener('touchstart', function(e) { tx0 = e.touches[0].clientX; }, { passive: true });
-  trackWrap.addEventListener('touchend',   function(e) {
-    var dx = e.changedTouches[0].clientX - tx0;
-    if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
-  }, { passive: true });
-
-  prevBtn.addEventListener('click', function() { step(-1); });
-  nextBtn.addEventListener('click', function() { step(1); });
-  cardEls.forEach(function(c, i) {
-    c.addEventListener('click', function() { if (i !== realIdx) goTo(i); });
-  });
-  dotEls.forEach(function(d, i) {
-    d.addEventListener('click', function() { goTo(i); });
-  });
-
-  // Init: position track, set classes, then start timer after layout settles.
-  requestAnimationFrame(function() {
-    translate(trackIdx, false);
-    updateClasses(realIdx);
-    setTimeout(function() { startProgress(); scheduleNext(); }, 150);
-    window.addEventListener('resize', function() { translate(trackIdx, false); }, { passive: true });
-  });
-
-  return function() { clearTimeout(timer); };
+  container.innerHTML =
+    '<p class="section-heading">Projects</p>' +
+    '<div class="projects">' + projectsHtml + '</div>';
 }
 
 /* ============================================
-   EXPERIENCE
+   RENDER — LEADERSHIP
    ============================================ */
-function renderExperience() {
-  const section = document.getElementById('experience');
-  section.innerHTML = '';
-  section.append(sectionHeader('02', 'Experience'));
-  const cards = data.experience.map(function(item, i){ return buildExpCard(item, i); });
-  mountCarousel(section, cards, 5000);
-}
+function renderLeadership(container) {
+  const items = data.leadership;
 
-function buildExpCard(item, idx) {
-  const card = el('div', 'exp-card');
+  const entriesHtml = items.map(function(item) {
+    const bulletsHtml = item.bullets.map(function(b) {
+      return '<li>' + esc(b) + '</li>';
+    }).join('');
 
-  /* Top row: index badge + period */
-  const top = el('div', 'exp-card-top');
-  top.append(
-    txt('span', 'exp-card-idx', String(idx + 1).padStart(2, '0')),
-    txt('span', 'exp-card-period', item.period)
-  );
-  card.append(top);
+    return '<div class="entry">' +
+      '<div class="entry-header">' +
+        '<div class="entry-left">' +
+          '<h3 class="entry-role">' + esc(item.role) + '</h3>' +
+          '<p class="entry-meta">' + esc(item.org) + '<span class="entry-sep">\u00b7</span>' + esc(item.location) + '</p>' +
+        '</div>' +
+        '<span class="entry-period">' + esc(item.period) + '</span>' +
+      '</div>' +
+      '<div class="entry-divider"></div>' +
+      '<ul class="entry-bullets">' + bulletsHtml + '</ul>' +
+    '</div>';
+  }).join('');
 
-  /* Role */
-  card.append(txt('h3', 'exp-card-role', item.role));
-
-  /* Org + location */
-  const meta = el('div', 'exp-card-meta');
-  const pulse = el('span', 'exp-card-pulse');
-  meta.append(
-    pulse,
-    txt('span', 'exp-card-org',  item.org),
-    txt('span', 'exp-card-sep',  '·'),
-    txt('span', 'exp-card-loc',  item.location)
-  );
-  card.append(meta);
-
-  card.append(el('div', 'exp-card-divider'));
-
-  /* Bullets */
-  const ul = el('ul', 'exp-card-bullets');
-  item.bullets.forEach(b => {
-    const li = txt('li', 'exp-card-bullet', b);
-    ul.append(li);
-  });
-  card.append(ul);
-
-  return card;
+  container.innerHTML =
+    '<p class="section-heading">Leadership</p>' +
+    '<div class="entries">' + entriesHtml + '</div>';
 }
 
 /* ============================================
-   PROJECTS
+   RENDER — SKILLS
    ============================================ */
-function renderProjects() {
-  const section = document.getElementById('projects');
-  section.innerHTML = '';
-  section.append(sectionHeader('03', 'Projects'));
-  const cards = data.projects.map(function(proj, i){ return buildProjectCard(proj, i); });
-  mountCarousel(section, cards, 5500);
-}
+function renderSkills(container) {
+  const skillsHtml = data.skills.map(function(group) {
+    const itemsHtml = group.items.map(function(s) {
+      return '<span class="tag">' + esc(s) + '</span>';
+    }).join('');
 
-function buildProjectCard(proj, idx) {
-  const card = el('div', 'exp-card proj-card');
+    return '<div class="skill-group">' +
+      '<p class="skill-cat">' + esc(group.category) + '</p>' +
+      '<div class="skill-items">' + itemsHtml + '</div>' +
+    '</div>';
+  }).join('');
 
-  /* Top row: index + github link */
-  const top = el('div', 'exp-card-top');
-  top.append(txt('span', 'exp-card-idx', String(idx + 1).padStart(2, '0')));
-  if (proj.github) {
-    const gh = el('a', 'proj-gh-link');
-    gh.href = proj.github; gh.target = '_blank';
-    gh.textContent = '↗ GitHub';
-    gh.addEventListener('click', function(e){ e.stopPropagation(); });
-    top.append(gh);
-  }
-  card.append(top);
-
-  card.append(txt('h3', 'exp-card-role', proj.title));
-
-  card.append(el('div', 'exp-card-divider'));
-
-  card.append(txt('p', 'proj-desc', proj.description));
-
-  /* Tech tags */
-  const tagsWrap = el('div', 'tech-tags proj-tags');
-  proj.tech.forEach(function(t){ tagsWrap.append(txt('span', 'tech-tag', t)); });
-  card.append(tagsWrap);
-
-  return card;
+  container.innerHTML =
+    '<p class="section-heading">Skills</p>' +
+    '<div class="skills">' + skillsHtml + '</div>';
 }
 
 /* ============================================
-   LEADERSHIP
+   RENDER — INTERESTS
    ============================================ */
-function renderLeadership() {
-  const section = document.getElementById('leadership');
-  section.innerHTML = '';
-  section.append(sectionHeader('04', 'Leadership'));
-  const cards = data.leadership.map(function(item, i){ return buildExpCard(item, i); });
-  mountCarousel(section, cards, 6000);
+function renderInterests(container) {
+  const interestsHtml = data.hobbies.map(function(h) {
+    return '<span class="interest">' + h.icon + ' ' + esc(h.label) + '</span>';
+  }).join('');
+
+  container.innerHTML =
+    '<p class="section-heading">Interests</p>' +
+    '<div class="interests">' + interestsHtml + '</div>';
 }
 
 /* ============================================
-   SKILLS
+   RENDER — CONTACT
    ============================================ */
-function renderSkills() {
-  const section = document.getElementById('skills');
-  section.innerHTML = '';
-  section.append(sectionHeader('05', 'Skills'));
+function renderContact(container) {
+  const d = data;
 
-  const grid = el('div', 'skills-grid');
-
-  data.skills.forEach((group, gi) => {
-    const card = el('div', 'skill-group reveal');
-    card.dataset.dragIdx = gi;
-    card.style.transitionDelay = (gi * 0.07) + 's';
-
-    card.append(dragHandle());
-
-    const delGroup = txt('button', 'delete-btn', '\u2715 Group');
-    delGroup.style.cssText = 'float:right;margin-bottom:4px;';
-    delGroup.addEventListener('click', () => {
-      data.skills.splice(gi, 1);
-      saveData();
-      renderSkills();
-      afterRender();
-    });
-    card.append(delGroup);
-
-    const cat = txt('div', 'skill-category', group.category);
-    makeEditable(cat, v => { data.skills[gi].category = v; });
-    card.append(cat);
-
-    const chipsWrap = el('div', 'skill-chips');
-    group.items.forEach((skill, si) => {
-      const chip = txt('span', 'skill-chip', skill);
-      makeEditable(chip, v => { data.skills[gi].items[si] = v; });
-
-      const delChip = txt('button', 'delete-btn', '\u2715');
-      delChip.style.cssText = 'padding:0 3px;font-size:0.55rem;margin-left:3px;';
-      delChip.addEventListener('click', e => {
-        e.stopPropagation();
-        data.skills[gi].items.splice(si, 1);
-        saveData();
-        renderSkills();
-        afterRender();
-      });
-      chip.append(delChip);
-      chipsWrap.append(chip);
-    });
-
-    const addChip = txt('button', 'add-tag-btn', '+ skill');
-    addChip.addEventListener('click', () => {
-      data.skills[gi].items.push('New');
-      saveData();
-      renderSkills();
-      afterRender();
-    });
-    chipsWrap.append(addChip);
-    card.append(chipsWrap);
-    grid.append(card);
-  });
-
-  const addGroup = txt('button', 'add-btn', '+ Add Skill Group');
-  addGroup.addEventListener('click', () => {
-    data.skills.push({ category: 'Category', items: ['Skill'] });
-    saveData();
-    renderSkills();
-    afterRender();
-  });
-
-  makeSortable(grid, data.skills, renderSkills);
-  section.append(grid, addGroup);
-}
-
-/* ============================================
-   HOBBIES
-   ============================================ */
-function renderHobbies() {
-  const section = document.getElementById('hobbies');
-  section.innerHTML = '';
-  section.append(sectionHeader('06', 'Interests'));
-
-  const grid = el('div', 'hobbies-grid reveal');
-
-  data.hobbies.forEach((h, i) => {
-    const chip = el('div', 'hobby-chip');
-    chip.dataset.dragIdx = i;
-
-    const icon  = txt('span', 'hobby-icon',  h.icon);
-    makeEditable(icon, v => { data.hobbies[i].icon = v.trim() || h.icon; });
-
-    const label = txt('span', 'hobby-label', h.label);
-    makeEditable(label, v => { data.hobbies[i].label = v; });
-
-    const delBtn = txt('button', 'delete-btn', '\u2715');
-    delBtn.style.cssText = 'margin-left:6px;padding:0 4px;font-size:0.55rem;';
-    delBtn.addEventListener('click', () => {
-      data.hobbies.splice(i, 1);
-      saveData();
-      renderHobbies();
-      afterRender();
-    });
-
-    chip.append(icon, label, delBtn);
-    grid.append(chip);
-  });
-
-  const addHobby = txt('button', 'add-btn', '+ Add Interest');
-  addHobby.addEventListener('click', () => {
-    data.hobbies.push({ icon: '\u2b50', label: 'New Interest' });
-    saveData();
-    renderHobbies();
-    afterRender();
-  });
-
-  makeSortable(grid, data.hobbies, renderHobbies);
-  section.append(grid, addHobby);
-}
-
-/* ============================================
-   CONTACT
-   ============================================ */
-function renderContact() {
-  const section = document.getElementById('contact');
-  section.innerHTML = '';
-  section.append(sectionHeader('07', 'Contact'));
-
-  const inner = el('div', 'contact-inner reveal');
-
-  const cta = el('h2', 'contact-cta');
-  cta.innerHTML = "Let\u2019s build<br>something <span class=\"accent\">great.</span>";
-
-  const blurb = txt('p', 'contact-blurb', data.contactBlurb);
-  makeEditable(blurb, v => { data.contactBlurb = v; });
-
-  const links = el('div', 'contact-links');
-
-  const emailLink = el('a', 'contact-link');
-  emailLink.href = 'mailto:' + data.email;
-  emailLink.textContent = '\u2709 ' + data.email;
-  makeEditable(emailLink, v => {
-    data.email = v.replace(/^\u2709\s*/, '').trim();
-    emailLink.href = 'mailto:' + data.email;
-  });
-
-  const ghLink = el('a', 'contact-link');
-  ghLink.href = data.github; ghLink.target = '_blank';
-  ghLink.textContent = '\u2325 GitHub';
-  makeEditable(ghLink, v => { data.github = v; ghLink.href = v; });
-
-  const liLink = el('a', 'contact-link');
-  liLink.href = data.linkedin; liLink.target = '_blank';
-  liLink.textContent = '\u2B21 LinkedIn';
-  makeEditable(liLink, v => { data.linkedin = v; liLink.href = v; });
-
-  /* ── Formspree contact form ── */
-  const formWrap = el('div', 'contact-form-wrap reveal');
-  formWrap.innerHTML =
-    '<div class="form-row">' +
-      '<div class="form-field"><label class="form-label">// name</label>' +
-        '<input type="text" name="name" class="form-input" placeholder="Your name" required /></div>' +
-      '<div class="form-field"><label class="form-label">// email</label>' +
-        '<input type="email" name="email" class="form-input" placeholder="your@email.com" required /></div>' +
-    '</div>' +
-    '<div class="form-field"><label class="form-label">// message</label>' +
-      '<textarea name="message" class="form-textarea" placeholder="What\'s on your mind?" required></textarea></div>' +
-    '<div class="form-footer-row">' +
-      '<button type="submit" class="btn btn-primary form-submit-btn">' +
-        '<span class="submit-idle">\u2197 Send Message</span>' +
-        '<span class="submit-busy" style="display:none">Sending\u2026</span>' +
-      '</button>' +
-      '<div class="form-msg form-success-msg" style="display:none">\u2713 Sent\u2014I\'ll be in touch soon.</div>' +
-      '<div class="form-msg form-error-msg" style="display:none">Something went wrong \u2014 email me directly.</div>' +
+  container.innerHTML =
+    '<p class="section-heading">Contact</p>' +
+    '<div class="contact-wrap">' +
+      '<p class="contact-intro">' + esc(d.contactBlurb) + '</p>' +
+      '<div class="contact-links">' +
+        '<a href="mailto:' + esc(d.email) + '" class="contact-item">' +
+          '<span class="contact-type">Email</span>' +
+          '<span class="contact-value">' + esc(d.email) + '</span>' +
+        '</a>' +
+        '<a href="' + esc(d.github) + '" target="_blank" rel="noopener" class="contact-item">' +
+          '<span class="contact-type">GitHub</span>' +
+          '<span class="contact-value">Jfraile05 \u2197</span>' +
+        '</a>' +
+        '<a href="' + esc(d.linkedin) + '" target="_blank" rel="noopener" class="contact-item">' +
+          '<span class="contact-type">LinkedIn</span>' +
+          '<span class="contact-value">jorge-fraile \u2197</span>' +
+        '</a>' +
+      '</div>' +
+      '<form class="contact-form" id="contact-form" novalidate>' +
+        '<div class="form-row">' +
+          '<div class="form-field">' +
+            '<label class="form-label" for="cf-name">Name</label>' +
+            '<input type="text" id="cf-name" name="name" class="form-input" placeholder="Your name" required />' +
+          '</div>' +
+          '<div class="form-field">' +
+            '<label class="form-label" for="cf-email">Email</label>' +
+            '<input type="email" id="cf-email" name="email" class="form-input" placeholder="your@email.com" required />' +
+          '</div>' +
+        '</div>' +
+        '<div class="form-field">' +
+          '<label class="form-label" for="cf-message">Message</label>' +
+          '<textarea id="cf-message" name="message" class="form-textarea" placeholder="What\'s on your mind?" required></textarea>' +
+        '</div>' +
+        '<div class="form-actions">' +
+          '<button type="submit" class="form-submit">Send Message \u2197</button>' +
+          '<p class="form-success" id="form-success">Sent \u2014 I\'ll be in touch soon.</p>' +
+          '<p class="form-error" id="form-error">Something went wrong \u2014 email me directly.</p>' +
+        '</div>' +
+      '</form>' +
     '</div>';
 
-  const submitBtn  = formWrap.querySelector('.form-submit-btn');
-  const idleText   = formWrap.querySelector('.submit-idle');
-  const busyText   = formWrap.querySelector('.submit-busy');
-  const successMsg = formWrap.querySelector('.form-success-msg');
-  const errorMsg   = formWrap.querySelector('.form-error-msg');
+  initContactForm();
+}
 
-  submitBtn.addEventListener('click', async (e) => {
+function initContactForm() {
+  const form = document.getElementById('contact-form');
+  if (!form) return;
+
+  const submitBtn  = form.querySelector('.form-submit');
+  const successMsg = document.getElementById('form-success');
+  const errorMsg   = document.getElementById('form-error');
+
+  form.addEventListener('submit', async function(e) {
     e.preventDefault();
-    const nameVal  = formWrap.querySelector('[name="name"]').value.trim();
-    const emailVal = formWrap.querySelector('[name="email"]').value.trim();
-    const msgVal   = formWrap.querySelector('[name="message"]').value.trim();
+    const nameVal  = form.querySelector('[name="name"]').value.trim();
+    const emailVal = form.querySelector('[name="email"]').value.trim();
+    const msgVal   = form.querySelector('[name="message"]').value.trim();
     if (!nameVal || !emailVal || !msgVal) return;
 
+    submitBtn.textContent = 'Sending\u2026';
     submitBtn.disabled = true;
-    idleText.style.display  = 'none';
-    busyText.style.display  = 'inline';
     successMsg.style.display = 'none';
     errorMsg.style.display   = 'none';
 
     try {
       const fd = new FormData();
-      fd.append('name', nameVal);
-      fd.append('email', emailVal);
+      fd.append('name',    nameVal);
+      fd.append('email',   emailVal);
       fd.append('message', msgVal);
+
       const res = await fetch('https://formspree.io/f/xlgovanz', {
-        method: 'POST',
+        method:  'POST',
         headers: { Accept: 'application/json' },
-        body: fd
+        body:    fd
       });
+
       if (res.ok) {
-        formWrap.querySelector('[name="name"]').value = '';
-        formWrap.querySelector('[name="email"]').value = '';
-        formWrap.querySelector('[name="message"]').value = '';
-        submitBtn.style.display = 'none';
-        successMsg.style.display = 'flex';
-      } else { throw new Error(); }
+        form.reset();
+        submitBtn.style.display  = 'none';
+        successMsg.style.display = 'block';
+      } else {
+        throw new Error();
+      }
     } catch (_) {
-      errorMsg.style.display = 'flex';
-      submitBtn.disabled = false;
-      idleText.style.display = 'inline';
-      busyText.style.display = 'none';
+      errorMsg.style.display = 'block';
+      submitBtn.textContent  = 'Send Message \u2197';
+      submitBtn.disabled     = false;
     }
   });
-
-  links.append(emailLink, ghLink, liLink);
-  inner.append(cta, blurb, formWrap, links);
-  section.append(inner);
 }
 
 /* ============================================
-   SCROLL REVEAL
+   SECTION ROUTER
    ============================================ */
-function initReveal() {
-  const obs = new IntersectionObserver(
-    entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          obs.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
-  );
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+const SECTIONS = ['about', 'experience', 'projects', 'leadership', 'skills', 'interests', 'contact'];
+
+const renderers = {
+  about:      renderAbout,
+  experience: renderExperience,
+  projects:   renderProjects,
+  leadership: renderLeadership,
+  skills:     renderSkills,
+  interests:  renderInterests,
+  contact:    renderContact
+};
+
+function renderSection(id) {
+  const main = document.getElementById('site-main');
+  main.innerHTML = '';
+  if (renderers[id]) renderers[id](main);
 }
 
-/* ============================================
-   CUSTOM CURSOR
-   ============================================ */
-function initCursor() {
-  const dot  = document.getElementById('cursor-dot');
-  const ring = document.getElementById('cursor-ring');
-  if (!dot || !ring) return;
-
-  let mx = 0, my = 0, rx = 0, ry = 0;
-
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX;
-    my = e.clientY;
-    dot.style.left = mx + 'px';
-    dot.style.top  = my + 'px';
-  });
-
-  (function animateRing() {
-    rx += (mx - rx) * 0.14;
-    ry += (my - ry) * 0.14;
-    ring.style.left = rx + 'px';
-    ring.style.top  = ry + 'px';
-    requestAnimationFrame(animateRing);
-  })();
-
-  document.addEventListener('mouseover', e => {
-    if (e.target.closest('a, button, [data-edit-target]')) {
-      ring.style.width  = '48px';
-      ring.style.height = '48px';
-      ring.style.borderColor = 'rgba(77,159,255,0.5)';
-    }
-  });
-
-  document.addEventListener('mouseout', e => {
-    if (e.target.closest('a, button, [data-edit-target]')) {
-      ring.style.width  = '32px';
-      ring.style.height = '32px';
-      ring.style.borderColor = 'rgba(77,159,255,0.32)';
-    }
-  });
-
-  document.addEventListener('mouseleave', () => {
-    dot.style.opacity  = '0';
-    ring.style.opacity = '0';
-  });
-  document.addEventListener('mouseenter', () => {
-    dot.style.opacity  = '1';
-    ring.style.opacity = '1';
+function updateNav(id) {
+  document.querySelectorAll('.nav-link').forEach(function(a) {
+    a.classList.toggle('active', a.dataset.section === id);
   });
 }
 
-/* ============================================
-   NAVBAR SCROLL
-   ============================================ */
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 8);
-}, { passive: true });
+function showSection(id, animate) {
+  if (!SECTIONS.includes(id)) id = 'about';
+  if (id === currentSection) return;
 
-/* ============================================
-   RENDER ALL
-   ============================================ */
-function setLogoHTML(initials) {
-  document.getElementById('nav-logo').innerHTML =
-    '<span class="logo-prompt">&gt;</span>' +
-    '<span class="logo-initials">' + initials + '</span>' +
-    '<span class="logo-cursor">_</span>';
-}
+  const main = document.getElementById('site-main');
 
-function render() {
-  const initials = data.initials || data.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  setLogoHTML(initials);
-
-  renderHero();
-  renderAbout();
-  renderExperience();
-  renderProjects();
-  renderLeadership();
-  renderSkills();
-  renderHobbies();
-  renderContact();
-
-  const existing = document.querySelector('footer');
-  if (existing) existing.remove();
-  const footer = document.createElement('footer');
-  footer.innerHTML = '\u00a9 ' + new Date().getFullYear() + ' ' + data.name + ' &nbsp;\u00b7&nbsp; Built with HTML, CSS &amp; JS';
-  document.querySelector('main').after(footer);
-
-  afterRender();
-}
-
-/* ============================================
-   DYNAMIC BACKGROUND — Particle Constellation
-   ============================================ */
-function initBackground() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  const canvas = document.getElementById('bg-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-
-  const COUNT      = 72;
-  const MAX_DIST   = 155;
-  const MOUSE_R    = 130;
-  const SPEED      = 0.28;
-
-  let W = 0, H = 0;
-  let mouseX = -9999, mouseY = -9999;
-
-  function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
+  if (animate === false) {
+    // Initial load — no transition
+    currentSection = id;
+    renderSection(id);
+    updateNav(id);
+    return;
   }
 
-  function makeParticle() {
-    const angle = Math.random() * Math.PI * 2;
-    const speed = (Math.random() * 0.5 + 0.5) * SPEED;
-    return {
-      x:     Math.random() * W,
-      y:     Math.random() * H,
-      vx:    Math.cos(angle) * speed,
-      vy:    Math.sin(angle) * speed,
-      baseR: Math.random() * 1.1 + 0.5,
-      phase: Math.random() * Math.PI * 2
-    };
-  }
+  // Fade out
+  main.style.opacity   = '0';
+  main.style.transform = 'translateY(8px)';
 
-  resize();
-  window.addEventListener('resize', resize);
+  setTimeout(function() {
+    currentSection = id;
+    renderSection(id);
+    updateNav(id);
+    window.scrollTo(0, 0);
+    history.replaceState(null, '', '#' + id);
 
-  let particles = Array.from({ length: COUNT }, makeParticle);
-
-  document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
-  document.addEventListener('mouseleave', () => { mouseX = mouseY = -9999; });
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-
-    /* Update positions */
-    for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
-      p.phase += 0.016;
-
-      /* Mouse repulsion */
-      const mdx = p.x - mouseX;
-      const mdy = p.y - mouseY;
-      const md2 = mdx * mdx + mdy * mdy;
-      if (md2 < MOUSE_R * MOUSE_R && md2 > 0) {
-        const md   = Math.sqrt(md2);
-        const push = (1 - md / MOUSE_R) * 0.5;
-        p.vx += (mdx / md) * push;
-        p.vy += (mdy / md) * push;
-      }
-
-      /* Dampen & move */
-      p.vx *= 0.97;
-      p.vy *= 0.97;
-      /* Clamp velocity */
-      const spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-      if (spd > SPEED * 4) { p.vx = (p.vx / spd) * SPEED * 4; p.vy = (p.vy / spd) * SPEED * 4; }
-
-      p.x += p.vx;
-      p.y += p.vy;
-
-      /* Wrap edges with a soft margin */
-      if (p.x < -20) p.x = W + 20;
-      if (p.x > W + 20) p.x = -20;
-      if (p.y < -20) p.y = H + 20;
-      if (p.y > H + 20) p.y = -20;
-    }
-
-    /* Draw edges */
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const dx   = particles[i].x - particles[j].x;
-        const dy   = particles[i].y - particles[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < MAX_DIST) {
-          const a = (1 - dist / MAX_DIST) * 0.13;
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(77,159,255,${a.toFixed(3)})`;
-          ctx.lineWidth = 0.6;
-          ctx.stroke();
-        }
-      }
-    }
-
-    /* Draw nodes */
-    for (let i = 0; i < particles.length; i++) {
-      const p      = particles[i];
-      const pulse  = 0.45 + Math.sin(p.phase) * 0.2;
-      const mdx    = p.x - mouseX;
-      const mdy    = p.y - mouseY;
-      const near   = Math.sqrt(mdx * mdx + mdy * mdy) < MOUSE_R;
-      const bright = near ? Math.min(1, pulse + 0.35) : pulse;
-
-      /* Outer glow for near-mouse particles */
-      if (near) {
-        const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.baseR * 6);
-        grd.addColorStop(0, `rgba(77,159,255,${(bright * 0.22).toFixed(3)})`);
-        grd.addColorStop(1, 'rgba(77,159,255,0)');
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.baseR * 6, 0, Math.PI * 2);
-        ctx.fillStyle = grd;
-        ctx.fill();
-      }
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.baseR, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(77,159,255,${(bright * 0.7).toFixed(3)})`;
-      ctx.fill();
-    }
-
-    requestAnimationFrame(draw);
-  }
-
-  draw();
-}
-
-/* ============================================
-   SCROLL PROGRESS BAR
-   ============================================ */
-function initScrollProgress() {
-  const bar = document.getElementById('scroll-bar');
-  if (!bar) return;
-  window.addEventListener('scroll', () => {
-    const max = document.body.scrollHeight - window.innerHeight;
-    bar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
-  }, { passive: true });
-}
-
-/* ============================================
-   ACTIVE NAV SECTION HIGHLIGHTING
-   ============================================ */
-function initActiveNav() {
-  const links = document.querySelectorAll('.nav-links a');
-  const sections = document.querySelectorAll('section[id]');
-  if (!sections.length) return;
-
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        links.forEach(a => a.classList.toggle('nav-active', a.getAttribute('href') === '#' + entry.target.id));
-      }
-    });
-  }, { rootMargin: '-40% 0px -55% 0px' });
-
-  sections.forEach(s => obs.observe(s));
-}
-
-/* ============================================
-   TYPEWRITER EFFECT — hero tagline
-   ============================================ */
-let typewriterDone = false;
-function initTypewriter() {
-  if (typewriterDone) return;
-  const p = document.querySelector('.hero-tagline');
-  if (!p) return;
-  const fullText = p.textContent.trim();
-  if (!fullText) return;
-  typewriterDone = true;
-
-  /* Lock the paragraph's current rendered height before clearing its text.
-     Without this, emptying textContent collapses the element to 0px,
-     which causes everything above (name, terminal card) to jump down/up. */
-  p.style.minHeight = p.offsetHeight + 'px';
-
-  p.textContent = '';
-  const cursor = el('span', 'type-cursor');
-  p.append(cursor);
-
-  let i = 0;
-  function type() {
-    if (editMode) { p.textContent = fullText; return; }
-    if (i < fullText.length) {
-      p.insertBefore(document.createTextNode(fullText[i++]), cursor);
-      setTimeout(type, 14 + Math.random() * 22);
-    } else {
-      setTimeout(() => {
-        cursor.style.transition = 'opacity 0.8s';
-        cursor.style.opacity = '0';
-        setTimeout(() => cursor.remove(), 900);
-      }, 1400);
-    }
-  }
-  setTimeout(type, 650);
-}
-
-/* ============================================
-   ANIMATED STAT COUNTERS
-   ============================================ */
-function initCounters() {
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      obs.unobserve(entry.target);
-      const el = entry.target;
-      const target = +el.dataset.target;
-      const suffix = el.dataset.suffix || '';
-      const dur = 1200;
-      const start = performance.now();
-      function step(now) {
-        const t = Math.min((now - start) / dur, 1);
-        const eased = 1 - Math.pow(1 - t, 3);
-        el.textContent = Math.round(eased * target) + suffix;
-        if (t < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    });
-  }, { threshold: 0.6 });
-
-  document.querySelectorAll('.stat-value[data-target]').forEach(el => obs.observe(el));
-}
-
-/* ============================================
-   MAGNETIC BUTTONS
-   ============================================ */
-function initMagnetic() {
-  function bind() {
-    document.querySelectorAll('.btn-primary').forEach(btn => {
-      if (btn.dataset.magnetic) return;
-      btn.dataset.magnetic = '1';
-      btn.addEventListener('mousemove', e => {
-        if (editMode) return;
-        const r  = btn.getBoundingClientRect();
-        const dx = (e.clientX - (r.left + r.width  / 2)) * 0.22;
-        const dy = (e.clientY - (r.top  + r.height / 2)) * 0.22;
-        btn.style.transform = `translate(${dx}px,${dy}px) translateY(-2px)`;
-      });
-      btn.addEventListener('mouseleave', () => {
-        btn.style.transition = 'transform 0.45s var(--spring), box-shadow 0.22s';
-        btn.style.transform  = '';
-        setTimeout(() => { btn.style.transition = ''; }, 450);
+    // Fade in (two rAF to ensure paint between innerHTML change and transition)
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        main.style.opacity   = '1';
+        main.style.transform = 'translateY(0)';
       });
     });
-  }
-  bind();
-  /* Re-bind after re-renders */
-  document.addEventListener('click', () => setTimeout(bind, 100));
+  }, 160);
 }
 
-render();
-initCursor();
-initBackground();
-initScrollProgress();
-initActiveNav();
-initTypewriter();
-initCounters();
-initMagnetic();
+/* ============================================
+   NAV CLICK HANDLER
+   ============================================ */
+document.querySelectorAll('.nav-link').forEach(function(link) {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    showSection(link.dataset.section, true);
+  });
+});
+
+/* ============================================
+   FOOTER
+   ============================================ */
+(function() {
+  var el = document.getElementById('footer-copy');
+  if (el) el.textContent = '\u00a9 ' + new Date().getFullYear() + ' Jorge Fraile Perez';
+})();
+
+/* ============================================
+   INIT
+   ============================================ */
+(function() {
+  var hash = location.hash.slice(1);
+  var start = SECTIONS.includes(hash) ? hash : 'about';
+  showSection(start, false);
+})();
