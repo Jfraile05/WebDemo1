@@ -6,42 +6,39 @@
   <title>Jorge Fraile Perez</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Mulish:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Mulish:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="app">
-    <header class="site-header" id="site-header">
-      <div class="header-top">
-        <div class="site-identity">
-          <h1 class="site-name">Jorge Fraile Perez</h1>
-          <p class="site-title">SDE Intern Candidate <span class="title-sep">·</span> AWS Student Builder Campus Leader</p>
-        </div>
-        <div class="site-status">
-          <span class="status-dot"></span>
-          <span class="status-label">Available for Internships</span>
-        </div>
-      </div>
-      <nav class="site-nav" role="navigation" aria-label="Main navigation">
-        <a class="nav-link" data-section="about" href="#about">About</a>
-        <a class="nav-link" data-section="experience" href="#experience">Experience</a>
-        <a class="nav-link" data-section="projects" href="#projects">Projects</a>
-        <a class="nav-link" data-section="leadership" href="#leadership">Leadership</a>
-        <a class="nav-link" data-section="skills" href="#skills">Skills</a>
-        <a class="nav-link" data-section="interests" href="#interests">Interests</a>
-        <a class="nav-link" data-section="contact" href="#contact">Contact</a>
-      </nav>
-    </header>
+  <div class="layout">
 
-    <main class="site-main" id="site-main" role="main">
-      <!-- Content rendered by JavaScript -->
+    <aside class="sidebar">
+      <div class="sidebar-inner">
+        <div class="profile">
+          <div class="photo-ring">
+            <img src="jorge.jpeg" alt="Jorge Fraile Perez" class="profile-photo" />
+          </div>
+          <h1 class="profile-name">Jorge Fraile Perez</h1>
+          <p class="profile-desc">Computer Science Student<br>at Florida State University</p>
+        </div>
+
+        <nav class="sidebar-nav" role="navigation">
+          <a class="nav-link active" data-section="about"      href="#about">About</a>
+          <a class="nav-link"        data-section="experience" href="#experience">Experience</a>
+          <a class="nav-link"        data-section="projects"   href="#projects">Projects</a>
+          <a class="nav-link"        data-section="leadership" href="#leadership">Leadership</a>
+          <a class="nav-link"        data-section="skills"     href="#skills">Skills</a>
+          <a class="nav-link"        data-section="interests"  href="#interests">Interests</a>
+          <a class="nav-link"        data-section="contact"    href="#contact">Contact</a>
+        </nav>
+      </div>
+    </aside>
+
+    <main class="content" id="content" role="main">
+      <!-- Rendered by JavaScript -->
     </main>
 
-    <footer class="site-footer">
-      <span id="footer-copy"></span>
-    </footer>
   </div>
-
   <script src="app.js"></script>
 </body>
 </html>

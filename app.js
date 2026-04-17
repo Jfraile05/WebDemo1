@@ -242,28 +242,18 @@ function renderAbout(container) {
   const techCount = d.skills.reduce((a, g) => a + g.items.length, 0);
 
   container.innerHTML =
-    '<div class="about-layout">' +
-      '<div class="about-body">' +
-        '<p class="about-bio">' + esc(d.about) + '</p>' +
-        '<div class="about-stats">' +
-          '<div class="stat"><span class="stat-n">' + d.projects.length + '</span><span class="stat-l">Projects</span></div>' +
-          '<div class="stat"><span class="stat-n">4</span><span class="stat-l">Years Coding</span></div>' +
-          '<div class="stat"><span class="stat-n">' + techCount + '+</span><span class="stat-l">Technologies</span></div>' +
-        '</div>' +
-        '<div class="about-actions">' +
-          '<a href="' + esc(d.resume) + '" target="_blank" rel="noopener" class="btn">Resume \u2197</a>' +
-          '<a href="' + esc(d.github) + '" target="_blank" rel="noopener" class="text-link">GitHub \u2197</a>' +
-          '<a href="' + esc(d.linkedin) + '" target="_blank" rel="noopener" class="text-link">LinkedIn \u2197</a>' +
-          '<a href="mailto:' + esc(d.email) + '" class="text-link">Email</a>' +
-        '</div>' +
-      '</div>' +
-      '<div class="about-photo-wrap">' +
-        '<img src="jorge.jpeg" alt="Jorge Fraile Perez" class="about-photo" />' +
-        '<div class="about-photo-caption">' +
-          '<span class="about-photo-name">Jorge Fraile Perez</span>' +
-          '<span class="about-photo-role">FSU · Computer Science</span>' +
-        '</div>' +
-      '</div>' +
+    '<h2 class="section-title">About</h2>' +
+    '<p class="about-text">' + esc(d.about) + '</p>' +
+    '<div class="about-stats">' +
+      '<div class="stat"><span class="stat-n">' + d.projects.length + '</span><span class="stat-l">Projects</span></div>' +
+      '<div class="stat"><span class="stat-n">4</span><span class="stat-l">Years Coding</span></div>' +
+      '<div class="stat"><span class="stat-n">' + techCount + '+</span><span class="stat-l">Technologies</span></div>' +
+    '</div>' +
+    '<div class="about-actions">' +
+      '<a href="' + esc(d.resume) + '" target="_blank" rel="noopener" class="btn">Resume \u2197</a>' +
+      '<a href="' + esc(d.github) + '" target="_blank" rel="noopener" class="text-link">GitHub \u2197</a>' +
+      '<a href="' + esc(d.linkedin) + '" target="_blank" rel="noopener" class="text-link">LinkedIn \u2197</a>' +
+      '<a href="mailto:' + esc(d.email) + '" class="text-link">Email</a>' +
     '</div>';
 }
 
@@ -292,7 +282,7 @@ function renderExperience(container) {
   }).join('');
 
   container.innerHTML =
-    '<p class="section-heading">Experience</p>' +
+    '<h2 class="section-title">Experience</h2>' +
     '<div class="entries">' + entriesHtml + '</div>';
 }
 
@@ -322,7 +312,7 @@ function renderProjects(container) {
   }).join('');
 
   container.innerHTML =
-    '<p class="section-heading">Projects</p>' +
+    '<h2 class="section-title">Projects</h2>' +
     '<div class="projects">' + projectsHtml + '</div>';
 }
 
@@ -351,7 +341,7 @@ function renderLeadership(container) {
   }).join('');
 
   container.innerHTML =
-    '<p class="section-heading">Leadership</p>' +
+    '<h2 class="section-title">Leadership</h2>' +
     '<div class="entries">' + entriesHtml + '</div>';
 }
 
@@ -371,7 +361,7 @@ function renderSkills(container) {
   }).join('');
 
   container.innerHTML =
-    '<p class="section-heading">Skills</p>' +
+    '<h2 class="section-title">Skills</h2>' +
     '<div class="skills">' + skillsHtml + '</div>';
 }
 
@@ -384,7 +374,7 @@ function renderInterests(container) {
   }).join('');
 
   container.innerHTML =
-    '<p class="section-heading">Interests</p>' +
+    '<h2 class="section-title">Interests</h2>' +
     '<div class="interests">' + interestsHtml + '</div>';
 }
 
@@ -395,7 +385,7 @@ function renderContact(container) {
   const d = data;
 
   container.innerHTML =
-    '<p class="section-heading">Contact</p>' +
+    '<h2 class="section-title">Contact</h2>' +
     '<div class="contact-wrap">' +
       '<p class="contact-intro">' + esc(d.contactBlurb) + '</p>' +
       '<div class="contact-links">' +
