@@ -241,19 +241,22 @@ function renderAbout(container) {
   const d = data;
   const techCount = d.skills.reduce((a, g) => a + g.items.length, 0);
 
+  container.classList.add('is-about');
   container.innerHTML =
-    '<h2 class="section-title">About</h2>' +
-    '<p class="about-text">' + esc(d.about) + '</p>' +
-    '<div class="about-stats">' +
-      '<div class="stat"><span class="stat-n">' + d.projects.length + '</span><span class="stat-l">Projects</span></div>' +
-      '<div class="stat"><span class="stat-n">4</span><span class="stat-l">Years Coding</span></div>' +
-      '<div class="stat"><span class="stat-n">' + techCount + '+</span><span class="stat-l">Technologies</span></div>' +
-    '</div>' +
-    '<div class="about-actions">' +
-      '<a href="' + esc(d.resume) + '" target="_blank" rel="noopener" class="btn">Resume \u2197</a>' +
-      '<a href="' + esc(d.github) + '" target="_blank" rel="noopener" class="text-link">GitHub \u2197</a>' +
-      '<a href="' + esc(d.linkedin) + '" target="_blank" rel="noopener" class="text-link">LinkedIn \u2197</a>' +
-      '<a href="mailto:' + esc(d.email) + '" class="text-link">Email</a>' +
+    '<div class="about-body">' +
+      '<h2 class="section-title">About</h2>' +
+      '<p class="about-text">' + esc(d.about) + '</p>' +
+      '<div class="about-stats">' +
+        '<div class="stat"><span class="stat-n">' + d.projects.length + '</span><span class="stat-l">Projects</span></div>' +
+        '<div class="stat"><span class="stat-n">4</span><span class="stat-l">Years Coding</span></div>' +
+        '<div class="stat"><span class="stat-n">' + techCount + '+</span><span class="stat-l">Technologies</span></div>' +
+      '</div>' +
+      '<div class="about-actions">' +
+        '<a href="' + esc(d.resume) + '" target="_blank" rel="noopener" class="btn">Resume \u2197</a>' +
+        '<a href="' + esc(d.github) + '" target="_blank" rel="noopener" class="text-link">GitHub \u2197</a>' +
+        '<a href="' + esc(d.linkedin) + '" target="_blank" rel="noopener" class="text-link">LinkedIn \u2197</a>' +
+        '<a href="mailto:' + esc(d.email) + '" class="text-link">Email</a>' +
+      '</div>' +
     '</div>';
 }
 
@@ -269,14 +272,9 @@ function renderExperience(container) {
     }).join('');
 
     return '<div class="entry">' +
-      '<div class="entry-header">' +
-        '<div class="entry-left">' +
-          '<h3 class="entry-role">' + esc(item.role) + '</h3>' +
-          '<p class="entry-meta">' + esc(item.org) + '<span class="entry-sep">\u00b7</span>' + esc(item.location) + '</p>' +
-        '</div>' +
-        '<span class="entry-period">' + esc(item.period) + '</span>' +
-      '</div>' +
-      '<div class="entry-divider"></div>' +
+      '<p class="entry-period">' + esc(item.period) + '</p>' +
+      '<h3 class="entry-role">' + esc(item.role) + '</h3>' +
+      '<p class="entry-meta">' + esc(item.org) + '<span class="entry-sep">\u00b7</span>' + esc(item.location) + '</p>' +
       '<ul class="entry-bullets">' + bulletsHtml + '</ul>' +
     '</div>';
   }).join('');
@@ -294,20 +292,17 @@ function renderProjects(container) {
 
   const projectsHtml = projs.map(function(proj) {
     const ghLink = proj.github
-      ? '<a href="' + esc(proj.github) + '" target="_blank" rel="noopener" class="project-gh">\u2197 GitHub</a>'
+      ? '<a href="' + esc(proj.github) + '" target="_blank" rel="noopener" class="project-gh">GitHub \u2192</a>'
       : '';
 
-    const tagsHtml = proj.tech.map(function(t) {
-      return '<span class="tag">' + esc(t) + '</span>';
-    }).join('');
+    const techStr = proj.tech.join(', ');
 
     return '<div class="project">' +
       '<div class="project-header">' +
-        '<h3 class="project-title">' + esc(proj.title) + '</h3>' +
+        '<h3 class="project-title">' + esc(proj.title) + ' <span class="project-tech">\u2022 ' + esc(techStr) + '</span></h3>' +
         ghLink +
       '</div>' +
       '<p class="project-desc">' + esc(proj.description) + '</p>' +
-      '<div class="tags">' + tagsHtml + '</div>' +
     '</div>';
   }).join('');
 
@@ -328,14 +323,9 @@ function renderLeadership(container) {
     }).join('');
 
     return '<div class="entry">' +
-      '<div class="entry-header">' +
-        '<div class="entry-left">' +
-          '<h3 class="entry-role">' + esc(item.role) + '</h3>' +
-          '<p class="entry-meta">' + esc(item.org) + '<span class="entry-sep">\u00b7</span>' + esc(item.location) + '</p>' +
-        '</div>' +
-        '<span class="entry-period">' + esc(item.period) + '</span>' +
-      '</div>' +
-      '<div class="entry-divider"></div>' +
+      '<p class="entry-period">' + esc(item.period) + '</p>' +
+      '<h3 class="entry-role">' + esc(item.role) + '</h3>' +
+      '<p class="entry-meta">' + esc(item.org) + '<span class="entry-sep">\u00b7</span>' + esc(item.location) + '</p>' +
       '<ul class="entry-bullets">' + bulletsHtml + '</ul>' +
     '</div>';
   }).join('');
@@ -350,13 +340,9 @@ function renderLeadership(container) {
    ============================================ */
 function renderSkills(container) {
   const skillsHtml = data.skills.map(function(group) {
-    const itemsHtml = group.items.map(function(s) {
-      return '<span class="tag">' + esc(s) + '</span>';
-    }).join('');
-
     return '<div class="skill-group">' +
       '<p class="skill-cat">' + esc(group.category) + '</p>' +
-      '<div class="skill-items">' + itemsHtml + '</div>' +
+      '<p class="skill-list">' + esc(group.items.join(', ')) + '</p>' +
     '</div>';
   }).join('');
 
@@ -370,7 +356,7 @@ function renderSkills(container) {
    ============================================ */
 function renderInterests(container) {
   const interestsHtml = data.hobbies.map(function(h) {
-    return '<span class="interest">' + h.icon + ' ' + esc(h.label) + '</span>';
+    return '<p class="interest">' + h.icon + ' ' + esc(h.label) + '</p>';
   }).join('');
 
   container.innerHTML =
@@ -493,6 +479,7 @@ const renderers = {
 function renderSection(id) {
   const main = document.getElementById('site-main');
   main.innerHTML = '';
+  main.classList.remove('is-about');
   if (renderers[id]) renderers[id](main);
 }
 
