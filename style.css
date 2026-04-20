@@ -88,16 +88,17 @@ a { color: inherit; text-decoration: none; }
   overflow: hidden;
   margin-bottom: 1rem;
   flex-shrink: 0;
+  box-shadow: 0 0 0 3px #0d0d0d;
 }
 
 .profile-photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 32%;
+  object-position: center 18%;
   display: block;
-  transform: scale(1.2);
-  transform-origin: center 32%;
+  transform: scale(1.05);
+  transform-origin: center 18%;
 }
 
 .profile-name {
