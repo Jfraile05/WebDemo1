@@ -8,7 +8,7 @@ const DEFAULT_DATA = {
   title:        "SDE Intern Candidate · AWS Student Builder Campus Leader",
   tagline:      "CS student at FSU maintaining and building on distributed infrastructure at scale — 300-node clusters, cloud deployments, and AI-powered automation pipelines.",
   resume:       "resume.pdf",
-  about:        "Junior at FSU pursuing a B.S. in Computer Science, focused on cloud infrastructure, DevOps, and systems engineering. Currently a Software Engineer Intern at Drafted Labs, AWS Student Builder Campus Leader, Undergraduate Systems Administrator at FSU CS, DevOps Project Manager with the FSU AWS Cloud Club, and Vice President of ColorStack at FSU. Always glad to connect.",
+  about:        "Junior at FSU pursuing a B.S. in Computer Science, focused on cloud infrastructure, DevOps, and systems engineering. Currently a Software Engineer Intern at Drafted Labs, AWS Student Builder Campus Leader, Undergraduate Systems Administrator at FSU CS, DevOps Project Manager with the FSU AWS Cloud Club, and Vice President of Administration of ColorStack at FSU. Always glad to connect.",
   contactBlurb: "Always open to new opportunities — whether that's internships, research, collaborations, or just a good conversation. Feel free to reach out.",
   email:        "Jorge@JorgeFraile.com",
   github:       "https://github.com/Jfraile05",
@@ -104,14 +104,13 @@ const DEFAULT_DATA = {
     },
     {
       id: 3,
-      role:     "Communications Assistant",
+      role:     "Vice President of Administration",
       org:      "ColorStack",
-      period:   "2025 – Present",
-      location: "Remote",
+      period:   "Jan. 2026 – Present",
+      location: "Tallahassee, FL",
       bullets: [
-        "Support communications and outreach efforts to grow and engage the ColorStack community",
-        "Coordinate technical collaboration across engineering teams and project initiatives",
-        "Manage internal technical communication platforms and infrastructure tools"
+        "Act as second-in-command to the president, keeping E-board on task and filling in as acting president",
+        "Oversee event registration, org documentation, and operational planning for consistent chapter execution"
       ]
     },
     {
@@ -153,19 +152,6 @@ const DEFAULT_DATA = {
       ]
     },
     {
-      id: 1,
-      role:     "Systems Administrator",
-      org:      "Florida State University, Department of Computer Science",
-      period:   "Jan. 2026 – Present",
-      location: "Tallahassee, FL",
-      bullets: [
-        "Administering Linux and Windows Server environments across 300+ nodes, maintaining network uptime above 99.5%",
-        "Building Python automation for system monitoring and alerting, reducing incident detection time by 40%",
-        "Diagnosing TCP/IP, DNS, BGP, and OSPF routing failures using log analysis and metrics, cutting MTTR by 30%",
-        "Managing Active Directory accounts and enforcing secure access controls, ensuring configuration compliance"
-      ]
-    },
-    {
       id: 4,
       role:     "AWS Student Builder Campus Leader",
       org:      "Amazon Web Services",
@@ -176,6 +162,19 @@ const DEFAULT_DATA = {
         "Teaching AWS services across majors, showing students how to turn ideas into modern solutions using cloud infrastructure",
         "Automating deployment workflows via Python and Bash scripting, reducing lab setup time by 35% and expanding reach",
         "Collaborating with 7 PMs to coordinate 33 developers, delivering 3 workshops and a semester-long AWS cloud project"
+      ]
+    },
+    {
+      id: 1,
+      role:     "Systems Administrator",
+      org:      "Florida State University, Department of Computer Science",
+      period:   "Jan. 2026 – Present",
+      location: "Tallahassee, FL",
+      bullets: [
+        "Administering Linux and Windows Server environments across 300+ nodes, maintaining network uptime above 99.5%",
+        "Building Python automation for system monitoring and alerting, reducing incident detection time by 40%",
+        "Diagnosing TCP/IP, DNS, BGP, and OSPF routing failures using log analysis and metrics, cutting MTTR by 30%",
+        "Managing Active Directory accounts and enforcing secure access controls, ensuring configuration compliance"
       ]
     },
     {
@@ -230,7 +229,7 @@ function renderAbout(container) {
   container.classList.add('is-about');
   container.innerHTML =
     '<div class="about-body">' +
-      '<h2 class="section-title">About</h2>' +
+      '<h2 class="section-title">Currently</h2>' +
       '<p class="about-text">' + esc(d.about) + '</p>' +
       '<div class="about-actions">' +
         '<a href="' + esc(d.resume) + '" target="_blank" rel="noopener" class="btn">Resume \u2197</a>' +
