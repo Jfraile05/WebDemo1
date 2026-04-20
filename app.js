@@ -78,6 +78,19 @@ const DEFAULT_DATA = {
   ],
   leadership: [
     {
+      id: 3,
+      role:     "Vice President of Administration",
+      org:      "ColorStack",
+      period:   "Jan. 2026 – Present",
+      location: "Tallahassee, FL",
+      bullets: [
+        "Act as second-in-command to the president, keeping E-board on task and filling in as acting president",
+        "Oversee event registration, org documentation, and operational planning for consistent chapter execution",
+        "Drive chapter growth by coordinating with national ColorStack leadership and partner organizations to align programming and expand the chapter's reach",
+        "Foster an inclusive community for underrepresented students in computing, connecting members with mentorship, internships, and professional development opportunities"
+      ]
+    },
+    {
       id: 1,
       role:     "AWS Student Builder Campus Leader",
       org:      "Amazon Web Services",
@@ -100,17 +113,6 @@ const DEFAULT_DATA = {
         "Built and maintained CI/CD pipelines on AWS, improving deployment speed by 50% with repeatable standards",
         "Monitored distributed cloud systems, analyzed logs and metrics, resolving alerts to maintain high availability",
         "Led root cause analysis on AWS infrastructure failures, reducing recurring issues by 40% through structured debugging"
-      ]
-    },
-    {
-      id: 3,
-      role:     "Vice President of Administration",
-      org:      "ColorStack",
-      period:   "Jan. 2026 – Present",
-      location: "Tallahassee, FL",
-      bullets: [
-        "Act as second-in-command to the president, keeping E-board on task and filling in as acting president",
-        "Oversee event registration, org documentation, and operational planning for consistent chapter execution"
       ]
     },
     {
