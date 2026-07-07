@@ -4,41 +4,677 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jorge Fraile Perez</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <meta name="description" content="Jorge Fraile Perez. Founding Engineer at Drafted Labs, AWS Student Builder Campus Leader, and CS student at Florida State University. Ask me anything." />
+  <link rel="icon" href="jorge.jpeg" />
+  <style>
+  /* Committed dark design: the neon fluid needs a black ground */
+  :root {
+    --bg: #050507;
+    --fg: #F4F4F5;
+    --card: #16161B;
+    --glass: rgba(16, 16, 21, 0.55);
+    --border: #2A2A31;
+    --border-soft: #232329;
+    --muted-fg: #A1A1AA;
+    --placeholder: #71717A;
+    --accent: #D4B886;
+    --accent-soft: #2B2517;
+    --tag-bg: #26262C;
+    --wm-bg: #F4F4F5;
+    --wm-fg: #111827;
+    --handle: #3F3F46;
+    --link: #D4B886;
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.45);
+    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.55);
+    --shadow-img: 0 10px 30px -5px rgba(0, 0, 0, 0.65), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    --scrim: rgba(0, 0, 0, 0.6);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: #000000;
+    color: var(--fg);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  #fluid {
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 0;
+    display: block;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body::before {
+      content: "";
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(42% 36% at 16% 20%, rgba(255, 0, 128, .30), transparent 70%),
+        radial-gradient(44% 38% at 84% 26%, rgba(0, 200, 255, .28), transparent 70%),
+        radial-gradient(46% 40% at 28% 84%, rgba(80, 255, 120, .22), transparent 70%),
+        radial-gradient(40% 34% at 76% 78%, rgba(255, 180, 0, .25), transparent 70%);
+    }
+  }
+
+  /* ============ Landing hero ============ */
+  .stage {
+    position: relative; z-index: 10;
+    width: 100vw; height: 100dvh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 24px;
+    pointer-events: none;
+    transition: opacity .3s ease;
+  }
+  .stage a, .stage button, .stage input, .stage img { pointer-events: auto; }
+  body.chat .stage { opacity: 0; visibility: hidden; pointer-events: none; }
+
+  .hello {
+    font-size: 1.35rem; font-weight: 700;
+    margin: 0 0 0.55rem;
+    text-align: center;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.8);
+    animation: rise .5s ease both;
+  }
+  h1.headline {
+    margin: 0;
+    font-size: clamp(2.1rem, 6.8vw, 4.5rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    text-align: center;
+    text-wrap: balance;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.85);
+    animation: rise .5s .08s ease both;
+  }
+  .avatar {
+    width: clamp(150px, 25vh, 240px); height: clamp(150px, 25vh, 240px);
+    border-radius: 2rem;
+    object-fit: cover;
+    box-shadow: var(--shadow-img);
+    margin: 2.5rem 0 1.4rem;
+    animation: rise .5s .16s ease both;
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  .askwrap {
+    position: relative;
+    max-width: 500px; width: 100%;
+    margin: 0 auto;
+    animation: rise .5s .24s ease both;
+  }
+  .askwrap input {
+    width: 100%;
+    padding: 1rem 3.5rem 1rem 1.5rem;
+    border-radius: 9999px;
+    border: 1px solid var(--border);
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    color: var(--fg);
+    font: inherit; font-size: 1rem;
+    box-shadow: var(--shadow-sm);
+    outline: none;
+  }
+  .askwrap input::placeholder { color: var(--placeholder); }
+  .askwrap input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .askwrap .send {
+    position: absolute; right: 0.5rem; top: 50%;
+    transform: translateY(-50%);
+    width: 2.5rem; height: 2.5rem;
+    border-radius: 50%;
+    border: 0;
+    background: var(--accent);
+    color: #14100A;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: transform .2s ease-in-out;
+  }
+  .askwrap .send:hover { transform: translateY(-50%) scale(1.07); }
+  .askwrap .send:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .quick {
+    display: flex; gap: 14px;
+    justify-content: center; flex-wrap: wrap;
+    margin-top: 1.5rem;
+    animation: rise .5s .3s ease both;
+  }
+  .quick button {
+    width: 126px; height: 94px;
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 0.55rem;
+    font: inherit; font-size: 0.875rem; font-weight: 500;
+    color: var(--fg);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease-in-out;
+  }
+  .quick button:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--border); }
+  .quick button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .quick svg { width: 20px; height: 20px; stroke: var(--accent); }
+
+  @media (max-height: 760px) {
+    .avatar { margin: 1.1rem 0; }
+    h1.headline { font-size: clamp(1.7rem, 5.5vw, 2.6rem); }
+    .quick { margin-top: 1rem; }
+    .quick button { width: 96px; height: 74px; font-size: 0.75rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hello, .avatar, h1.headline, .askwrap, .quick { animation: none !important; }
+    .stage, .chatview { transition: none !important; }
+  }
+
+  /* ============ Corner elements ============ */
+  .corner-info {
+    position: fixed; top: 1.25rem; right: 1.5rem; z-index: 60;
+    width: 2.2rem; height: 2.2rem;
+    border-radius: 50%;
+    border: 0; background: transparent;
+    color: var(--fg);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; opacity: .85;
+  }
+  .corner-info:hover { opacity: 1; }
+  .corner-info:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .corner-info svg { width: 22px; height: 22px; }
+
+  .watermark {
+    position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 60;
+    background: var(--wm-bg);
+    color: var(--wm-fg);
+    font-size: 0.75rem; font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    text-decoration: none;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* ============ Chat view ============ */
+  .chatview {
+    position: fixed; inset: 0; z-index: 40;
+    background: var(--bg);
+    display: flex; flex-direction: column; align-items: center;
+    opacity: 0; visibility: hidden;
+    transform: translateY(24px);
+    transition: opacity .3s ease, transform .3s ease, visibility .3s;
+  }
+  body.chat .chatview { opacity: 1; visibility: visible; transform: none; }
+
+  .chat-top { flex: none; padding: 0.7rem 0 0.3rem; }
+  .chat-top button {
+    border: 0; background: transparent; padding: 0; cursor: pointer;
+    border-radius: 0.9rem;
+  }
+  .chat-top button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .chat-top img {
+    width: 46px; height: 46px;
+    border-radius: 0.8rem;
+    object-fit: cover; display: block;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .feed {
+    flex: 1; width: 100%;
+    overflow-y: auto;
+    padding: 1rem 1.4rem 1.5rem;
+  }
+  .answer { max-width: 720px; margin: 0 auto; animation: rise .3s ease both; }
+  .bubble-user {
+    display: table;
+    margin: 0 0 1.1rem auto;
+    background: var(--accent); color: #14100A;
+    padding: 8px 16px;
+    border-radius: 18px 18px 4px 18px;
+    font-size: 15px; max-width: 80%;
+    box-shadow: var(--shadow-sm);
+  }
+  .answer h2 {
+    margin: 0.2rem 0 1rem;
+    font-size: 2rem; font-weight: 800; letter-spacing: -0.03em;
+  }
+  .answer .convo { color: var(--fg); font-size: 15.5px; line-height: 1.6; margin: 1.2rem 0 0; }
+  .answer .muted { color: var(--muted-fg); }
+
+  .cat { display: flex; align-items: center; gap: 8px; margin: 1.4rem 0 0.6rem; }
+  .cat svg { width: 18px; height: 18px; stroke: var(--accent); flex: none; }
+  .cat h3 { margin: 0; font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill-d {
+    font-size: 13px; font-weight: 500;
+    background: var(--tag-bg); color: var(--fg);
+    border: 1px solid var(--border);
+    padding: 4px 12px; border-radius: 9999px;
+  }
+  .pill-g {
+    font-size: 13px; font-weight: 500;
+    background: var(--accent-soft); color: var(--fg);
+    padding: 4px 12px; border-radius: 9999px;
+  }
+
+  .gcard {
+    background: var(--card);
+    border-radius: 1.25rem;
+    padding: 1.6rem 1.8rem;
+  }
+  .gcard-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .gcard-head h2 { margin: 0; }
+  .gcard-head .handle { color: var(--muted-fg); font-size: 14px; }
+  .crow {
+    display: flex; align-items: center; gap: 12px;
+    margin: 0.9rem 0; font-size: 16px;
+  }
+  .crow svg { width: 19px; height: 19px; stroke: var(--muted-fg); flex: none; }
+  .crow a { color: var(--link); text-decoration: none; }
+  .crow a:hover { text-decoration: underline; }
+  .linkrow { display: flex; gap: 1.6rem; flex-wrap: wrap; margin-top: 1.1rem; }
+  .linkrow a { color: var(--fg); font-size: 15px; font-weight: 500; text-decoration: none; }
+  .linkrow a:hover { color: var(--link); }
+
+  .proj { padding: 1rem 0 0.4rem; }
+  .proj-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .proj-head h3 { margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
+  .proj-head .date { font-size: 13px; color: var(--muted-fg); }
+  .badge {
+    font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--accent); background: var(--accent-soft);
+    padding: 2px 9px; border-radius: 9999px;
+  }
+  .proj p { margin: 0.5rem 0 0.8rem; color: var(--muted-fg); font-size: 15px; line-height: 1.6; }
+
+  .mapcard {
+    margin-top: 1rem; height: 200px; border-radius: 1rem;
+    border: 1px solid var(--border);
+    background:
+      linear-gradient(var(--border-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-soft) 1px, transparent 1px),
+      var(--card);
+    background-size: 28px 28px, 28px 28px, auto;
+    position: relative;
+  }
+  .mapcard svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .pin-pulse { animation: pinpulse 2.4s ease-out infinite; }
+  @keyframes pinpulse {
+    0% { r: 8; opacity: 0.6; }
+    100% { r: 18; opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .pin-pulse { animation: none; opacity: 0.4; } }
+
+  .chat-dock {
+    flex: none; width: 100%;
+    padding: 0.4rem 1.4rem 0.5rem;
+    display: flex; flex-direction: column; align-items: center; gap: 0.7rem;
+  }
+  .quickrow { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+  .quickrow button {
+    display: inline-flex; align-items: center; gap: 6px;
+    font: inherit; font-size: 0.8rem; font-weight: 500;
+    color: var(--fg);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    padding: 5px 13px;
+    cursor: pointer;
+    transition: all .15s ease-in-out;
+  }
+  .quickrow button:hover { border-color: var(--accent); background: var(--accent-soft); }
+  .quickrow button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .quickrow svg { width: 14px; height: 14px; stroke: var(--accent); }
+  .chat-dock .askwrap { animation: none; }
+
+  .handlebar {
+    border: 0; background: transparent; cursor: pointer;
+    padding: 0.15rem 1rem 0.5rem;
+  }
+  .handlebar span {
+    display: block;
+    width: 2.25rem; height: 0.25rem;
+    border-radius: 9999px;
+    background: var(--handle);
+  }
+  .handlebar:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .drawer-hint {
+    position: fixed; bottom: 0.35rem; left: 50%; z-index: 20;
+    transform: translateX(-50%);
+  }
+
+  /* ============ Info modal ============ */
+  .modal {
+    position: fixed; inset: 0; z-index: 70;
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 24px;
+    background: var(--scrim);
+  }
+  body.modal-open .modal { display: flex; }
+  .modal-card {
+    max-width: 420px; width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+    box-shadow: var(--shadow-md);
+    padding: 24px 26px;
+  }
+  .modal-card h2 { margin: 0 0 8px; font-size: 19px; letter-spacing: -0.01em; }
+  .modal-card p { margin: 8px 0; color: var(--muted-fg); font-size: 14.5px; }
+
+  .thinking::after { content: ""; animation: dots 1.2s steps(4) infinite; }
+  @keyframes dots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+</style>
 </head>
 <body>
-  <div class="layout">
+<canvas id="fluid" aria-hidden="true"></canvas>
 
-    <aside class="sidebar">
-      <div class="sidebar-inner">
-        <div class="profile">
-          <div class="photo-ring">
-            <img src="jorge.jpeg" alt="Jorge Fraile Perez" class="profile-photo" />
-          </div>
-          <h1 class="profile-name">Jorge Fraile Perez</h1>
-          <p class="profile-desc">Computer Science Student<br>at Florida State University</p>
-        </div>
+<main class="stage" id="stage">
+  <p class="hello">Hey, I'm Jorge Fraile 👋</p>
+  <h1 class="headline">Founding Engineer &amp; VP ColorStack</h1>
+  <img class="avatar" src="jorge.jpeg" alt="Jorge Fraile Perez" />
 
-        <nav class="sidebar-nav" role="navigation">
-          <a class="nav-link active" data-section="about"      href="#about">About</a>
-          <a class="nav-link"        data-section="experience" href="#experience">Experience</a>
-          <a class="nav-link"        data-section="projects"   href="#projects">Projects</a>
-          <a class="nav-link"        data-section="leadership" href="#leadership">Leadership</a>
-          <a class="nav-link"        data-section="skills"     href="#skills">Skills</a>
-          <a class="nav-link"        data-section="interests"  href="#interests">Interests</a>
-          <a class="nav-link"        data-section="contact"    href="#contact">Contact</a>
-        </nav>
-      </div>
-    </aside>
+  <form class="askwrap" id="askform">
+    <input id="ask" type="text" placeholder="Ask me anything..." autocomplete="off" aria-label="Ask me anything" />
+    <button class="send" type="submit" aria-label="Send">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+    </button>
+  </form>
 
-    <main class="content" id="site-main" role="main">
-      <!-- Rendered by JavaScript -->
-    </main>
-
+  <div class="quick" role="group" aria-label="Quick questions">
+    <button data-tool="me">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      Me
+    </button>
+    <button data-tool="projects">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      Projects
+    </button>
+    <button data-tool="skills">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+      Skills
+    </button>
+    <button data-tool="contact">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><circle cx="17.5" cy="10.5" r="2.5"/><path d="m21 14-1.7-1.7"/></svg>
+      Contact
+    </button>
+    <button data-tool="location">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+      Location
+    </button>
   </div>
-  <script src="app.js"></script>
+</main>
+
+<button class="drawer-hint handlebar" id="drawerhint" aria-label="Open conversation"><span></span></button>
+
+<section class="chatview" id="chatview" aria-label="Conversation">
+  <div class="chat-top">
+    <button id="backhome" aria-label="Back to home">
+      <img src="jorge.jpeg" alt="Jorge Fraile Perez" />
+    </button>
+  </div>
+  <div class="feed" id="feed" aria-live="polite"></div>
+  <div class="chat-dock">
+    <div class="quickrow" role="group" aria-label="Quick questions">
+      <button data-tool="me"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>Me</button>
+      <button data-tool="projects"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Projects</button>
+      <button data-tool="skills"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>Skills</button>
+      <button data-tool="contact"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><circle cx="17.5" cy="10.5" r="2.5"/><path d="m21 14-1.7-1.7"/></svg>Contact</button>
+      <button data-tool="location"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>Location</button>
+    </div>
+    <form class="askwrap" id="askform2">
+      <input id="ask2" type="text" placeholder="Ask me anything..." autocomplete="off" aria-label="Ask me anything" />
+      <button class="send" type="submit" aria-label="Send">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+      </button>
+    </form>
+    <button class="handlebar" id="closechat" aria-label="Back to home"><span></span></button>
+  </div>
+</section>
+
+<button class="corner-info" id="infobtn" aria-label="About this site">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+</button>
+
+<a class="watermark" href="https://jorgefraile.com">jorgefraile.com</a>
+
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <h2>About this site</h2>
+    <p>This is the redesigned jorgefraile.com: an interactive portfolio where you ask questions instead of scrolling sections. Type anything or use the shortcuts.</p>
+    <p>The background is a real-time GPU fluid simulation. Move your cursor around and it reacts.</p>
+    <p>In this preview the answers are prebuilt. The live version will answer with an AI trained on Jorge's background.</p>
+  </div>
+</div>
+
+
+<script src="fluid.js"></script>
+<script>
+(function () {
+  "use strict";
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    WebGLFluid(document.getElementById("fluid"), {
+      TRIGGER: "hover",
+      IMMEDIATE: true,
+      BLOOM: true,
+      BLOOM_INTENSITY: 0.2,
+      COLORFUL: true,
+      COLOR_UPDATE_SPEED: 2,
+      CURL: 12,
+      SPLAT_RADIUS: 0.5,
+      SPLAT_FORCE: 2000,
+      DENSITY_DISSIPATION: 0.99,
+      VELOCITY_DISSIPATION: 0.99,
+      PRESSURE: 0.8
+    });
+  }
+})();
+</script>
+<script>
+
+(function () {
+  "use strict";
+
+
+  /* ============ Chat UI ============ */
+
+  var layersIcon = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>';
+
+  function pills(cls, items) {
+    return '<div class="pills">' + items.map(function (s) {
+      return '<span class="' + cls + '">' + s + '</span>';
+    }).join('') + '</div>';
+  }
+  function cat(name, items) {
+    return '<div class="cat">' + layersIcon + '<h3>' + name + '</h3></div>' + pills('pill-d', items);
+  }
+
+  var cards = {
+    me: {
+      q: "Who are you?",
+      html: '<p class="muted" style="margin:0.2rem 0 0.6rem">Tallahassee, Florida, United States</p>' +
+        '<p style="margin:0 0 1rem;line-height:1.6">Junior at Florida State University pursuing a B.S. in Computer Science with a minor in Applied Mathematics (Class of 2027, GPA 3.52, Dean\'s List). I focus on cloud infrastructure, DevOps, and the systems behind production AI.</p>' +
+        '<h3 style="margin:0 0 0.4rem;font-size:1.05rem">Currently</h3>' +
+        '<ul style="margin:0 0 1.1rem;padding-left:1.2rem;color:var(--muted-fg);line-height:1.75">' +
+        '<li>Founding Engineer at Drafted Labs, since Feb 2026</li>' +
+        '<li>Co-Founder of Falcon Automatics, since Jan 2025</li>' +
+        '<li>AWS Student Builder Campus Leader, since Mar 2026</li>' +
+        '<li>Undergraduate Systems Administrator, FSU Computer Science, since Jan 2026</li>' +
+        '<li>VP of Administration at ColorStack FSU and Marketing Outreach Chair at ACM, since May 2026</li>' +
+        '</ul>' +
+        pills('pill-g', ["Cloud Infrastructure", "DevOps", "AWS", "Python", "C++", "LLM Evaluation", "Linux"]) +
+        '<p class="convo">I\'m Jorge Fraile Perez. At Drafted Labs I engineer LLM evaluation and data annotation features serving 102,000+ vetted university contributors, and at Falcon Automatics I architect a multi-tenant AI automation platform spanning 6 MCP servers and 8+ autonomous agents. What would you like to know more about?</p>'
+    },
+    projects: {
+      q: "What projects are you most proud of?",
+      html: '<h2>Projects</h2>' +
+        '<div class="proj"><div class="proj-head"><h3>SmartGallery</h3><span class="badge">Featured</span><span class="date">Spring 2026</span></div>' +
+        '<p>Serverless image recognition and management web app built with the AWS Cloud Club at FSU. I coordinated 40 developers across 5 teams to deliver it in 10 weeks with zero production failures. Automated Lambda and Rekognition pipelines eliminated 95% of manual tagging overhead.</p>' +
+        pills('pill-d', ["React", "AWS SAM", "Lambda", "Rekognition", "DynamoDB", "S3", "API Gateway", "Cognito"]) +
+        '<p style="margin:0.7rem 0 0"><a style="color:var(--link);text-decoration:none;font-size:14px;font-weight:500" href="https://github.com/Jfraile05/CloudClub-Spring26-ImageManagementWebApp" target="_blank" rel="noopener">GitHub &#8599;</a></p></div>' +
+        '<div class="proj"><div class="proj-head"><h3>NoleQuest</h3><span class="date">AWS Design Sprint</span></div>' +
+        '<p>AI-powered internship marketplace prototype. Architected the AWS network infrastructure with VPC, routing, and IP management supporting 1,000+ reliable user requests, with a serverless backend and monitoring for zero-disruption delivery.</p>' +
+        pills('pill-d', ["React", "AWS", "Amazon Bedrock", "Claude Sonnet", "Figma"]) +
+        '<p style="margin:0.7rem 0 0"><a style="color:var(--link);text-decoration:none;font-size:14px;font-weight:500" href="https://github.com/Jfraile05/AWS-NoleQuest" target="_blank" rel="noopener">GitHub &#8599;</a></p></div>' +
+        '<div class="proj"><div class="proj-head"><h3>Cloud API</h3></div>' +
+        '<p>Lightweight Python REST API on AWS EC2 with production-style infrastructure: Flask managed through Gunicorn and systemd with health monitoring, automated recovery, and multi-worker concurrency.</p>' +
+        pills('pill-d', ["Python", "Flask", "AWS EC2", "Gunicorn", "systemd", "Linux"]) +
+        '<p style="margin:0.7rem 0 0"><a style="color:var(--link);text-decoration:none;font-size:14px;font-weight:500" href="https://github.com/Jfraile05/cloud-api" target="_blank" rel="noopener">GitHub &#8599;</a></p></div>' +
+        '<div class="proj"><div class="proj-head"><h3>FSU Systems Automation</h3></div>' +
+        '<p>Python automation and observability tooling for FSU\'s 300+ node CS department infrastructure. Cut incident detection time 40%, mean time to repair 30%, and overall downtime 25%.</p>' +
+        pills('pill-d', ["Python", "Linux", "Observability"]) + '</div>' +
+        '<p class="convo">There\'s more on my GitHub, including a C++17 Pokémon battle engine and a C++ banking system. Want the story behind any of these? 😊</p>'
+    },
+    skills: {
+      q: "What are your skills?",
+      html: '<h2>Skills &amp; Expertise</h2>' +
+        cat("Programming", ["Python", "C++", "C#", "Java", "SQL", "Bash", "JavaScript"]) +
+        cat("Cloud & AWS", ["Lambda", "EC2", "S3", "DynamoDB", "API Gateway", "IAM", "VPC", "Serverless", "CI/CD"]) +
+        cat("Systems", ["Linux", "Windows Server", "Ubuntu", "Active Directory", "Distributed Systems", "Multithreading"]) +
+        cat("AI / ML", ["LLM Training & Evaluation", "Model Fine-Tuning", "Prompt Engineering", "Amazon Bedrock", "Claude", "Generative AI"]) +
+        cat("Networking", ["TCP/IP", "DNS", "BGP", "OSPF", "Routing", "Observability"]) +
+        cat("Reliability", ["System Reliability", "Fault Tolerance", "Scalability", "Root Cause Analysis", "Automation"]) +
+        cat("Dev & Data", ["React", "Node.js", "Vite", "MySQL", "SQLite"]) +
+        cat("Tools", ["Git", "GitHub", "Docker", "ServiceNow", "SCCM"])
+    },
+    contact: {
+      q: "How can I reach you?",
+      html: '<div class="gcard">' +
+        '<div class="gcard-head"><h2 style="margin:0">Contact Information</h2><span class="handle">@Jfraile05</span></div>' +
+        '<div class="crow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg><a href="mailto:Jorge@JorgeFraile.com">Jorge@JorgeFraile.com</a></div>' +
+        '<div class="crow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>305-798-5261</span></div>' +
+        '<div class="linkrow">' +
+        '<a href="https://linkedin.com/in/jorge-fraile" target="_blank" rel="noopener">LinkedIn</a>' +
+        '<a href="https://github.com/Jfraile05" target="_blank" rel="noopener">GitHub</a>' +
+        '<a href="resume.pdf" target="_blank" rel="noopener">Resume</a>' +
+        '</div></div>' +
+        '<p class="convo">Always open to new opportunities, whether that\'s internships, research, collaborations, or just a good conversation. Feel free to reach out! 😊</p>'
+    },
+    location: {
+      q: "Where are you based?",
+      html: '<h2>Location</h2>' +
+        '<p style="margin:0;font-size:1.1rem;font-weight:600">Tallahassee, Florida, United States</p>' +
+        '<div class="mapcard"><svg viewBox="0 0 420 320" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of Florida with Tallahassee marked"><path d="M14 64 L240 58 C250 66 256 74 262 86 C272 108 282 140 292 172 C300 200 306 232 308 258 C309 268 304 276 296 276 C286 276 278 262 272 244 C262 212 250 178 234 148 C220 122 206 106 188 100 C168 94 140 92 108 92 C80 92 46 94 24 96 C16 90 13 76 14 64 Z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/><circle class="pin-pulse" cx="168" cy="76" r="9" fill="none" stroke="var(--accent)"/><circle cx="168" cy="76" r="5.5" fill="var(--accent)"/><text x="168" y="42" text-anchor="middle" font-size="16" font-weight="600" fill="var(--fg)" font-family="inherit">Tallahassee</text><text x="308" y="304" text-anchor="end" font-size="13" fill="var(--muted-fg)" font-family="inherit">Florida, United States</text></svg></div>' +
+        '<p class="convo">I\'m based in Tallahassee, Florida, home of Florida State University. Open to remote work and relocation. Have you ever been down here?</p>'
+    }
+  };
+
+  var routes = [
+    [/project|built|build|portfolio|smartgallery|nolequest|work/i, "projects"],
+    [/skill|stack|tech|know|language/i, "skills"],
+    [/contact|reach|email|phone|hire|linkedin|github|resume/i, "contact"],
+    [/where|location|based|live|city/i, "location"],
+    [/./, "me"]
+  ];
+
+  var feed = document.getElementById("feed");
+
+  function esc(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function enterChat() { document.body.classList.add("chat"); }
+  function exitChat() { document.body.classList.remove("chat"); }
+
+  function answer(tool, question) {
+    var def = cards[tool];
+    feed.innerHTML = '<div class="answer"><div class="bubble-user">' + esc(question || def.q) + "</div>" + def.html + "</div>";
+    enterChat();
+    feed.scrollTop = 0;
+  }
+
+  /* ============ Live chat (OpenRouter via /api/chat) ============ */
+
+  var history = [];
+
+  function askLLM(text) {
+    history.push({ role: "user", content: text });
+    if (history.length > 8) history = history.slice(-8);
+    feed.innerHTML = '<div class="answer"><div class="bubble-user">' + esc(text) +
+      '</div><p class="convo" id="llm-reply"><span class="thinking">Thinking</span></p></div>';
+    enterChat();
+    feed.scrollTop = 0;
+    var target = document.getElementById("llm-reply");
+
+    fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: history })
+    }).then(function (r) {
+      return r.json().then(function (j) { return { ok: r.ok, j: j }; });
+    }).then(function (res) {
+      if (!res.ok || !res.j.reply) throw new Error(res.j.error || "no reply");
+      var reply = res.j.reply.replace(/\*\*(.+?)\*\*/g, "$1").replace(/\*(.+?)\*/g, "$1");
+      history.push({ role: "assistant", content: reply });
+      typeOut(target, reply);
+    }).catch(function () {
+      var tool = routeFor(text);
+      var def = cards[tool];
+      feed.innerHTML = '<div class="answer"><div class="bubble-user">' + esc(text) + "</div>" + def.html + "</div>";
+      feed.scrollTop = 0;
+    });
+  }
+
+  function typeOut(el, text) {
+    var i = 0;
+    el.textContent = "";
+    var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) { el.textContent = text; return; }
+    (function tick() {
+      i = Math.min(i + 3, text.length);
+      el.textContent = text.slice(0, i);
+      if (i < text.length) requestAnimationFrame(tick);
+    })();
+  }
+
+  function routeFor(text) {
+    for (var i = 0; i < routes.length; i++) {
+      if (routes[i][0].test(text)) return routes[i][1];
+    }
+    return "me";
+  }
+
+  function handleSubmit(inputEl) {
+    return function (e) {
+      e.preventDefault();
+      var text = inputEl.value.trim();
+      if (!text) return;
+      askLLM(text);
+      inputEl.value = "";
+    };
+  }
+
+  document.getElementById("askform").addEventListener("submit", handleSubmit(document.getElementById("ask")));
+  document.getElementById("askform2").addEventListener("submit", handleSubmit(document.getElementById("ask2")));
+
+  document.querySelectorAll("[data-tool]").forEach(function (btn) {
+    btn.addEventListener("click", function () { answer(btn.dataset.tool); });
+  });
+
+  document.getElementById("drawerhint").addEventListener("click", function () { answer("me"); });
+  document.getElementById("closechat").addEventListener("click", exitChat);
+  document.getElementById("backhome").addEventListener("click", exitChat);
+
+  var modal = document.getElementById("modal");
+  document.getElementById("infobtn").addEventListener("click", function () {
+    document.body.classList.add("modal-open");
+  });
+  modal.addEventListener("click", function (e) {
+    if (e.target === modal) document.body.classList.remove("modal-open");
+  });
+  window.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      if (document.body.classList.contains("modal-open")) document.body.classList.remove("modal-open");
+      else exitChat();
+    }
+  });
+})();
+
+</script>
 </body>
 </html>
