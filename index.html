@@ -364,15 +364,42 @@
   }
   body.modal-open .modal { display: flex; }
   .modal-card {
-    max-width: 420px; width: 100%;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 1.25rem;
-    box-shadow: var(--shadow-md);
-    padding: 24px 26px;
+    max-width: 560px; width: 100%;
+    background: #FFFFFF;
+    border-radius: 1.1rem;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+    padding: 2.5rem 2.6rem 2.3rem;
+    position: relative;
+    text-align: left;
   }
-  .modal-card h2 { margin: 0 0 8px; font-size: 19px; letter-spacing: -0.01em; }
-  .modal-card p { margin: 8px 0; color: var(--muted-fg); font-size: 14.5px; }
+  .modal-card h2 {
+    margin: 0 0 1.1rem; color: #000000;
+    font-size: 1.7rem; font-weight: 700; letter-spacing: -0.02em;
+  }
+  .modal-card p {
+    margin: 0 0 1.7rem; color: #6B7280;
+    font-size: 1.08rem; line-height: 1.65;
+  }
+  .modal-x {
+    position: absolute; top: 1.6rem; right: 1.6rem;
+    width: 2.3rem; height: 2.3rem;
+    border-radius: 50%; border: 0;
+    background: #000000; color: #FFFFFF;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .modal-x svg { width: 16px; height: 16px; }
+  .modal-x:focus-visible, .modal-cta:focus-visible { outline: 2px solid #C7A24C; outline-offset: 2px; }
+  .modal-cta {
+    display: block; margin: 0 auto;
+    background: #C7A24C; color: #FFFFFF;
+    border: 0; border-radius: 9999px;
+    padding: 0.75rem 2rem;
+    font: inherit; font-size: 1.05rem; font-weight: 600;
+    cursor: pointer;
+    transition: filter .15s ease;
+  }
+  .modal-cta:hover { filter: brightness(1.07); }
 
   .thinking::after { content: ""; animation: dots 1.2s steps(4) infinite; }
   @keyframes dots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
@@ -452,10 +479,12 @@
 
 <div class="modal" id="modal">
   <div class="modal-card">
-    <h2>About this site</h2>
-    <p>This is the redesigned jorgefraile.com: an interactive portfolio where you ask questions instead of scrolling sections. Type anything or use the shortcuts.</p>
-    <p>The background is a real-time GPU fluid simulation. Move your cursor around and it reacts.</p>
-    <p>Answers come from an AI that knows Jorge's background, projects, and experience. The shortcut buttons give instant summaries.</p>
+    <button class="modal-x" id="modalclose" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h2>Welcome to AI Portfolio</h2>
+    <p>This is an AI-powered portfolio that adapts to your questions. Ask me anything about my work, skills, or experience!</p>
+    <button class="modal-cta" id="startchat">Start Chatting</button>
   </div>
 </div>
 
@@ -712,6 +741,14 @@ window.initGlobe = function () {
   });
   modal.addEventListener("click", function (e) {
     if (e.target === modal) document.body.classList.remove("modal-open");
+  });
+  document.getElementById("modalclose").addEventListener("click", function () {
+    document.body.classList.remove("modal-open");
+  });
+  document.getElementById("startchat").addEventListener("click", function () {
+    document.body.classList.remove("modal-open");
+    var input = document.body.classList.contains("chat") ? document.getElementById("ask2") : document.getElementById("ask");
+    input.focus();
   });
   window.addEventListener("keydown", function (e) {
     if (e.key === "Escape") {
