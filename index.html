@@ -92,10 +92,16 @@
   .avatar {
     width: clamp(150px, 25vh, 240px); height: clamp(150px, 25vh, 240px);
     border-radius: 2rem;
-    object-fit: cover;
+    overflow: hidden;
     box-shadow: var(--shadow-img);
     margin: 2.5rem 0 1.4rem;
     animation: rise .5s .16s ease both;
+  }
+  .avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    transform: scale(1.18);
+    transform-origin: 50% 30%;
   }
   @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
@@ -291,7 +297,7 @@
   .proj p { margin: 0.5rem 0 0.8rem; color: var(--muted-fg); font-size: 15px; line-height: 1.6; }
 
   .mapcard {
-    margin-top: 1rem; height: 200px; border-radius: 1rem;
+    margin-top: 1rem; height: 230px; border-radius: 1rem; overflow: hidden;
     border: 1px solid var(--border);
     background:
       linear-gradient(var(--border-soft) 1px, transparent 1px),
@@ -300,7 +306,7 @@
     background-size: 28px 28px, 28px 28px, auto;
     position: relative;
   }
-  .mapcard svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .mapcard iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .pin-pulse { animation: pinpulse 2.4s ease-out infinite; }
   @keyframes pinpulse {
     0% { r: 8; opacity: 0.6; }
@@ -377,7 +383,7 @@
 <main class="stage" id="stage">
   <p class="hello">Hey, I'm Jorge Fraile 👋</p>
   <h1 class="headline">Founding Engineer &amp; VP ColorStack</h1>
-  <img class="avatar" src="jorge.jpeg" alt="Jorge Fraile Perez" />
+  <div class="avatar"><img src="jorge.jpeg" alt="Jorge Fraile Perez" /></div>
 
   <form class="askwrap" id="askform">
     <input id="ask" type="text" placeholder="Ask me anything..." autocomplete="off" aria-label="Ask me anything" />
@@ -559,7 +565,7 @@
       q: "Where are you based?",
       html: '<h2>Location</h2>' +
         '<p style="margin:0;font-size:1.1rem;font-weight:600">Tallahassee, Florida, United States</p>' +
-        '<div class="mapcard"><svg viewBox="0 0 420 320" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of Florida with Tallahassee marked"><path d="M14 64 L240 58 C250 66 256 74 262 86 C272 108 282 140 292 172 C300 200 306 232 308 258 C309 268 304 276 296 276 C286 276 278 262 272 244 C262 212 250 178 234 148 C220 122 206 106 188 100 C168 94 140 92 108 92 C80 92 46 94 24 96 C16 90 13 76 14 64 Z" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/><circle class="pin-pulse" cx="168" cy="76" r="9" fill="none" stroke="var(--accent)"/><circle cx="168" cy="76" r="5.5" fill="var(--accent)"/><text x="168" y="42" text-anchor="middle" font-size="16" font-weight="600" fill="var(--fg)" font-family="inherit">Tallahassee</text><text x="308" y="304" text-anchor="end" font-size="13" fill="var(--muted-fg)" font-family="inherit">Florida, United States</text></svg></div>' +
+        '<div class="mapcard"><iframe title="Map of Tallahassee, Florida" src="https://www.openstreetmap.org/export/embed.html?bbox=-84.60%2C30.28%2C-83.96%2C30.60&amp;layer=mapnik&amp;marker=30.4383%2C-84.2807" loading="lazy"></iframe></div>' +
         '<p class="convo">I\'m based in Tallahassee, Florida, home of Florida State University. Open to remote work and relocation. Have you ever been down here?</p>'
     }
   };
