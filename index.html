@@ -357,6 +357,47 @@
   .crow a { color: var(--link); text-decoration: none; }
   .crow a:hover { text-decoration: underline; }
   .linkrow { display: flex; gap: 1.6rem; flex-wrap: wrap; margin-top: 1.1rem; }
+  .contact-form { margin-top: 1.5rem; padding-top: 1.3rem; border-top: 1px solid var(--border); }
+  .contact-form h3 { margin: 0 0 0.9rem; font-size: 1.05rem; font-weight: 700; }
+  .cf-row { display: flex; gap: 10px; }
+  .cf-row .cf-field { flex: 1; }
+  .cf-field { margin-bottom: 10px; min-width: 0; }
+  .cf-field label {
+    display: block; margin-bottom: 5px;
+    font-size: 12px; font-weight: 600; letter-spacing: .04em;
+    color: var(--muted-fg); text-transform: uppercase;
+  }
+  .cf-field input, .cf-field textarea {
+    width: 100%;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--fg);
+    font: inherit; font-size: 15px;
+    padding: 10px 12px;
+    outline: none;
+  }
+  .cf-field input::placeholder, .cf-field textarea::placeholder { color: var(--placeholder); }
+  .cf-field input:focus-visible, .cf-field textarea:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 1px;
+  }
+  .cf-field textarea { min-height: 96px; resize: vertical; }
+  .cf-send {
+    background: var(--accent); color: #14100A;
+    border: 0; border-radius: 9999px;
+    padding: 0.6rem 1.6rem;
+    font: inherit; font-size: 0.95rem; font-weight: 600;
+    cursor: pointer;
+    transition: filter .15s ease, transform .12s ease;
+  }
+  .cf-send:hover { filter: brightness(1.08); }
+  .cf-send:active { transform: scale(.96); }
+  .cf-send:disabled { opacity: .6; cursor: default; }
+  .cf-send:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .cf-status { margin: 0.7rem 0 0; font-size: 14px; display: none; }
+  .cf-status.ok { color: #8FCF9B; display: block; }
+  .cf-status.err { color: #E08A8A; display: block; }
+  @media (max-width: 720px) { .cf-row { flex-direction: column; gap: 0; } }
   .linkrow a { color: var(--fg); font-size: 15px; font-weight: 500; text-decoration: none; }
   .linkrow a:hover { color: var(--link); }
 
@@ -834,7 +875,18 @@ window.initGlobe = function () {
         '<a href="https://linkedin.com/in/jorge-fraile" target="_blank" rel="noopener">LinkedIn</a>' +
         '<a href="https://github.com/Jfraile05" target="_blank" rel="noopener">GitHub</a>' +
         '<a href="resume.pdf" target="_blank" rel="noopener">Resume</a>' +
-        '</div></div>' +
+        '</div>' +
+        '<form class="contact-form" novalidate>' +
+        '<h3>Send me a message</h3>' +
+        '<div class="cf-row">' +
+        '<div class="cf-field"><label>Name</label><input type="text" name="name" placeholder="Your name" autocomplete="name" required /></div>' +
+        '<div class="cf-field"><label>Email</label><input type="email" name="email" placeholder="your@email.com" autocomplete="email" required /></div>' +
+        '</div>' +
+        '<div class="cf-field"><label>Message</label><textarea name="message" placeholder="What\'s on your mind?" required></textarea></div>' +
+        '<button class="cf-send" type="submit">Send Message</button>' +
+        '<p class="cf-status"></p>' +
+        '</form>' +
+        '</div>' +
         '<p class="convo">Always open to new opportunities, whether that\'s internships, research, collaborations, or just a good conversation. Feel free to reach out! 😊</p>'
     },
     location: {
@@ -965,6 +1017,45 @@ window.initGlobe = function () {
       inputEl.value = "";
     };
   }
+
+  feed.addEventListener("submit", function (e) {
+    var form = e.target.closest && e.target.closest(".contact-form");
+    if (!form) return;
+    e.preventDefault();
+    var name = form.querySelector('[name="name"]').value.trim();
+    var email = form.querySelector('[name="email"]').value.trim();
+    var message = form.querySelector('[name="message"]').value.trim();
+    var btn = form.querySelector(".cf-send");
+    var status = form.querySelector(".cf-status");
+    if (!name || !email || !message) {
+      status.textContent = "Please fill in all three fields.";
+      status.className = "cf-status err";
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+    status.className = "cf-status";
+    var fd = new FormData();
+    fd.append("name", name);
+    fd.append("email", email);
+    fd.append("message", message);
+    fetch("https://formspree.io/f/xlgovanz", {
+      method: "POST",
+      headers: { Accept: "application/json" },
+      body: fd
+    }).then(function (r) {
+      if (!r.ok) throw new Error("send failed");
+      form.reset();
+      btn.style.display = "none";
+      status.textContent = "Sent! I'll be in touch soon 😊";
+      status.className = "cf-status ok";
+    }).catch(function () {
+      btn.disabled = false;
+      btn.textContent = "Send Message";
+      status.textContent = "Something went wrong. Email me directly at Jorge@JorgeFraile.com";
+      status.className = "cf-status err";
+    });
+  });
 
   document.getElementById("askform").addEventListener("submit", handleSubmit(document.getElementById("ask")));
   document.getElementById("askform2").addEventListener("submit", handleSubmit(document.getElementById("ask2")));
