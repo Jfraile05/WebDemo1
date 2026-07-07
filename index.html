@@ -20,8 +20,6 @@
     --accent: #D4B886;
     --accent-soft: #2B2517;
     --tag-bg: #26262C;
-    --wm-bg: #F4F4F5;
-    --wm-fg: #111827;
     --handle: #3F3F46;
     --link: #D4B886;
     --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.45);
@@ -191,17 +189,6 @@
   .corner-info:hover { opacity: 1; }
   .corner-info:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .corner-info svg { width: 22px; height: 22px; }
-
-  .watermark {
-    position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 60;
-    background: var(--wm-bg);
-    color: var(--wm-fg);
-    font-size: 0.75rem; font-weight: 500;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    text-decoration: none;
-    box-shadow: var(--shadow-sm);
-  }
 
   /* ============ Chat view ============ */
   .chatview {
@@ -475,7 +462,6 @@
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
 </button>
 
-<a class="watermark" href="https://jorgefraile.com">jorgefraile.com</a>
 
 <div class="modal" id="modal">
   <div class="modal-card">
