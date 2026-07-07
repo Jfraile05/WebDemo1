@@ -74,7 +74,22 @@
     margin: 0 0 0.4rem;
     text-align: center;
     text-shadow: 0 1px 12px rgba(0, 0, 0, 0.8);
-    animation: rise .5s ease both;
+    animation: blurIn .55s ease both;
+  }
+  .hello .wave {
+    display: inline-block;
+    animation: wave 1.1s ease .9s both;
+    transform-origin: 70% 80%;
+  }
+  @keyframes blurIn {
+    from { opacity: 0; filter: blur(10px); transform: translateY(10px); }
+    to { opacity: 1; filter: blur(0); transform: none; }
+  }
+  @keyframes wave {
+    0%, 100% { transform: rotate(0); }
+    20% { transform: rotate(22deg); }
+    45% { transform: rotate(-10deg); }
+    70% { transform: rotate(14deg); }
   }
   h1.headline {
     margin: 0;
@@ -85,15 +100,37 @@
     text-align: center;
     text-wrap: balance;
     text-shadow: 0 2px 24px rgba(0, 0, 0, 0.85);
-    animation: rise .5s .08s ease both;
   }
+  .headline .w { display: inline-block; overflow: hidden; vertical-align: bottom; }
+  .headline .wi {
+    display: inline-block;
+    transform: translateY(115%);
+    animation: wordUp .65s cubic-bezier(.22, .9, .3, 1) both;
+  }
+  .headline .w:nth-child(1) .wi { animation-delay: .22s; }
+  .headline .w:nth-child(2) .wi { animation-delay: .29s; }
+  .headline .w:nth-child(3) .wi { animation-delay: .36s; }
+  .headline .w:nth-child(4) .wi { animation-delay: .43s; }
+  .headline .w:nth-child(5) .wi { animation-delay: .50s; }
+  .headline .w:nth-child(6) .wi { animation-delay: .57s; }
+  .headline .w:nth-child(7) .wi { animation-delay: .64s; }
+  @keyframes wordUp { to { transform: translateY(0); } }
   .avatar {
     width: clamp(160px, 29vh, 240px); height: clamp(160px, 29vh, 240px);
     border-radius: 2rem;
     overflow: hidden;
     box-shadow: var(--shadow-img);
     margin: 2.75rem 0 1.5rem;
-    animation: rise .5s .16s ease both;
+    animation: avatarIn .6s cubic-bezier(.34, 1.4, .5, 1) .5s both,
+               ripple 1s ease 1.15s both;
+  }
+  @keyframes avatarIn {
+    from { opacity: 0; transform: scale(.82); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes ripple {
+    from { box-shadow: 0 0 0 0 rgba(212, 184, 134, .5), var(--shadow-img); }
+    to { box-shadow: 0 0 0 34px rgba(212, 184, 134, 0), var(--shadow-img); }
   }
   .avatar img {
     width: 100%; height: 100%;
@@ -107,7 +144,12 @@
     position: relative;
     max-width: 500px; width: 100%;
     margin: 0 auto;
-    animation: rise .5s .24s ease both;
+    animation: barReveal .6s cubic-bezier(.25, .8, .3, 1) .85s both;
+  }
+  @keyframes barReveal {
+    from { opacity: 0; clip-path: inset(0 44% 0 44% round 9999px); }
+    35% { opacity: 1; }
+    to { opacity: 1; clip-path: inset(0 0 0 0 round 9999px); }
   }
   .askwrap input {
     width: 100%;
@@ -135,15 +177,30 @@
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     transition: transform .2s ease-in-out;
+    animation: sendPop .5s cubic-bezier(.34, 1.56, .64, 1) 1.3s both;
+  }
+  @keyframes sendPop {
+    from { opacity: 0; transform: translateY(-50%) scale(0); }
+    to { opacity: 1; transform: translateY(-50%) scale(1); }
   }
   .askwrap .send:hover { transform: translateY(-50%) scale(1.07); }
+  .askwrap .send:active { transform: translateY(-50%) scale(.92); }
   .askwrap .send:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   .quick {
     display: flex; gap: 13px;
     justify-content: center; flex-wrap: wrap;
     margin-top: 1.4rem;
-    animation: rise .5s .3s ease both;
+  }
+  .quick button { animation: cardIn .55s cubic-bezier(.34, 1.56, .64, 1) both; }
+  .quick button:nth-child(1) { animation-delay: 1.15s; }
+  .quick button:nth-child(2) { animation-delay: 1.23s; }
+  .quick button:nth-child(3) { animation-delay: 1.31s; }
+  .quick button:nth-child(4) { animation-delay: 1.39s; }
+  .quick button:nth-child(5) { animation-delay: 1.47s; }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(20px) scale(.88); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
   }
   .quick button {
     width: 126px; height: 94px;
@@ -162,6 +219,7 @@
     transition: all 0.2s ease-in-out;
   }
   .quick button:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--border); }
+  .quick button:active { transform: translateY(0) scale(.95); }
   .quick button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .quick svg { width: 18px; height: 18px; stroke: var(--accent); }
 
@@ -174,7 +232,8 @@
     .quick button { width: 112px; height: 84px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .hello, .avatar, h1.headline, .askwrap, .quick { animation: none !important; }
+    .hello, .hello .wave, .avatar, .headline .wi, .askwrap, .askwrap .send, .quick button { animation: none !important; }
+    .headline .wi { transform: none; }
     .stage, .chatview { transition: none !important; }
   }
 
@@ -325,6 +384,7 @@
   .quickrow button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .quickrow svg { width: 14px; height: 14px; stroke: var(--accent); }
   .chat-dock .askwrap { animation: none; }
+  .chat-dock .askwrap .send { animation: none; }
 
   .handlebar {
     border: 0; background: transparent; cursor: pointer;
@@ -398,8 +458,8 @@
 <canvas id="fluid" aria-hidden="true"></canvas>
 
 <main class="stage" id="stage">
-  <p class="hello">Hey, I'm Jorge 👋</p>
-  <h1 class="headline">Founding Engineer &amp; CS Student at FSU</h1>
+  <p class="hello">Hey, I'm Jorge <span class="wave">👋</span></p>
+  <h1 class="headline"><span class="w"><span class="wi">Founding</span></span> <span class="w"><span class="wi">Engineer</span></span> <span class="w"><span class="wi">&amp;</span></span> <span class="w"><span class="wi">CS</span></span> <span class="w"><span class="wi">Student</span></span> <span class="w"><span class="wi">at</span></span> <span class="w"><span class="wi">FSU</span></span></h1>
   <div class="avatar"><img src="jorge.jpeg" alt="Jorge Fraile Perez" /></div>
 
   <form class="askwrap" id="askform">
@@ -717,6 +777,10 @@ window.initGlobe = function () {
 
   document.querySelectorAll("[data-tool]").forEach(function (btn) {
     btn.addEventListener("click", function () { answer(btn.dataset.tool); });
+  });
+
+  document.querySelectorAll(".quick button, .askwrap .send").forEach(function (el) {
+    el.addEventListener("animationend", function () { el.style.animation = "none"; }, { once: true });
   });
 
   document.getElementById("drawerhint").addEventListener("click", function () { answer("me"); });
