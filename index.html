@@ -297,16 +297,17 @@
   .proj p { margin: 0.5rem 0 0.8rem; color: var(--muted-fg); font-size: 15px; line-height: 1.6; }
 
   .mapcard {
-    margin-top: 1rem; height: 230px; border-radius: 1rem; overflow: hidden;
+    margin-top: 1rem; height: 290px; border-radius: 1rem; overflow: hidden;
     border: 1px solid var(--border);
-    background:
-      linear-gradient(var(--border-soft) 1px, transparent 1px),
-      linear-gradient(90deg, var(--border-soft) 1px, transparent 1px),
-      var(--card);
-    background-size: 28px 28px, 28px 28px, auto;
+    background: var(--card);
     position: relative;
   }
-  .mapcard iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .mapcard { display: flex; align-items: center; justify-content: center; }
+  .mapcard canvas { width: 260px; height: 260px; max-width: 90%; }
+  .mapcard .geo {
+    position: absolute; left: 14px; bottom: 10px;
+    font-size: 12.5px; color: var(--muted-fg); letter-spacing: .02em;
+  }
   .pin-pulse { animation: pinpulse 2.4s ease-out infinite; }
   @keyframes pinpulse {
     0% { r: 8; opacity: 0.6; }
@@ -382,7 +383,7 @@
 
 <main class="stage" id="stage">
   <p class="hello">Hey, I'm Jorge Fraile 👋</p>
-  <h1 class="headline">Founding Engineer, Systems Admin &amp; Senior CS Student at FSU</h1>
+  <h1 class="headline">Founding Engineer &amp; CS Student at FSU</h1>
   <div class="avatar"><img src="jorge.jpeg" alt="Jorge Fraile Perez" /></div>
 
   <form class="askwrap" id="askform">
@@ -459,6 +460,39 @@
 </div>
 
 
+<script type="module">
+import createGlobe from "./globe.js";
+let globe = null;
+window.initGlobe = function () {
+  if (globe) { globe.destroy(); globe = null; }
+  const canvas = document.getElementById("globe");
+  if (!canvas) return;
+  const side = Math.min(260, canvas.parentElement.clientWidth * 0.9);
+  canvas.style.width = side + "px";
+  canvas.style.height = side + "px";
+  // phi that faces Tallahassee (long -84.28): PI - long in radians
+  let phi = Math.PI - (-84.2807 * Math.PI) / 180 + 1.1;
+  globe = createGlobe(canvas, {
+    devicePixelRatio: 2,
+    width: side * 2,
+    height: side * 2,
+    phi: phi,
+    theta: 0.42,
+    dark: 1,
+    diffuse: 1.2,
+    mapSamples: 20000,
+    mapBrightness: 8,
+    baseColor: [0.36, 0.33, 0.27],
+    markerColor: [0.9, 0.76, 0.5],
+    glowColor: [0.35, 0.3, 0.22],
+    markers: [{ location: [30.4383, -84.2807], size: 0.1 }],
+    onRender: (state) => {
+      state.phi = phi;
+      phi += 0.0012;
+    }
+  });
+};
+</script>
 <script src="fluid.js"></script>
 <script>
 (function () {
@@ -565,7 +599,7 @@
       q: "Where are you based?",
       html: '<h2>Location</h2>' +
         '<p style="margin:0;font-size:1.1rem;font-weight:600">Tallahassee, Florida, United States</p>' +
-        '<div class="mapcard"><iframe title="Map of Tallahassee, Florida" src="https://www.openstreetmap.org/export/embed.html?bbox=-84.60%2C30.28%2C-83.96%2C30.60&amp;layer=mapnik&amp;marker=30.4383%2C-84.2807" loading="lazy"></iframe></div>' +
+        '<div class="mapcard"><canvas id="globe"></canvas><span class="geo">Tallahassee · 30.44° N, 84.28° W</span></div>' +
         '<p class="convo">I\'m based in Tallahassee, Florida, home of Florida State University. Open to remote work and relocation. Have you ever been down here?</p>'
     }
   };
@@ -592,6 +626,7 @@
     feed.innerHTML = '<div class="answer"><div class="bubble-user">' + esc(question || def.q) + "</div>" + def.html + "</div>";
     enterChat();
     feed.scrollTop = 0;
+    if (tool === "location" && window.initGlobe) window.initGlobe();
   }
 
   /* ============ Live chat (OpenRouter via /api/chat) ============ */
