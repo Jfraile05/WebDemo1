@@ -62,7 +62,7 @@
     width: 100vw; height: 100dvh;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    padding: 24px;
+    padding: 24px 24px calc(24px + 6vh);
     pointer-events: none;
     transition: opacity .3s ease;
   }
@@ -70,15 +70,15 @@
   body.chat .stage { opacity: 0; visibility: hidden; pointer-events: none; }
 
   .hello {
-    font-size: 1.35rem; font-weight: 700;
-    margin: 0 0 0.55rem;
+    font-size: 1.45rem; font-weight: 700;
+    margin: 0 0 0.4rem;
     text-align: center;
     text-shadow: 0 1px 12px rgba(0, 0, 0, 0.8);
     animation: rise .5s ease both;
   }
   h1.headline {
     margin: 0;
-    font-size: clamp(2.1rem, 6.8vw, 4.5rem);
+    font-size: clamp(2.1rem, 6vw, 3.7rem);
     font-weight: 900;
     letter-spacing: -0.04em;
     line-height: 1.1;
@@ -88,11 +88,11 @@
     animation: rise .5s .08s ease both;
   }
   .avatar {
-    width: clamp(150px, 25vh, 240px); height: clamp(150px, 25vh, 240px);
+    width: clamp(160px, 29vh, 240px); height: clamp(160px, 29vh, 240px);
     border-radius: 2rem;
     overflow: hidden;
     box-shadow: var(--shadow-img);
-    margin: 2.5rem 0 1.4rem;
+    margin: 2.75rem 0 1.5rem;
     animation: rise .5s .16s ease both;
   }
   .avatar img {
@@ -140,9 +140,9 @@
   .askwrap .send:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   .quick {
-    display: flex; gap: 14px;
+    display: flex; gap: 13px;
     justify-content: center; flex-wrap: wrap;
-    margin-top: 1.5rem;
+    margin-top: 1.4rem;
     animation: rise .5s .3s ease both;
   }
   .quick button {
@@ -163,7 +163,7 @@
   }
   .quick button:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--border); }
   .quick button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .quick svg { width: 20px; height: 20px; stroke: var(--accent); }
+  .quick svg { width: 18px; height: 18px; stroke: var(--accent); }
 
   @media (max-height: 760px) {
     .avatar { margin: 1.1rem 0; }
@@ -178,8 +178,8 @@
 
   /* ============ Corner elements ============ */
   .corner-info {
-    position: fixed; top: 1.25rem; right: 1.5rem; z-index: 60;
-    width: 2.2rem; height: 2.2rem;
+    position: fixed; top: 2rem; right: 2.6rem; z-index: 60;
+    width: 2.4rem; height: 2.4rem;
     border-radius: 50%;
     border: 0; background: transparent;
     color: var(--fg);
@@ -188,7 +188,7 @@
   }
   .corner-info:hover { opacity: 1; }
   .corner-info:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .corner-info svg { width: 22px; height: 22px; }
+  .corner-info svg { width: 24px; height: 24px; }
 
   /* ============ Chat view ============ */
   .chatview {
@@ -330,14 +330,14 @@
   }
   .handlebar span {
     display: block;
-    width: 2.25rem; height: 0.25rem;
+    width: 2.5rem; height: 0.25rem;
     border-radius: 9999px;
     background: var(--handle);
   }
   .handlebar:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   .drawer-hint {
-    position: fixed; bottom: 0.35rem; left: 50%; z-index: 20;
+    position: fixed; bottom: 0.85rem; left: 50%; z-index: 20;
     transform: translateX(-50%);
   }
 
@@ -403,7 +403,7 @@
   <form class="askwrap" id="askform">
     <input id="ask" type="text" placeholder="Ask me anything..." autocomplete="off" aria-label="Ask me anything" />
     <button class="send" type="submit" aria-label="Send">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
     </button>
   </form>
 
