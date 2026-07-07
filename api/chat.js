@@ -39,14 +39,49 @@ Interests: cooking, finances and trading, gaming, hiking, sci-fi films, skateboa
 - Never fabricate experience, dates, or numbers. Never use em dashes.
 - If someone asks about hiring or opportunities, be enthusiastic and point to your email and LinkedIn.`;
 
+// Rate limiting: in-memory sliding windows. Instances are reused under
+// Fluid Compute, so this meaningfully caps abuse without extra infra.
+// The global budget bounds total spend even against distributed callers.
+const IP_WINDOW_MS = 60 * 1000;
+const IP_MAX = 8;
+const GLOBAL_WINDOW_MS = 10 * 60 * 1000;
+const GLOBAL_MAX = 150;
+const ipHits = new Map();
+let globalHits = [];
+
+function rateLimited(ip) {
+  const now = Date.now();
+  globalHits = globalHits.filter(t => now - t < GLOBAL_WINDOW_MS);
+  if (globalHits.length >= GLOBAL_MAX) return true;
+  const hits = (ipHits.get(ip) || []).filter(t => now - t < IP_WINDOW_MS);
+  if (hits.length >= IP_MAX) { ipHits.set(ip, hits); return true; }
+  hits.push(now);
+  ipHits.set(ip, hits);
+  globalHits.push(now);
+  if (ipHits.size > 5000) ipHits.clear();
+  return false;
+}
+
+const ALLOWED_ORIGIN = /^https:\/\/((www\.)?jorgefraile\.com|[a-z0-9-]+\.vercel\.app)$/;
+
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const origin = req.headers.origin;
+  if (origin && !ALLOWED_ORIGIN.test(origin)) {
+    return res.status(403).json({ error: 'Forbidden origin' });
+  }
+
+  const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
+  if (rateLimited(ip)) {
+    return res.status(429).json({ error: 'rate_limited' });
+  }
+
   const key = process.env.OPENROUTER_API_KEY;
   if (!key) {
-    return res.status(500).json({ error: 'Server is missing OPENROUTER_API_KEY' });
+    return res.status(500).json({ error: 'Chat is not configured' });
   }
 
   let messages = (req.body && req.body.messages) || [];
@@ -78,8 +113,8 @@ module.exports = async (req, res) => {
     });
 
     if (!upstream.ok) {
-      const detail = (await upstream.text()).slice(0, 300);
-      return res.status(502).json({ error: 'Upstream error', status: upstream.status, detail });
+      console.error('openrouter error', upstream.status, (await upstream.text()).slice(0, 300));
+      return res.status(502).json({ error: 'Upstream error' });
     }
 
     const data = await upstream.json();
@@ -89,6 +124,7 @@ module.exports = async (req, res) => {
     }
     return res.status(200).json({ reply });
   } catch (err) {
-    return res.status(502).json({ error: 'Request failed', detail: String(err).slice(0, 200) });
+    console.error('chat handler error', String(err).slice(0, 200));
+    return res.status(502).json({ error: 'Request failed' });
   }
 };

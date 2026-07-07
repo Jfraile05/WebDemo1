@@ -612,8 +612,13 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ messages: history })
     }).then(function (r) {
-      return r.json().then(function (j) { return { ok: r.ok, j: j }; });
+      return r.json().then(function (j) { return { ok: r.ok, status: r.status, j: j }; });
     }).then(function (res) {
+      if (res.status === 429) {
+        typeOut(target, "You're asking faster than I can keep up 😅 Give it a minute and ask again, or use the shortcut buttons below.");
+        history.pop();
+        return;
+      }
       if (!res.ok || !res.j.reply) throw new Error(res.j.error || "no reply");
       var reply = res.j.reply.replace(/\*\*(.+?)\*\*/g, "$1").replace(/\*(.+?)\*/g, "$1");
       history.push({ role: "assistant", content: reply });
