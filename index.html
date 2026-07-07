@@ -307,7 +307,7 @@
     overflow-y: auto;
     padding: 1rem 1.4rem 1.5rem;
   }
-  .answer { max-width: 720px; margin: 0 auto; animation: rise .3s ease both; }
+  .answer { max-width: 720px; margin: 0 auto 1.8rem; animation: rise .3s ease both; }
   .bubble-user {
     display: table;
     margin: 0 0 1.1rem auto;
@@ -846,6 +846,14 @@ window.initGlobe = function () {
     }
   };
 
+  var cardText = {
+    me: "I'm Jorge Fraile Perez, a junior at FSU studying Computer Science and Applied Mathematics (Class of 2027, GPA 3.52, Dean's List, HSF Scholar, AWS Certified Cloud Practitioner), based in Tallahassee, Florida. Currently: Founding Engineer at Drafted (since Mar 2026), Co-Founder of Falcon Automatics (since Jan 2025), AWS Student Builder Campus Leader (since Feb 2026), Undergraduate Systems Administrator at FSU CS (since Jan 2026), VP of Administration at ColorStack FSU and Marketing Outreach Chair at ACM.",
+    projects: "My main projects: SmartGallery, a serverless image recognition app built with 40 developers across 5 teams in 10 weeks with zero production failures (React, AWS SAM, Lambda, Rekognition, DynamoDB, S3, API Gateway, Cognito). NoleQuest, an AI internship marketplace on Amazon Bedrock with Claude Sonnet. Cloud API, a Python REST API on EC2 with Flask, Gunicorn, and systemd. FSU Systems Automation, observability tooling for 300+ nodes. Plus a C++17 Pokemon battle engine and a C++ banking system on GitHub.",
+    skills: "My skills: Programming in Python, C++, C#, Java, SQL, Bash, JavaScript. Cloud and AWS: Lambda, EC2, S3, DynamoDB, API Gateway, IAM, VPC, serverless, CI/CD. Systems: Linux, Windows Server, Ubuntu, Active Directory, distributed systems. AI/ML: LLM training and evaluation, fine-tuning, prompt engineering, Amazon Bedrock, Claude. Networking: TCP/IP, DNS, BGP, OSPF. Also React, Node.js, MySQL, SQLite, Git, GitHub, Docker, ServiceNow, SCCM.",
+    contact: "You can reach me at Jorge@JorgeFraile.com or 305-798-5261. LinkedIn: linkedin.com/in/jorge-fraile. GitHub: github.com/Jfraile05. My resume is at jorgefraile.com/resume.pdf.",
+    location: "I'm based in Tallahassee, Florida, home of Florida State University. Open to remote work and relocation."
+  };
+
   var routes = [
     [/project|built|build|portfolio|smartgallery|nolequest|work/i, "projects"],
     [/skill|stack|tech|know|language/i, "skills"],
@@ -863,11 +871,35 @@ window.initGlobe = function () {
   function enterChat() { document.body.classList.add("chat"); }
   function exitChat() { document.body.classList.remove("chat"); }
 
+  function retireIds() {
+    ["globe", "pin3d", "stars1", "stars2"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && feed.contains(el)) el.removeAttribute("id");
+    });
+  }
+
+  function appendEntry(innerHTML) {
+    retireIds();
+    var entry = document.createElement("div");
+    entry.className = "answer";
+    entry.innerHTML = innerHTML;
+    feed.appendChild(entry);
+    enterChat();
+    requestAnimationFrame(function () {
+      feed.scrollTop = entry.offsetTop - 10;
+    });
+    return entry;
+  }
+
+  function pushHistory(userText, assistantText) {
+    history.push({ role: "user", content: userText }, { role: "assistant", content: assistantText });
+    if (history.length > 10) history = history.slice(-10);
+  }
+
   function answer(tool, question) {
     var def = cards[tool];
-    feed.innerHTML = '<div class="answer"><div class="bubble-user">' + esc(question || def.q) + "</div>" + def.html + "</div>";
-    enterChat();
-    feed.scrollTop = 0;
+    appendEntry('<div class="bubble-user">' + esc(question || def.q) + "</div>" + def.html);
+    pushHistory(question || def.q, cardText[tool]);
     if (tool === "location" && window.initGlobe) window.initGlobe();
   }
 
@@ -877,12 +909,10 @@ window.initGlobe = function () {
 
   function askLLM(text) {
     history.push({ role: "user", content: text });
-    if (history.length > 8) history = history.slice(-8);
-    feed.innerHTML = '<div class="answer"><div class="bubble-user">' + esc(text) +
-      '</div><p class="convo" id="llm-reply"><span class="thinking">Thinking</span></p></div>';
-    enterChat();
-    feed.scrollTop = 0;
-    var target = document.getElementById("llm-reply");
+    if (history.length > 10) history = history.slice(-10);
+    var entry = appendEntry('<div class="bubble-user">' + esc(text) +
+      '</div><p class="convo"><span class="thinking">Thinking</span></p>');
+    var target = entry.querySelector(".convo");
 
     fetch("/api/chat", {
       method: "POST",
@@ -901,10 +931,9 @@ window.initGlobe = function () {
       history.push({ role: "assistant", content: reply });
       typeOut(target, reply);
     }).catch(function () {
-      var tool = routeFor(text);
-      var def = cards[tool];
-      feed.innerHTML = '<div class="answer"><div class="bubble-user">' + esc(text) + "</div>" + def.html + "</div>";
-      feed.scrollTop = 0;
+      history.pop();
+      entry.remove();
+      answer(routeFor(text), text);
     });
   }
 
@@ -948,7 +977,10 @@ window.initGlobe = function () {
     el.addEventListener("animationend", function () { el.style.animation = "none"; }, { once: true });
   });
 
-  document.getElementById("drawerhint").addEventListener("click", function () { answer("me"); });
+  document.getElementById("drawerhint").addEventListener("click", function () {
+    if (feed.children.length) enterChat();
+    else answer("me");
+  });
   document.getElementById("closechat").addEventListener("click", exitChat);
   document.getElementById("backhome").addEventListener("click", exitChat);
 

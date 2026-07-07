@@ -71,7 +71,7 @@ function rateLimited(ip) {
   return false;
 }
 
-const ALLOWED_ORIGIN = /^https:\/\/((www\.)?jorgefraile\.com|[a-z0-9-]+\.vercel\.app)$/;
+const ALLOWED_ORIGIN = /^(https:\/\/((www\.)?jorgefraile\.com|[a-z0-9-]+\.vercel\.app)|http:\/\/localhost(:\d+)?)$/;
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
