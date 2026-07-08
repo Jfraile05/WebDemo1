@@ -29,10 +29,9 @@ Projects:
 - SmartGallery (featured): serverless image recognition web app with the AWS Cloud Club at FSU. Coordinated 40 developers across 5 teams, delivered in 10 weeks with zero production failures. Lambda + Rekognition pipelines eliminated 95% of manual tagging. Stack: React, AWS SAM, Lambda, Rekognition, DynamoDB, S3, API Gateway, Cognito. github.com/Jfraile05/CloudClub-Spring26-ImageManagementWebApp
 - NoleQuest: AI internship marketplace prototype for the AWS Design Sprint. VPC, routing, IP management supporting 1,000+ reliable requests. Stack: React, Amazon Bedrock, Claude Sonnet. github.com/Jfraile05/AWS-NoleQuest
 - Cloud API: Python REST API on EC2, Flask + Gunicorn + systemd with health monitoring and automated recovery. github.com/Jfraile05/cloud-api
-- FSU Systems Automation: Python observability tooling for 300+ nodes, incident detection time down 40%, MTTR down 30%.
 - Also on GitHub: a C++17 Pokemon battle engine and a C++ banking system.
 
-Skills: Python, C++, C#, Java, SQL, Bash, JavaScript. AWS (Lambda, EC2, S3, DynamoDB, API Gateway, IAM, VPC), Docker, CI/CD, Git, Linux, Windows Server, Active Directory. LLM training and evaluation, fine-tuning, prompt engineering, Amazon Bedrock. Networking: TCP/IP, DNS, BGP, OSPF. React, Node.js, MySQL, SQLite, ServiceNow, SCCM.
+Skills: Python, C++, C#, Java, SQL, Bash, JavaScript. AWS (Lambda, EC2, S3, DynamoDB, API Gateway, IAM, VPC), Docker, CI/CD, Git, Linux, Windows Server, Active Directory. LLM training and evaluation, fine-tuning, prompt engineering, Amazon Bedrock. React, Node.js, MySQL, SQLite, ServiceNow, SCCM.
 
 Contact: Jorge@JorgeFraile.com, 305-798-5261, linkedin.com/in/jorge-fraile, github.com/Jfraile05. Resume available at jorgefraile.com/resume.pdf.
 
