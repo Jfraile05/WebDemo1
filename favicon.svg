@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="g" x1="8" y1="44" x2="56" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FF0080"/>
+      <stop offset="0.34" stop-color="#FFB400"/>
+      <stop offset="0.66" stop-color="#50FF78"/>
+      <stop offset="1" stop-color="#00C8FF"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="2.5"/>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="#050507"/>
+  <g font-family="-apple-system, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif" font-weight="900" font-size="36" text-anchor="middle">
+    <text x="32" y="45" fill="url(#g)" filter="url(#glow)" opacity="0.85">JF</text>
+    <text x="32" y="45" fill="url(#g)">JF</text>
+  </g>
+</svg>
