@@ -103,13 +103,10 @@
     text-wrap: balance;
     text-shadow: 0 2px 24px rgba(0, 0, 0, 0.85);
   }
-  .headline .w { display: inline-block; overflow: hidden; vertical-align: bottom; }
-  /* Unclip after the reveal so the text-shadow isn't cut into boxes on bright fluid */
-  .headline.revealed .w { overflow: visible; }
+  .headline .w { display: inline-block; vertical-align: bottom; }
   .headline .wi {
     display: inline-block;
-    transform: translateY(115%);
-    animation: wordUp .65s cubic-bezier(.22, .9, .3, 1) both;
+    animation: blurIn .55s ease both;
   }
   .headline .w:nth-child(1) .wi { animation-delay: .22s; }
   .headline .w:nth-child(2) .wi { animation-delay: .29s; }
@@ -118,7 +115,6 @@
   .headline .w:nth-child(5) .wi { animation-delay: .50s; }
   .headline .w:nth-child(6) .wi { animation-delay: .57s; }
   .headline .w:nth-child(7) .wi { animation-delay: .64s; }
-  @keyframes wordUp { to { transform: translateY(0); } }
   .avatar {
     width: clamp(160px, 29vh, 240px); height: clamp(160px, 29vh, 240px);
     border-radius: 2rem;
@@ -264,7 +260,6 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .hello, .hello .wave, .avatar, .headline .wi, .askwrap, .askwrap .send, .quick button { animation: none !important; }
-    .headline .wi { transform: none; }
     .stage, .chatview { transition: none !important; }
   }
 
@@ -806,11 +801,6 @@ window.initGlobe = function () {
 
 (function () {
   "use strict";
-
-  /* Word-reveal clipping is only needed while the intro runs (last word ends ~1.3s) */
-  setTimeout(function () {
-    document.querySelector("h1.headline").classList.add("revealed");
-  }, 1400);
 
   /* ============ Chat UI ============ */
 
