@@ -104,6 +104,8 @@
     text-shadow: 0 2px 24px rgba(0, 0, 0, 0.85);
   }
   .headline .w { display: inline-block; overflow: hidden; vertical-align: bottom; }
+  /* Unclip after the reveal so the text-shadow isn't cut into boxes on bright fluid */
+  .headline.revealed .w { overflow: visible; }
   .headline .wi {
     display: inline-block;
     transform: translateY(115%);
@@ -805,6 +807,10 @@ window.initGlobe = function () {
 (function () {
   "use strict";
 
+  /* Word-reveal clipping is only needed while the intro runs (last word ends ~1.3s) */
+  setTimeout(function () {
+    document.querySelector("h1.headline").classList.add("revealed");
+  }, 1400);
 
   /* ============ Chat UI ============ */
 
