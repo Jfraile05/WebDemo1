@@ -422,7 +422,7 @@
   }
   .mapcard { display: flex; align-items: center; justify-content: center; }
   .mapcard canvas {
-    width: 310px; height: 310px; max-width: 92%;
+    width: 340px; height: 340px; max-width: 92%;
     position: relative; z-index: 2;
     cursor: grab;
     touch-action: none;
@@ -443,24 +443,24 @@
   }
   .pin-svg {
     display: block;
-    width: 13px; height: 20px;
-    margin-left: -6.5px; margin-top: -20px;
+    width: 11px; height: 17px;
+    margin-left: -5.5px; margin-top: -17px;
     filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.6));
     animation: pinDrop .55s cubic-bezier(.34, 1.56, .64, 1) .35s both,
                pinBob 2.6s ease-in-out 1s infinite;
   }
   .pin-ring {
     position: absolute; left: 0; top: 0;
-    width: 14px; height: 6px;
-    margin-left: -7px; margin-top: -3px;
+    width: 11px; height: 5px;
+    margin-left: -5.5px; margin-top: -2.5px;
     border: 1.5px solid rgba(242, 204, 118, 0.7);
     border-radius: 50%;
     animation: pinPulse 2s ease-out .9s infinite;
   }
   .pin-label {
-    position: absolute; left: 0; top: -32px;
+    position: absolute; left: 0; top: -28px;
     transform: translateX(-50%);
-    font-size: 11px; font-weight: 600; letter-spacing: .03em;
+    font-size: 10px; font-weight: 600; letter-spacing: .03em;
     color: #F2CC76;
     text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
     white-space: nowrap;
@@ -468,16 +468,16 @@
   }
   .pin-mini .mini-dot {
     position: absolute; left: 0; top: 0;
-    width: 7px; height: 7px;
-    margin-left: -3.5px; margin-top: -3.5px;
+    width: 5px; height: 5px;
+    margin-left: -2.5px; margin-top: -2.5px;
     border-radius: 50%;
     background: #F2CC76;
     box-shadow: 0 0 6px rgba(242, 204, 118, 0.9);
     animation: pinDrop .55s cubic-bezier(.34, 1.56, .64, 1) .45s both;
   }
   .pin-mini .pin-label {
-    top: 6px;
-    font-size: 10px;
+    top: 5px;
+    font-size: 9px;
     color: rgba(242, 204, 118, 0.85);
   }
   @keyframes pinDrop {
@@ -711,7 +711,8 @@ window.initGlobe = function () {
     el.style.boxShadow = shadows.join(", ");
   });
 
-  const side = Math.min(310, card.clientWidth * 0.92);
+  const side = Math.min(340, card.clientWidth * 0.92);
+  const ZOOM = 1.2;
   canvas.style.width = side + "px";
   canvas.style.height = side + "px";
 
@@ -760,7 +761,7 @@ window.initGlobe = function () {
   });
   function placePin(phiNow) {
     const cp = Math.cos(phiNow), sp = Math.sin(phiNow);
-    const R = side * 0.4;
+    const R = side * 0.4 * ZOOM;
     pins.forEach(function (p) {
       if (!p.el) return;
       const vx = cp * p.mx + sp * p.mz;
@@ -780,6 +781,7 @@ window.initGlobe = function () {
     height: side * 2,
     phi: phi,
     theta: THETA,
+    scale: ZOOM,
     dark: 1,
     diffuse: 1.2,
     mapSamples: 24000,
