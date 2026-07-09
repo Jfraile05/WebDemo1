@@ -110,6 +110,34 @@ function cleanVisitor(v) {
   return { name: name, email: email };
 }
 
+// Instant email for high-signal events (hiring questions, shared contact
+// info), on top of the daily digest. Capped per day to protect the shared
+// Formspree quota; the digest still records everything regardless.
+const HIRING_RE = /\b(hir(e|ing|ed)|recruit\w*|intern(ship)?s?|jobs?|position|opportunit\w*|role|interview\w*|resume|cv|opening|freelance|contract(or)?|full.?time|part.?time|work (with|for) (you|jorge)|available (for|to))\b/i;
+let alertDay = '';
+let alertCount = 0;
+async function instantAlert(subject, fields) {
+  const day = new Date().toISOString().slice(0, 10);
+  if (day !== alertDay) { alertDay = day; alertCount = 0; }
+  if (alertCount >= 3) return;
+  alertCount++;
+  try {
+    await fetch('https://formspree.io/f/xlgovanz', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(Object.assign({ _subject: subject }, fields))
+    });
+  } catch (e) {
+    console.error('alert error', String(e).slice(0, 200));
+  }
+}
+
+function describeVisitor(visitor, ip, geo) {
+  const who = visitor ? [visitor.name, visitor.email].filter(Boolean).join(' ') : 'anonymous';
+  const place = geo ? [geo.city, geo.region, geo.country, geo.org].filter(Boolean).join(', ') : '';
+  return who + ' · ' + ip + (place ? ' · ' + place : '');
+}
+
 async function logExchange(entry) {
   try {
     await put('chat/' + Date.now() + '.json', JSON.stringify(entry), {
@@ -143,13 +171,17 @@ module.exports = async (req, res) => {
   // Intro-card submission: record who the visitor is, no LLM call.
   if (req.body && req.body.identify === true) {
     if (!visitor) return res.status(400).json({ error: 'Nothing to record' });
+    const geo = await geoLookup(ip);
     await logExchange({
       t: Date.now(),
       ip: ip,
-      geo: await geoLookup(ip),
+      geo: geo,
       visitor: visitor,
       question: '(visitor introduced themselves)',
       reply: ''
+    });
+    await instantAlert('Site chat: visitor shared contact info', {
+      visitor: describeVisitor(visitor, ip, geo)
     });
     return res.status(200).json({ ok: true });
   }
@@ -199,14 +231,24 @@ module.exports = async (req, res) => {
     }
 
     // Log the exchange for the daily digest email (api/digest.js).
+    const question = messages[messages.length - 1].content;
+    const geo = await geoLookup(ip);
     await logExchange({
       t: Date.now(),
       ip: ip,
-      geo: await geoLookup(ip),
+      geo: geo,
       visitor: visitor,
-      question: messages[messages.length - 1].content,
+      question: question,
       reply: reply
     });
+
+    if (HIRING_RE.test(question)) {
+      await instantAlert('Site chat hiring alert: ' + question.slice(0, 70), {
+        visitor: describeVisitor(visitor, ip, geo),
+        question: question,
+        reply: reply
+      });
+    }
 
     return res.status(200).json({ reply });
   } catch (err) {
