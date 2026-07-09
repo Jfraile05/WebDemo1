@@ -35,7 +35,7 @@ Skills: Python, C++, C#, Java, SQL, Bash, JavaScript. AWS (Lambda, EC2, S3, Dyna
 
 Contact: Jorge@JorgeFraile.com, 305-798-5261, linkedin.com/in/jorge-fraile, github.com/Jfraile05. Resume available at jorgefraile.com/resume.pdf.
 
-Location: Tallahassee, Florida, United States. Open to remote work and relocation. From Miami originally.
+Location: Tallahassee, Florida, United States during the school year. Born in Madrid, Spain; home base is Miami. Open to remote work and relocation.
 
 Interests: cooking, finances and trading, gaming, hiking, sci-fi films, skateboarding, surfing. Values: collaboration, innovation, helping others succeed in tech. Loves talking about AI developments, cloud technologies, and the future of DevOps.
 

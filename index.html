@@ -443,28 +443,42 @@
   }
   .pin-svg {
     display: block;
-    width: 32px; height: 32px;
-    margin-left: -16px; margin-top: -30px;
-    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.7));
+    width: 20px; height: 20px;
+    margin-left: -10px; margin-top: -19px;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.6));
     animation: pinDrop .55s cubic-bezier(.34, 1.56, .64, 1) .35s both,
                pinBob 2.6s ease-in-out 1s infinite;
   }
   .pin-ring {
     position: absolute; left: 0; top: 0;
-    width: 22px; height: 10px;
-    margin-left: -11px; margin-top: -5px;
-    border: 2px solid rgba(242, 204, 118, 0.8);
+    width: 14px; height: 6px;
+    margin-left: -7px; margin-top: -3px;
+    border: 1.5px solid rgba(242, 204, 118, 0.7);
     border-radius: 50%;
     animation: pinPulse 2s ease-out .9s infinite;
   }
   .pin-label {
-    position: absolute; left: 0; top: -56px;
+    position: absolute; left: 0; top: -37px;
     transform: translateX(-50%);
-    font-size: 12px; font-weight: 600; letter-spacing: .03em;
+    font-size: 11px; font-weight: 600; letter-spacing: .03em;
     color: #F2CC76;
     text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
     white-space: nowrap;
     animation: pinDrop .55s cubic-bezier(.34, 1.56, .64, 1) .45s both;
+  }
+  .pin-mini .mini-dot {
+    position: absolute; left: 0; top: 0;
+    width: 7px; height: 7px;
+    margin-left: -3.5px; margin-top: -3.5px;
+    border-radius: 50%;
+    background: #F2CC76;
+    box-shadow: 0 0 6px rgba(242, 204, 118, 0.9);
+    animation: pinDrop .55s cubic-bezier(.34, 1.56, .64, 1) .45s both;
+  }
+  .pin-mini .pin-label {
+    top: 6px;
+    font-size: 10px;
+    color: rgba(242, 204, 118, 0.85);
   }
   @keyframes pinDrop {
     from { opacity: 0; transform: translateY(-16px); }
@@ -472,14 +486,14 @@
   }
   @keyframes pinBob {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-4px); }
+    50% { transform: translateY(-2.5px); }
   }
   @keyframes pinPulse {
     from { opacity: .9; transform: scale(.4); }
     to { opacity: 0; transform: scale(2.1); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .pin-svg, .pin-ring, .pin-label { animation: none; opacity: 1; }
+    .pin-svg, .pin-ring, .pin-label, .pin-mini .mini-dot { animation: none; opacity: 1; }
     .pin-ring { opacity: .5; }
   }
   @keyframes twinkle { from { opacity: 0.35; } to { opacity: 1; } }
@@ -724,30 +738,40 @@ window.initGlobe = function () {
     canvas.addEventListener(ev, function () { dragging = false; });
   });
 
-  // project Tallahassee onto the screen every frame so the pin rides the
+  // project each city onto the screen every frame so the pins ride the
   // globe. Marker model vector and rotation order mirror cobe's shader:
   // M = (-cos(lat)cos(lon - PI), sin(lat), cos(lat)sin(lon - PI)),
   // view = Rx(theta) * Ry(phi) * M.
-  const pin = document.getElementById("pin3d");
-  const LAT = 30.4383 * Math.PI / 180;
-  const LON = -84.2807 * Math.PI / 180 - Math.PI;
   const THETA = 0.42;
-  const MX = -Math.cos(LAT) * Math.cos(LON);
-  const MY = Math.sin(LAT);
-  const MZ = Math.cos(LAT) * Math.sin(LON);
   const COS_T = Math.cos(THETA), SIN_T = Math.sin(THETA);
+  const pins = [
+    ["pin3d", 30.4383, -84.2807],
+    ["pinMadrid", 40.4168, -3.7038],
+    ["pinMiami", 25.7617, -80.1918]
+  ].map(function (p) {
+    const lat = p[1] * Math.PI / 180;
+    const lon = p[2] * Math.PI / 180 - Math.PI;
+    return {
+      el: document.getElementById(p[0]),
+      mx: -Math.cos(lat) * Math.cos(lon),
+      my: Math.sin(lat),
+      mz: Math.cos(lat) * Math.sin(lon)
+    };
+  });
   function placePin(phiNow) {
-    if (!pin) return;
     const cp = Math.cos(phiNow), sp = Math.sin(phiNow);
-    const vx = cp * MX + sp * MZ;
-    const zm = -sp * MX + cp * MZ;
-    const vy = COS_T * MY - SIN_T * zm;
-    const vz = SIN_T * MY + COS_T * zm;
     const R = side * 0.4;
-    const px = canvas.offsetLeft + side / 2 + vx * R;
-    const py = canvas.offsetTop + side / 2 - vy * R;
-    pin.style.transform = "translate(" + px.toFixed(1) + "px," + py.toFixed(1) + "px)";
-    pin.style.opacity = vz > 0.18 ? "1" : "0";
+    pins.forEach(function (p) {
+      if (!p.el) return;
+      const vx = cp * p.mx + sp * p.mz;
+      const zm = -sp * p.mx + cp * p.mz;
+      const vy = COS_T * p.my - SIN_T * zm;
+      const vz = SIN_T * p.my + COS_T * zm;
+      const px = canvas.offsetLeft + side / 2 + vx * R;
+      const py = canvas.offsetTop + side / 2 - vy * R;
+      p.el.style.transform = "translate(" + px.toFixed(1) + "px," + py.toFixed(1) + "px)";
+      p.el.style.opacity = vz > 0.18 ? "1" : "0";
+    });
   }
 
   globe = createGlobe(canvas, {
@@ -763,7 +787,11 @@ window.initGlobe = function () {
     baseColor: [0.36, 0.33, 0.27],
     markerColor: [1, 0.82, 0.45],
     glowColor: [0.4, 0.34, 0.24],
-    markers: [{ location: [30.4383, -84.2807], size: 0.07 }],
+    markers: [
+      { location: [30.4383, -84.2807], size: 0.07 },
+      { location: [40.4168, -3.7038], size: 0.05 },
+      { location: [25.7617, -80.1918], size: 0.05 }
+    ],
     onRender: function (state) {
       if (!dragging) {
         phi += (reduced ? 0 : 0.0012) + velocity;
@@ -887,8 +915,8 @@ window.initGlobe = function () {
       q: "Where are you based?",
       html: '<h2>Location</h2>' +
         '<p style="margin:0;font-size:1.1rem;font-weight:600">Tallahassee, Florida, United States</p>' +
-        '<div class="mapcard"><div class="stars" id="stars1"></div><div class="stars twinkle" id="stars2"></div><canvas id="globe"></canvas><div class="pin3d" id="pin3d"><span class="pin-ring"></span><span class="pin-label">Tallahassee</span><svg class="pin-svg" viewBox="0 0 24 24" fill="rgba(212,184,134,0.3)" stroke="#F2CC76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3" fill="#F2CC76" stroke="none"/></svg></div><span class="geo">Tallahassee · 30.44° N, 84.28° W</span></div>' +
-        '<p class="convo">I\'m based in Tallahassee, Florida, home of Florida State University. Open to remote work and relocation. Have you ever been down here?</p>'
+        '<div class="mapcard"><div class="stars" id="stars1"></div><div class="stars twinkle" id="stars2"></div><canvas id="globe"></canvas><div class="pin3d" id="pin3d"><span class="pin-ring"></span><span class="pin-label">Tallahassee</span><svg class="pin-svg" viewBox="0 0 24 24" fill="rgba(212,184,134,0.3)" stroke="#F2CC76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3" fill="#F2CC76" stroke="none"/></svg></div><div class="pin3d pin-mini" id="pinMadrid"><span class="mini-dot"></span><span class="pin-label">Madrid · born</span></div><div class="pin3d pin-mini" id="pinMiami"><span class="mini-dot"></span><span class="pin-label">Miami · home</span></div><span class="geo">Born in Madrid · Living in Miami · FSU in Tallahassee</span></div>' +
+        '<p class="convo">Born in Madrid, home base in Miami, and in Tallahassee for school at Florida State. Open to remote work and relocation. Have you ever been down here?</p>'
     }
   };
 
@@ -897,7 +925,7 @@ window.initGlobe = function () {
     projects: "My main projects: SmartGallery, a serverless image recognition app built with 40 developers across 5 teams in 10 weeks with zero production failures (React, AWS SAM, Lambda, Rekognition, DynamoDB, S3, API Gateway, Cognito). NoleQuest, an AI internship marketplace on Amazon Bedrock with Claude Sonnet. Cloud API, a Python REST API on EC2 with Flask, Gunicorn, and systemd. Plus a C++17 Pokemon battle engine and a C++ banking system on GitHub.",
     skills: "My skills: Programming in Python, C++, C#, Java, SQL, Bash, JavaScript. Cloud and AWS: Lambda, EC2, S3, DynamoDB, API Gateway, IAM, VPC, serverless, CI/CD. Systems: Linux, Windows Server, Active Directory, distributed systems. AI/ML: LLM training and evaluation, fine-tuning, prompt engineering, Amazon Bedrock, Claude. Also React, Node.js, MySQL, SQLite, Git, GitHub, Docker, ServiceNow, SCCM.",
     contact: "You can reach me at Jorge@JorgeFraile.com or 305-798-5261. LinkedIn: linkedin.com/in/jorge-fraile. GitHub: github.com/Jfraile05. My resume is at jorgefraile.com/resume.pdf.",
-    location: "I'm based in Tallahassee, Florida, home of Florida State University. Open to remote work and relocation."
+    location: "Born in Madrid, home base in Miami, and in Tallahassee for school at Florida State. Open to remote work and relocation."
   };
 
   var routes = [
@@ -918,7 +946,7 @@ window.initGlobe = function () {
   function exitChat() { document.body.classList.remove("chat"); }
 
   function retireIds() {
-    ["globe", "pin3d", "stars1", "stars2"].forEach(function (id) {
+    ["globe", "pin3d", "pinMadrid", "pinMiami", "stars1", "stars2"].forEach(function (id) {
       var el = document.getElementById(id);
       if (el && feed.contains(el)) el.removeAttribute("id");
     });
