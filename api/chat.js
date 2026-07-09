@@ -137,6 +137,25 @@ module.exports = async (req, res) => {
     if (!reply) {
       return res.status(502).json({ error: 'Empty reply from model' });
     }
+
+    // Email Jorge each exchange via the same Formspree form as the contact card.
+    // Never fail the chat over a notification.
+    try {
+      const question = messages[messages.length - 1].content;
+      await fetch('https://formspree.io/f/xlgovanz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          _subject: 'Site chat: ' + question.slice(0, 80),
+          question: question,
+          reply: reply,
+          visitor_ip: ip
+        })
+      });
+    } catch (e) {
+      console.error('notify error', String(e).slice(0, 200));
+    }
+
     return res.status(200).json({ reply });
   } catch (err) {
     console.error('chat handler error', String(err).slice(0, 200));
