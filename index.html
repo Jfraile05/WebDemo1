@@ -501,12 +501,6 @@
   }
   @keyframes twinkle { from { opacity: 0.35; } to { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { .stars.twinkle { animation: none; } }
-  .mapcard .geo {
-    position: absolute; left: 14px; bottom: 10px;
-    z-index: 4;
-    font-size: 12.5px; color: var(--muted-fg); letter-spacing: .02em;
-    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
-  }
   .pin-pulse { animation: pinpulse 2.4s ease-out infinite; }
   @keyframes pinpulse {
     0% { r: 8; opacity: 0.6; }
@@ -918,7 +912,7 @@ window.initGlobe = function () {
       q: "Where are you based?",
       html: '<h2>Location</h2>' +
         '<p style="margin:0;font-size:1.1rem;font-weight:600">Tallahassee, Florida, United States</p>' +
-        '<div class="mapcard"><div class="stars" id="stars1"></div><div class="stars twinkle" id="stars2"></div><canvas id="globe"></canvas><div class="pin3d" id="pin3d"><span class="pin-ring"></span><span class="pin-label">Tallahassee</span><svg class="pin-svg" viewBox="0 0 24 36"><path d="M10.9 19 L13.1 19 L12.05 36 Z" fill="#E3E3EA"/><circle cx="12" cy="10.5" r="9.5" fill="#F2CC76"/><circle cx="8.6" cy="7.2" r="2.8" fill="#FBE9BC" opacity="0.9"/></svg></div><div class="pin3d pin-mini" id="pinMadrid"><span class="mini-dot"></span><span class="pin-label">Madrid · born</span></div><div class="pin3d pin-mini" id="pinMiami"><span class="mini-dot"></span><span class="pin-label">Miami · home</span></div><span class="geo">Born in Madrid · Living in Miami · FSU in Tallahassee</span></div>' +
+        '<div class="mapcard"><div class="stars" id="stars1"></div><div class="stars twinkle" id="stars2"></div><canvas id="globe"></canvas><div class="pin3d" id="pin3d"><span class="pin-ring"></span><span class="pin-label">Tallahassee</span><svg class="pin-svg" viewBox="0 0 24 36"><path d="M10.9 19 L13.1 19 L12.05 36 Z" fill="#E3E3EA"/><circle cx="12" cy="10.5" r="9.5" fill="#F2CC76"/><circle cx="8.6" cy="7.2" r="2.8" fill="#FBE9BC" opacity="0.9"/></svg></div><div class="pin3d pin-mini" id="pinMadrid"><span class="mini-dot"></span><span class="pin-label">Madrid · born</span></div><div class="pin3d pin-mini" id="pinMiami"><span class="mini-dot"></span><span class="pin-label">Miami · home</span></div></div>' +
         '<p class="convo">Born in Madrid, home base in Miami, and in Tallahassee for school at Florida State. Open to remote work and relocation. Have you ever been down here?</p>'
     }
   };
