@@ -111,17 +111,36 @@ function cleanVisitor(v) {
 }
 
 // Instant email for high-signal events (hiring questions, shared contact
-// info), on top of the daily digest. Capped per day to protect the shared
-// Formspree quota; the digest still records everything regardless.
+// info), on top of the daily digest. Sent via Resend (RESEND_API_KEY +
+// ALERT_EMAIL); falls back to the shared Formspree form until the Resend
+// key is configured. Daily cap bounds abuse.
 const HIRING_RE = /\b(hir(e|ing|ed)|recruit\w*|intern(ship)?s?|jobs?|position|opportunit\w*|role|interview\w*|resume|cv|opening|freelance|contract(or)?|full.?time|part.?time|work (with|for) (you|jorge)|available (for|to))\b/i;
 let alertDay = '';
 let alertCount = 0;
 async function instantAlert(subject, fields) {
   const day = new Date().toISOString().slice(0, 10);
   if (day !== alertDay) { alertDay = day; alertCount = 0; }
-  if (alertCount >= 3) return;
+  if (alertCount >= 20) return;
   alertCount++;
   try {
+    const key = process.env.RESEND_API_KEY;
+    const to = process.env.ALERT_EMAIL;
+    if (key && to) {
+      const text = Object.entries(fields).map(function (kv) { return kv[0] + ': ' + kv[1]; }).join('\n\n');
+      const r = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: 'jorgefraile.com chat <onboarding@resend.dev>',
+          to: [to],
+          subject: subject,
+          text: text
+        })
+      });
+      if (r.ok) return;
+      console.error('resend error', r.status, (await r.text()).slice(0, 200));
+    }
+    // Fallback: Formspree (counts against the shared 50/month quota).
     await fetch('https://formspree.io/f/xlgovanz', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
