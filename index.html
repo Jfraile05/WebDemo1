@@ -789,10 +789,7 @@ window.initGlobe = function () {
     baseColor: [0.36, 0.33, 0.27],
     markerColor: [1, 0.82, 0.45],
     glowColor: [0.4, 0.34, 0.24],
-    markers: [
-      { location: [40.4168, -3.7038], size: 0.05 },
-      { location: [25.7617, -80.1918], size: 0.05 }
-    ],
+    markers: [],
     onRender: function (state) {
       if (!dragging) {
         phi += (reduced ? 0 : 0.0012) + velocity;
