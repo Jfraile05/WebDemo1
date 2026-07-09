@@ -1,0 +1,7 @@
+{
+  "name": "web-demo1",
+  "private": true,
+  "dependencies": {
+    "@vercel/blob": "^2.6.1"
+  }
+}

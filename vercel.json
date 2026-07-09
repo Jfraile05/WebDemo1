@@ -1,4 +1,7 @@
 {
+  "crons": [
+    { "path": "/api/digest", "schedule": "0 0 * * *" }
+  ],
   "headers": [
     {
       "source": "/(.*)",

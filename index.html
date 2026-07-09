@@ -393,6 +393,17 @@
   .cf-send:active { transform: scale(.96); }
   .cf-send:disabled { opacity: .6; cursor: default; }
   .cf-send:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .intro-card { margin: 0; }
+  .intro-card .cf-send { margin-right: 4px; }
+  .cf-skip {
+    background: none; border: 0;
+    color: var(--muted-fg);
+    font: inherit; font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.6rem 0.9rem;
+  }
+  .cf-skip:hover { color: var(--fg); }
+  .cf-skip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 9999px; }
   .cf-status { margin: 0.7rem 0 0; font-size: 14px; display: none; }
   .cf-status.ok { color: #8FCF9B; display: block; }
   .cf-status.err { color: #E08A8A; display: block; }
@@ -977,6 +988,8 @@ window.initGlobe = function () {
   /* ============ Live chat (OpenRouter via /api/chat) ============ */
 
   var history = [];
+  var visitor = null;
+  try { visitor = JSON.parse(sessionStorage.getItem("visitor") || "null"); } catch (e) {}
 
   function askLLM(text) {
     history.push({ role: "user", content: text });
@@ -988,7 +1001,7 @@ window.initGlobe = function () {
     fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: history })
+      body: JSON.stringify({ messages: history, visitor: visitor })
     }).then(function (r) {
       return r.json().then(function (j) { return { ok: r.ok, status: r.status, j: j }; });
     }).then(function (res) {
@@ -1000,7 +1013,7 @@ window.initGlobe = function () {
       if (!res.ok || !res.j.reply) throw new Error(res.j.error || "no reply");
       var reply = res.j.reply.replace(/\*\*(.+?)\*\*/g, "$1").replace(/\*(.+?)\*/g, "$1");
       history.push({ role: "assistant", content: reply });
-      typeOut(target, reply);
+      typeOut(target, reply, maybeOfferIntro);
     }).catch(function () {
       history.pop();
       entry.remove();
@@ -1008,16 +1021,50 @@ window.initGlobe = function () {
     });
   }
 
-  function typeOut(el, text) {
+  function typeOut(el, text, done) {
     var i = 0;
     el.textContent = "";
     var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) { el.textContent = text; return; }
+    if (reduced) { el.textContent = text; if (done) done(); return; }
     (function tick() {
       i = Math.min(i + 3, text.length);
       el.textContent = text.slice(0, i);
       if (i < text.length) requestAnimationFrame(tick);
+      else if (done) done();
     })();
+  }
+
+  /* One-time optional card asking the visitor to introduce themselves. */
+  function maybeOfferIntro() {
+    if (visitor) return;
+    try { if (sessionStorage.getItem("introDone")) return; sessionStorage.setItem("introDone", "1"); } catch (e) {}
+    var entry = appendEntry(
+      '<form class="intro-card" novalidate>' +
+        '<p class="convo" style="margin-top:0">Want me to be able to follow up? Leave your name and email. Totally optional, only used so I can reply. 😊</p>' +
+        '<div class="cf-row">' +
+          '<div class="cf-field"><label>Name</label><input name="name" type="text" autocomplete="name" /></div>' +
+          '<div class="cf-field"><label>Email</label><input name="email" type="email" autocomplete="email" /></div>' +
+        '</div>' +
+        '<button class="cf-send" type="submit">Share with Jorge</button>' +
+        '<button class="cf-skip" type="button">No thanks</button>' +
+      '</form>'
+    );
+    var form = entry.querySelector(".intro-card");
+    form.querySelector(".cf-skip").addEventListener("click", function () { entry.remove(); });
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var name = form.querySelector('[name="name"]').value.trim();
+      var email = form.querySelector('[name="email"]').value.trim();
+      if (!name && !email) { entry.remove(); return; }
+      visitor = { name: name, email: email };
+      try { sessionStorage.setItem("visitor", JSON.stringify(visitor)); } catch (err) {}
+      fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identify: true, visitor: visitor })
+      }).catch(function () {});
+      form.innerHTML = '<p class="convo" style="margin:0">Thanks' + (name ? ", " + esc(name) : "") + '! 😊</p>';
+    });
   }
 
   function routeFor(text) {

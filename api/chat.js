@@ -1,6 +1,9 @@
-// Vercel serverless function: POST /api/chat { messages: [{role, content}] }
+// Vercel serverless function: POST /api/chat { messages: [{role, content}], visitor?, identify? }
 // Answers as Jorge via OpenRouter. Requires OPENROUTER_API_KEY env var.
 // Model is configurable via OPENROUTER_MODEL (default: z-ai/glm-4.7-flash).
+// Every exchange is logged to Vercel Blob; api/digest.js emails a daily summary.
+
+const { put } = require('@vercel/blob');
 
 const SYSTEM_PROMPT = `You are Jorge Fraile Perez, answering visitors on your personal website jorgefraile.com. Speak in first person as Jorge. You are not an AI assistant, you are Jorge having a friendly conversation.
 
@@ -78,6 +81,47 @@ function rateLimited(ip) {
 
 const ALLOWED_ORIGIN = /^(https:\/\/((www\.)?jorgefraile\.com|[a-z0-9-]+\.vercel\.app)|http:\/\/localhost(:\d+)?)$/;
 
+// Best-effort city/org lookup so the digest shows more than an IP.
+const geoCache = new Map();
+async function geoLookup(ip) {
+  if (!ip || ip === 'unknown') return null;
+  if (geoCache.has(ip)) return geoCache.get(ip);
+  let geo = null;
+  try {
+    const r = await fetch('https://ipapi.co/' + encodeURIComponent(ip) + '/json/', {
+      signal: AbortSignal.timeout(1500),
+      headers: { 'User-Agent': 'jorgefraile.com chat digest' }
+    });
+    if (r.ok) {
+      const j = await r.json();
+      if (!j.error) geo = { city: j.city, region: j.region, country: j.country_name, org: j.org };
+    }
+  } catch (e) { /* geo is optional */ }
+  geoCache.set(ip, geo);
+  if (geoCache.size > 1000) geoCache.clear();
+  return geo;
+}
+
+function cleanVisitor(v) {
+  if (!v || typeof v !== 'object') return null;
+  const name = typeof v.name === 'string' ? v.name.replace(/[\r\n]/g, ' ').trim().slice(0, 80) : '';
+  const email = typeof v.email === 'string' ? v.email.replace(/[\r\n\s]/g, '').slice(0, 120) : '';
+  if (!name && !email) return null;
+  return { name: name, email: email };
+}
+
+async function logExchange(entry) {
+  try {
+    await put('chat/' + Date.now() + '.json', JSON.stringify(entry), {
+      access: 'private',
+      addRandomSuffix: true,
+      contentType: 'application/json'
+    });
+  } catch (e) {
+    console.error('log error', String(e).slice(0, 200));
+  }
+}
+
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -92,6 +136,22 @@ module.exports = async (req, res) => {
   const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
   if (rateLimited(ip)) {
     return res.status(429).json({ error: 'rate_limited' });
+  }
+
+  const visitor = cleanVisitor(req.body && req.body.visitor);
+
+  // Intro-card submission: record who the visitor is, no LLM call.
+  if (req.body && req.body.identify === true) {
+    if (!visitor) return res.status(400).json({ error: 'Nothing to record' });
+    await logExchange({
+      t: Date.now(),
+      ip: ip,
+      geo: await geoLookup(ip),
+      visitor: visitor,
+      question: '(visitor introduced themselves)',
+      reply: ''
+    });
+    return res.status(200).json({ ok: true });
   }
 
   const key = process.env.OPENROUTER_API_KEY;
@@ -138,23 +198,15 @@ module.exports = async (req, res) => {
       return res.status(502).json({ error: 'Empty reply from model' });
     }
 
-    // Email Jorge each exchange via the same Formspree form as the contact card.
-    // Never fail the chat over a notification.
-    try {
-      const question = messages[messages.length - 1].content;
-      await fetch('https://formspree.io/f/xlgovanz', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          _subject: 'Site chat: ' + question.slice(0, 80),
-          question: question,
-          reply: reply,
-          visitor_ip: ip
-        })
-      });
-    } catch (e) {
-      console.error('notify error', String(e).slice(0, 200));
-    }
+    // Log the exchange for the daily digest email (api/digest.js).
+    await logExchange({
+      t: Date.now(),
+      ip: ip,
+      geo: await geoLookup(ip),
+      visitor: visitor,
+      question: messages[messages.length - 1].content,
+      reply: reply
+    });
 
     return res.status(200).json({ reply });
   } catch (err) {
