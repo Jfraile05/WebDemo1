@@ -51,14 +51,19 @@ Interests: cooking, finances and trading, gaming, hiking, sci-fi films, skateboa
 // Fluid Compute, so this meaningfully caps abuse without extra infra.
 // The global budget bounds total spend even against distributed callers.
 const IP_WINDOW_MS = 60 * 1000;
-const IP_MAX = 8;
+const IP_MAX = 5;
 const GLOBAL_WINDOW_MS = 10 * 60 * 1000;
-const GLOBAL_MAX = 150;
+const GLOBAL_MAX = 40;
+const DAY_WINDOW_MS = 24 * 60 * 60 * 1000;
+const DAY_MAX = 400;
 const ipHits = new Map();
 let globalHits = [];
+let dayHits = [];
 
 function rateLimited(ip) {
   const now = Date.now();
+  dayHits = dayHits.filter(t => now - t < DAY_WINDOW_MS);
+  if (dayHits.length >= DAY_MAX) return true;
   globalHits = globalHits.filter(t => now - t < GLOBAL_WINDOW_MS);
   if (globalHits.length >= GLOBAL_MAX) return true;
   const hits = (ipHits.get(ip) || []).filter(t => now - t < IP_WINDOW_MS);
@@ -66,6 +71,7 @@ function rateLimited(ip) {
   hits.push(now);
   ipHits.set(ip, hits);
   globalHits.push(now);
+  dayHits.push(now);
   if (ipHits.size > 5000) ipHits.clear();
   return false;
 }
@@ -77,8 +83,9 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Browsers always send Origin on POST fetch; absence means a script.
   const origin = req.headers.origin;
-  if (origin && !ALLOWED_ORIGIN.test(origin)) {
+  if (!origin || !ALLOWED_ORIGIN.test(origin)) {
     return res.status(403).json({ error: 'Forbidden origin' });
   }
 
