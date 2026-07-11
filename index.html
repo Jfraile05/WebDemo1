@@ -559,6 +559,30 @@
     transform: translateX(-50%);
   }
 
+  /* Touch devices have no hover cursor to discover the fluid; hint subtly */
+  .swipe-hint {
+    display: none;
+    position: absolute;
+    bottom: calc(2.6rem + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px; letter-spacing: .06em;
+    color: var(--muted-fg);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+    opacity: 0;
+  }
+  @media (pointer: coarse) {
+    .swipe-hint {
+      display: block;
+      animation: hintIn 1.2s ease 1.8s forwards, hintPulse 3.2s ease-in-out 3s infinite;
+    }
+  }
+  .swipe-hint.gone { transition: opacity .8s ease; opacity: 0 !important; animation: none; }
+  @keyframes hintIn { to { opacity: .65; } }
+  @keyframes hintPulse { 0%, 100% { opacity: .65; } 50% { opacity: .3; } }
+  @media (prefers-reduced-motion: reduce) { .swipe-hint { display: none; } }
+
   /* ============ Info modal ============ */
   .modal {
     position: fixed; inset: 0; z-index: 70;
@@ -647,6 +671,7 @@
       Location
     </button>
   </div>
+  <p class="swipe-hint" id="swipehint" aria-hidden="true">swipe to stir the colors</p>
 </main>
 
 <button class="drawer-hint handlebar" id="drawerhint" aria-label="Open conversation"><span></span></button>
@@ -1156,6 +1181,15 @@ window.initGlobe = function () {
     var input = document.body.classList.contains("chat") ? document.getElementById("ask2") : document.getElementById("ask");
     input.focus();
   });
+  var swipeHint = document.getElementById("swipehint");
+  if (swipeHint) {
+    var hideHint = function () {
+      swipeHint.classList.add("gone");
+      window.removeEventListener("touchmove", hideHint);
+    };
+    window.addEventListener("touchmove", hideHint, { passive: true });
+  }
+
   window.addEventListener("keydown", function (e) {
     if (e.key === "Escape") {
       if (document.body.classList.contains("modal-open")) document.body.classList.remove("modal-open");
