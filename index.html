@@ -1183,6 +1183,29 @@ window.initGlobe = function () {
   });
   var swipeHint = document.getElementById("swipehint");
   if (swipeHint) {
+    var hints = [
+      "run a finger through the dark",
+      "the dark is liquid",
+      "touch the void",
+      "wake the sleeping colors",
+      "disturb the stillness",
+      "the night bends to your touch",
+      "see what leaks from the black",
+      "something glows beneath the black",
+      "stir the shadows",
+      "the screen remembers your touch",
+      "trace a path through the nothing",
+      "a spectrum hides in the black",
+      "the dark keeps colors. find them",
+      "swipe. the void answers",
+      "wake the light under the surface",
+      "this black is not empty",
+      "leave a mark on the dark",
+      "the abyss likes to be touched",
+      "paint with what hides below",
+      "drag the silence around"
+    ];
+    swipeHint.textContent = hints[Math.floor(Math.random() * hints.length)];
     var hideHint = function () {
       swipeHint.classList.add("gone");
       window.removeEventListener("touchmove", hideHint);
