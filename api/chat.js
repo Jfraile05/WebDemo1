@@ -169,6 +169,47 @@ async function logExchange(entry) {
   }
 }
 
+// Model fallback chain. The chat tries these in order and only fails if every
+// one fails. The last entry is a free model, so a depleted paid balance (the
+// key's spend cap) or a single-model outage can never take the chat offline.
+const FREE_FALLBACK = 'google/gemma-4-26b-a4b-it:free';
+function modelChain() {
+  const chain = (process.env.OPENROUTER_MODEL || 'z-ai/glm-4.7-flash')
+    .split(',').map(s => s.trim()).filter(Boolean);
+  if (chain.length === 0) chain.push('z-ai/glm-4.7-flash');
+  if (!chain.includes('z-ai/glm-4.5-air')) chain.push('z-ai/glm-4.5-air');
+  if (!chain.includes(FREE_FALLBACK)) chain.push(FREE_FALLBACK);
+  return chain;
+}
+
+// Calls one model. Returns the reply text, or null on any error / empty reply
+// so the caller can move on to the next model in the chain.
+async function callModel(key, model, messages) {
+  const upstream = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Bearer ' + key,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://www.jorgefraile.com',
+      'X-Title': 'jorgefraile.com'
+    },
+    body: JSON.stringify({
+      model: model,
+      reasoning: { enabled: false },
+      messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
+      max_tokens: 400,
+      temperature: 0.7
+    })
+  });
+  if (!upstream.ok) {
+    console.error('openrouter error', model, upstream.status, (await upstream.text()).slice(0, 200));
+    return null;
+  }
+  const data = await upstream.json();
+  const reply = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+  return (reply && reply.trim()) ? reply : null;
+}
+
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -220,35 +261,22 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'Send at least one user message' });
   }
 
+  // Try each model in the fallback chain until one answers. Only the whole
+  // chain failing (including the free model) returns an error to the client.
+  let reply = null;
+  for (const model of modelChain()) {
+    try {
+      reply = await callModel(key, model, messages);
+    } catch (err) {
+      console.error('chat model error', model, String(err).slice(0, 150));
+    }
+    if (reply) break;
+  }
+  if (!reply) {
+    return res.status(502).json({ error: 'Upstream error' });
+  }
+
   try {
-    const upstream = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + key,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://www.jorgefraile.com',
-        'X-Title': 'jorgefraile.com'
-      },
-      body: JSON.stringify({
-        model: process.env.OPENROUTER_MODEL || 'z-ai/glm-4.7-flash',
-        reasoning: { enabled: false },
-        messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
-        max_tokens: 400,
-        temperature: 0.7
-      })
-    });
-
-    if (!upstream.ok) {
-      console.error('openrouter error', upstream.status, (await upstream.text()).slice(0, 300));
-      return res.status(502).json({ error: 'Upstream error' });
-    }
-
-    const data = await upstream.json();
-    const reply = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-    if (!reply) {
-      return res.status(502).json({ error: 'Empty reply from model' });
-    }
-
     // Log the exchange for the daily digest email (api/digest.js).
     const question = messages[messages.length - 1].content;
     const geo = await geoLookup(ip);
@@ -269,9 +297,10 @@ module.exports = async (req, res) => {
       });
     }
 
-    return res.status(200).json({ reply });
   } catch (err) {
-    console.error('chat handler error', String(err).slice(0, 200));
-    return res.status(502).json({ error: 'Request failed' });
+    // Logging and alerts are best-effort; never fail a good reply over them.
+    console.error('chat post-reply error', String(err).slice(0, 200));
   }
+
+  return res.status(200).json({ reply });
 };
