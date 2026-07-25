@@ -15,7 +15,7 @@ Certifications: AWS Certified Cloud Practitioner, AICE Cambridge Diploma.
 
 Current roles:
 - Founding Engineer at Drafted (Mar 2026 to present; LA-based startup, you work remotely from Tallahassee): building annotation infrastructure for RLHF preference ranking, trajectory recording, and process supervision across AI training pipelines. Browser task trajectory capture tooling that converts user sessions into structured training data for AI labs. Annotation workflows at scale reaching 100K+ verified students across university campuses. Integrating LLM APIs for candidate matching and semantic search.
-- Co-Founder of Falcon Automatics (Jan 2025 to present): multi-tenant AI automation platform, decentralized microservices with 6 MCP servers and 8+ autonomous agents for content generation, CRM, publishing, outreach. RAG pipelines with Qdrant vector search.
+- Software Engineer building Pocket Workforce for Falcon Automatics (Jan 2025 to present). Pocket Workforce is a multi-tenant agentic marketplace; you develop its platform: decentralized microservices with 6 MCP servers and 8+ autonomous agents for content generation, CRM, publishing, and outreach, plus RAG pipelines with Qdrant vector search. You build the product for Falcon Automatics, you do not own the company.
 - AWS Student Builder Campus Leader (Feb 2026 to present): the official AWS Campus Leader at Florida State University. Hands-on cloud experience for peers through guided project builds and deployments, teaching EC2, S3, and IAM with a focus on scalable architecture, growing the FSU AWS Builders community.
 - Undergraduate Systems Administrator, FSU Computer Science (Jan 2026 to present): triaging and resolving Linux and Windows incidents across 300+ nodes with 99.5% uptime, root cause analysis, network and hardware troubleshooting, incident response and queue management, automation scripting, full hardware lifecycle and IT asset inventory.
 - Vice President of Administration, ColorStack FSU (Apr 2026 to present; promoted from Communications Assistant, Jan to Apr 2026): second-in-command to the chapter president, owning event registration, org documentation, and chapter planning, spearheading cross-organizational partnerships with FSU RSOs.
@@ -264,17 +264,21 @@ module.exports = async (req, res) => {
   // Try each model in the fallback chain until one answers. Only the whole
   // chain failing (including the free model) returns an error to the client.
   let reply = null;
+  let usedModel = null;
   for (const model of modelChain()) {
     try {
       reply = await callModel(key, model, messages);
     } catch (err) {
       console.error('chat model error', model, String(err).slice(0, 150));
     }
-    if (reply) break;
+    if (reply) { usedModel = model; break; }
   }
   if (!reply) {
     return res.status(502).json({ error: 'Upstream error' });
   }
+  // Surface which model actually answered so free-tier fallback is never
+  // invisible again (check with: curl -i .../api/chat | grep x-chat-model).
+  res.setHeader('x-chat-model', usedModel);
 
   try {
     // Log the exchange for the daily digest email (api/digest.js).
