@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Jorge Fraile Perez</title>
-  <meta name="description" content="Jorge Fraile Perez. Founding Engineer at Drafted Labs, AWS Student Builder Campus Leader, and CS student at Florida State University. Ask me anything." />
+  <meta name="description" content="Jorge Fraile Perez. Founding Engineer at Drafted Labs, AI Research and Network Operations Intern at FSU ITS, and CS student at Florida State University. Ask me anything." />
   <link rel="icon" href="favicon-32.png?v=2" type="image/png" sizes="32x32" />
   <link rel="icon" href="favicon-96.png" type="image/png" sizes="96x96" />
   <link rel="icon" href="favicon.svg?v=2" type="image/svg+xml" sizes="any" />
@@ -199,6 +199,7 @@
   .quick button:nth-child(3) { animation-delay: 1.31s; }
   .quick button:nth-child(4) { animation-delay: 1.39s; }
   .quick button:nth-child(5) { animation-delay: 1.47s; }
+  .quick button:nth-child(6) { animation-delay: 1.55s; }
   @keyframes cardIn {
     from { opacity: 0; transform: translateY(20px) scale(.88); }
     to { opacity: 1; transform: translateY(0) scale(1); }
@@ -223,6 +224,11 @@
   .quick button:active { transform: translateY(0) scale(.95); }
   .quick button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .quick svg { width: 18px; height: 18px; stroke: var(--accent); }
+  /* Six shortcuts fit one row only on wide screens; below that wrap 3 and 3
+     instead of leaving a single orphan on the second row. */
+  @media (min-width: 721px) and (max-width: 940px) {
+    .quick { max-width: 420px; }
+  }
 
   @media (max-width: 720px) {
     .stage { padding: 16px 16px calc(16px + 3vh); }
@@ -642,7 +648,7 @@
 
 <main class="stage" id="stage">
   <p class="hello">Hey, I'm Jorge <span class="wave">👋</span></p>
-  <h1 class="headline"><span class="w"><span class="wi">Founding</span></span> <span class="w"><span class="wi">Engineer</span></span> <span class="w"><span class="wi">&amp;</span></span> <span class="w"><span class="wi">CS</span></span> <span class="w"><span class="wi">Student</span></span> <span class="w"><span class="wi">at</span></span> <span class="w"><span class="wi">FSU</span></span></h1>
+  <h1 class="headline"><span class="w"><span class="wi">Founding</span></span> <span class="w"><span class="wi">Engineer</span></span> <span class="w"><span class="wi">&amp;</span></span> <span class="w"><span class="wi">AI</span></span> <span class="w"><span class="wi">Research</span></span> <span class="w"><span class="wi">Intern</span></span></h1>
   <div class="avatar"><img src="jorge.jpeg?v=2" alt="Jorge Fraile Perez" /></div>
 
   <form class="askwrap" id="askform">
@@ -657,8 +663,12 @@
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
       Me
     </button>
+    <button data-tool="experience">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><path d="M2 13h20"/></svg>
+      Experience
+    </button>
     <button data-tool="projects">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>
       Projects
     </button>
     <button data-tool="skills">
@@ -689,7 +699,8 @@
   <div class="chat-dock">
     <div class="quickrow" role="group" aria-label="Quick questions">
       <button data-tool="me"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>Me</button>
-      <button data-tool="projects"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Projects</button>
+      <button data-tool="experience"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><path d="M2 13h20"/></svg>Experience</button>
+      <button data-tool="projects"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>Projects</button>
       <button data-tool="skills"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>Skills</button>
       <button data-tool="contact"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><circle cx="17.5" cy="10.5" r="2.5"/><path d="m21 14-1.7-1.7"/></svg>Contact</button>
       <button data-tool="location"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>Location</button>
@@ -878,53 +889,97 @@ window.initGlobe = function () {
   function cat(name, items) {
     return '<div class="cat">' + layersIcon + '<h3>' + name + '</h3></div>' + pills('pill-d', items);
   }
+  /* One role block in the experience card. */
+  function role(title, org, when, body, tags) {
+    return '<div class="proj"><div class="proj-head"><h3>' + title + '</h3>' +
+      '<span class="date">' + when + '</span></div>' +
+      '<p><strong style="color:var(--fg)">' + org + '</strong><br/>' + body + '</p>' +
+      (tags ? pills('pill-d', tags) : '') + '</div>';
+  }
 
   var cards = {
     me: {
-      q: "Who are you?",
+      q: "Who is Jorge?",
       html: '<p class="muted" style="margin:0.2rem 0 0.6rem">Tallahassee, Florida, United States</p>' +
-        '<p style="margin:0 0 1rem;line-height:1.6">Junior at Florida State University pursuing a B.S. in Computer Science &amp; Applied Mathematics, Class of 2027 (GPA 3.52, Dean\'s List, HSF Scholar 2026). AWS Certified Cloud Practitioner. I focus on cloud infrastructure, DevOps, and the systems behind production AI.</p>' +
+        '<p style="margin:0 0 1rem;line-height:1.6">Junior at Florida State University pursuing a B.S. in Computer Science &amp; Applied Mathematics, Class of 2027 (GPA 3.52, Dean\'s List, HSF Scholar 2026). AWS Certified Cloud Practitioner. He focuses on cloud infrastructure, DevOps, and the systems behind production AI.</p>' +
         '<h3 style="margin:0 0 0.4rem;font-size:1.05rem">Currently</h3>' +
         '<ul style="margin:0 0 1.1rem;padding-left:1.2rem;color:var(--muted-fg);line-height:1.75">' +
         '<li>Founding Engineer at Drafted, since Mar 2026</li>' +
-        '<li>Building Pocket Workforce for Falcon Automatics, since Jan 2026</li>' +
+        '<li>AI Research Intern and Network Operations Intern at FSU Information Technology Services, since Sep 2026</li>' +
         '<li>AWS Student Builder Campus Leader, since Feb 2026</li>' +
         '<li>Undergraduate Systems Administrator, FSU Computer Science, since Jan 2026</li>' +
         '<li>VP of Administration at ColorStack FSU, since Apr 2026, and Marketing Outreach Chair at ACM, since May 2026</li>' +
         '</ul>' +
         pills('pill-g', ["Cloud Infrastructure", "DevOps", "AWS", "Python", "C++", "LLM Evaluation", "Linux"]) +
-        '<p class="convo">I\'m Jorge Fraile Perez. At Drafted Labs I engineer LLM evaluation and data annotation features serving 102,000+ vetted university contributors, and for Falcon Automatics I build Pocket Workforce, a multi-tenant agentic marketplace spanning 6 MCP servers and 8+ autonomous agents. What would you like to know more about?</p>'
+        '<p class="convo">Jorge Fraile Perez is a Founding Engineer at Drafted, where he builds LLM evaluation and data annotation features serving 102,000+ vetted university contributors. He also holds concurrent AI Research and Network Operations internships at FSU Information Technology Services. Please let me know which part of his background you would like to review.</p>'
+    },
+    experience: {
+      q: "What is Jorge's experience?",
+      html: '<h2>Experience</h2>' +
+        '<h3 style="margin:0.6rem 0 0;font-size:1.05rem">Currently</h3>' +
+        role("Founding Engineer", "Drafted Labs &middot; Remote", "Since Mar 2026",
+          'Redesigned the core platform architecture and shipped new services, resolving reliability issues and improving scalability across the stack. Leads the Drafted x Snorkel AI partnership, recruiting engineers across 10+ universities to build LLM evaluation tasks that stress test frontier model agents. Engineers Python LLM evaluation and data annotation pipelines supporting 100,000+ vetted contributors from MIT, Stanford, USC, UChicago, and other leading universities.',
+          ["Python", "LLM Evaluation", "Data Annotation", "RLHF", "Platform Architecture"]) +
+        role("AI Research Intern", "FSU Information Technology Services &middot; Tallahassee, FL", "Since Sep 2026",
+          'Evaluates LLM and generative AI tools and develops Python based RAG workflows for university use cases, documenting capabilities, limitations, and cost tradeoffs. Benchmarks model accuracy, latency, and cost to guide deployment decisions and responsible AI adoption.',
+          ["Python", "RAG", "LLM Evaluation", "Generative AI", "Benchmarking"]) +
+        role("Network Operations Intern", "FSU Information Technology Services &middot; Tallahassee, FL", "Since Sep 2026",
+          'Configures and troubleshoots Juniper switches through the Junos CLI, managing VLAN assignments, ports, and interface issues across campus infrastructure. Monitors network health and resolves connectivity issues with Juniper Mist and Marvis while maintaining IP records, switch port mappings, and technical documentation.',
+          ["Juniper Junos", "Juniper Mist", "Marvis", "VLANs", "TCP/IP", "DNS"]) +
+        role("Undergraduate Systems Administrator", "FSU Department of Computer Science &middot; Tallahassee, FL", "Since Jan 2026",
+          'Resolved 200+ support tickets covering Linux and Windows Server issues across 300+ managed nodes. Diagnoses DNS, DHCP, and connectivity failures through log analysis and maintains system documentation and configuration standards.',
+          ["Linux", "Windows Server", "DNS", "DHCP", "Root Cause Analysis"]) +
+        role("Student Builder Campus Leader", "Amazon Web Services &middot; Hybrid", "Since Feb 2026",
+          'Drives cloud and infrastructure adoption across 500+ students through hands on labs, workshops, and technical events. Built Python automation to provision cloud lab environments and tracks attendance and engagement metrics to shape future workshop content.',
+          ["AWS", "EC2", "S3", "IAM", "Python Automation"]) +
+        role("Technical Support &amp; Device Repair Technician", "Self employed &middot; Miami, FL", "Since Jan 2020",
+          'Diagnoses and resolves hardware, operating system, and network issues for 200+ customers, and has configured and maintained 50+ systems.',
+          null) +
+        '<h3 style="margin:1.5rem 0 0.2rem;font-size:1.05rem">Leadership</h3>' +
+        '<ul style="margin:0 0 1.1rem;padding-left:1.2rem;color:var(--muted-fg);line-height:1.75">' +
+        '<li>Vice President of Administration, ColorStack FSU, since Apr 2026. Second in command to the chapter president, owning event registration, organizational documentation, and operational planning.</li>' +
+        '<li>Marketing Outreach Chair, ACM FSU, since May 2026. Leads outreach and marketing campaigns and coordinates events, communications, and recruitment with E-board leadership.</li>' +
+        '</ul>' +
+        '<h3 style="margin:1.2rem 0 0.2rem;font-size:1.05rem">Previously</h3>' +
+        '<ul style="margin:0 0 0.6rem;padding-left:1.2rem;color:var(--muted-fg);line-height:1.75">' +
+        '<li>DevOps Project Manager, AWS Student Builder Group at FSU, Jan to May 2026</li>' +
+        '<li>IT Shadowing, Florida Auditor General, Dec 2025</li>' +
+        '<li>Research Intern, Coral Reproduction Lab, University of Miami Rosenstiel School, Jun 2022 to Apr 2023</li>' +
+        '<li>Front Service Clerk, Publix, 2022</li>' +
+        '</ul>' +
+        '<p class="convo">Jorge holds both Florida State University ITS internships, AI Research and Network Operations, concurrently alongside his engineering work at Drafted Labs. I can provide more detail on any of these roles.</p>'
     },
     projects: {
-      q: "What projects are you most proud of?",
+      q: "What projects has Jorge worked on?",
       html: '<h2>Projects</h2>' +
         '<div class="proj"><div class="proj-head"><h3>SmartGallery</h3><span class="badge">Featured</span><span class="date">Spring 2026</span></div>' +
-        '<p>Serverless image recognition and management web app built with the AWS Cloud Club at FSU. I coordinated 40 developers across 5 teams to deliver it in 10 weeks with zero production failures. Automated Lambda and Rekognition pipelines eliminated 95% of manual tagging overhead.</p>' +
+        '<p>Serverless image recognition and management web app built with the AWS Cloud Club at FSU. Jorge coordinated 40 developers across 5 teams to deliver it in 10 weeks with zero production failures. Automated Lambda and Rekognition pipelines eliminated 95% of manual tagging overhead.</p>' +
         pills('pill-d', ["React", "AWS SAM", "Lambda", "Rekognition", "DynamoDB", "S3", "API Gateway", "Cognito"]) +
         '<p style="margin:0.7rem 0 0"><a style="color:var(--link);text-decoration:none;font-size:14px;font-weight:500" href="https://github.com/Jfraile05/CloudClub-Spring26-ImageManagementWebApp" target="_blank" rel="noopener">GitHub &#8599;</a></p></div>' +
         '<div class="proj"><div class="proj-head"><h3>NoleQuest</h3><span class="date">AWS Design Sprint</span></div>' +
-        '<p>AI-powered internship marketplace prototype. Architected the AWS network infrastructure with VPC, routing, and IP management supporting 1,000+ reliable user requests, with a serverless backend and monitoring for zero-disruption delivery.</p>' +
+        '<p>AI-powered internship marketplace prototype. Jorge architected the AWS network infrastructure with VPC, routing, and IP management supporting 1,000+ reliable user requests, with a serverless backend and monitoring for zero-disruption delivery.</p>' +
         pills('pill-d', ["React", "AWS", "Amazon Bedrock", "Claude Sonnet", "Figma"]) +
         '<p style="margin:0.7rem 0 0"><a style="color:var(--link);text-decoration:none;font-size:14px;font-weight:500" href="https://github.com/Jfraile05/AWS-NoleQuest" target="_blank" rel="noopener">GitHub &#8599;</a></p></div>' +
         '<div class="proj"><div class="proj-head"><h3>Cloud API</h3></div>' +
         '<p>Lightweight Python REST API on AWS EC2 with production-style infrastructure: Flask managed through Gunicorn and systemd with health monitoring, automated recovery, and multi-worker concurrency.</p>' +
         pills('pill-d', ["Python", "Flask", "AWS EC2", "Gunicorn", "systemd", "Linux"]) +
         '<p style="margin:0.7rem 0 0"><a style="color:var(--link);text-decoration:none;font-size:14px;font-weight:500" href="https://github.com/Jfraile05/cloud-api" target="_blank" rel="noopener">GitHub &#8599;</a></p></div>' +
-        '<p class="convo">There\'s more on my GitHub, including a C++17 Pokémon battle engine and a C++ banking system. Want the story behind any of these? 😊</p>'
+        '<p class="convo">Further work is available on his GitHub, including a C++17 Pokémon battle engine and a C++ banking system. I can provide more detail on any of these projects.</p>'
     },
     skills: {
-      q: "What are your skills?",
+      q: "What are Jorge's skills?",
       html: '<h2>Skills &amp; Expertise</h2>' +
         cat("Programming", ["Python", "C++", "C#", "Java", "SQL", "Bash", "JavaScript"]) +
         cat("Cloud & AWS", ["Lambda", "EC2", "S3", "DynamoDB", "API Gateway", "IAM", "VPC", "Serverless", "CI/CD"]) +
         cat("Systems", ["Linux", "Windows Server", "Active Directory", "Distributed Systems", "Multithreading"]) +
-        cat("AI / ML", ["LLM Training & Evaluation", "Model Fine-Tuning", "Prompt Engineering", "Amazon Bedrock", "Claude", "Generative AI"]) +
+        cat("Networking", ["Juniper Junos", "Juniper Mist", "Marvis", "VLANs", "TCP/IP", "DNS", "DHCP"]) +
+        cat("AI / ML", ["LLM Training & Evaluation", "RAG", "Model Fine-Tuning", "Prompt Engineering", "Amazon Bedrock", "Claude", "Generative AI"]) +
         cat("Reliability", ["System Reliability", "Fault Tolerance", "Scalability", "Root Cause Analysis", "Automation"]) +
         cat("Dev & Data", ["React", "Node.js", "Vite", "MySQL", "SQLite"]) +
         cat("Tools", ["Git", "GitHub", "Docker", "ServiceNow", "SCCM"])
     },
     contact: {
-      q: "How can I reach you?",
+      q: "How can I contact Jorge?",
       html: '<div class="gcard">' +
         '<div class="gcard-head"><h2 style="margin:0">Contact Information</h2><span class="handle">@Jfraile05</span></div>' +
         '<div class="crow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg><a href="mailto:Jorge@JorgeFraile.com">Jorge@JorgeFraile.com</a></div>' +
@@ -935,36 +990,43 @@ window.initGlobe = function () {
         '<a href="resume.pdf" target="_blank" rel="noopener">Resume</a>' +
         '</div>' +
         '<form class="contact-form" novalidate>' +
-        '<h3>Send me a message</h3>' +
+        '<h3>Send Jorge a message</h3>' +
         '<div class="cf-row">' +
         '<div class="cf-field"><label>Name</label><input type="text" name="name" placeholder="Your name" autocomplete="name" required /></div>' +
         '<div class="cf-field"><label>Email</label><input type="email" name="email" placeholder="your@email.com" autocomplete="email" required /></div>' +
         '</div>' +
-        '<div class="cf-field"><label>Message</label><textarea name="message" placeholder="What\'s on your mind?" required></textarea></div>' +
+        '<div class="cf-field"><label>Message</label><textarea name="message" placeholder="Your message" required></textarea></div>' +
         '<button class="cf-send" type="submit">Send Message</button>' +
         '<p class="cf-status"></p>' +
         '</form>' +
         '</div>' +
-        '<p class="convo">Always open to new opportunities, whether that\'s internships, research, collaborations, or just a good conversation. Feel free to reach out! 😊</p>'
+        '<p class="convo">Jorge is open to new opportunities, including internships, research, and collaborations. He can be reached directly at Jorge@JorgeFraile.com or through LinkedIn.</p>'
     },
     location: {
-      q: "Where are you based?",
+      q: "Where is Jorge based?",
       html: '<h2>Location</h2>' +
         '<p style="margin:0;font-size:1.1rem;font-weight:600">Tallahassee, Florida, United States</p>' +
         '<div class="mapcard"><div class="stars" id="stars1"></div><div class="stars twinkle" id="stars2"></div><canvas id="globe"></canvas><div class="pin3d" id="pin3d"><span class="pin-ring"></span><span class="pin-label">Tallahassee</span><svg class="pin-svg" viewBox="0 0 24 36"><path d="M10.9 19 L13.1 19 L12.05 36 Z" fill="#E3E3EA"/><circle cx="12" cy="10.5" r="9.5" fill="#E63B2E"/><circle cx="8.6" cy="7.2" r="2.8" fill="#FF9184" opacity="0.9"/></svg></div><div class="pin3d pin-mini" id="pinMadrid"><span class="mini-dot"></span><span class="pin-label">Madrid · born</span></div><div class="pin3d pin-mini" id="pinMiami"><span class="mini-dot"></span><span class="pin-label">Miami · home</span></div></div>' +
-        '<p class="convo">Born in Madrid, home base in Miami, and in Tallahassee for school at Florida State. Open to remote work and relocation. Have you ever been down here?</p>'
+        '<p class="convo">Jorge was born in Madrid, his home base is Miami, and he is in Tallahassee for school at Florida State. He is open to remote work and relocation.</p>'
+    },
+    decline: {
+      q: "",
+      html: '<p class="convo">I am not trained to answer personal questions. I can provide information about Jorge\'s professional background, experience, skills, and projects.</p>'
     }
   };
 
   var cardText = {
-    me: "I'm Jorge Fraile Perez, a junior at FSU studying Computer Science and Applied Mathematics (Class of 2027, GPA 3.52, Dean's List, HSF Scholar, AWS Certified Cloud Practitioner), based in Tallahassee, Florida. Currently: Founding Engineer at Drafted (since Mar 2026), building Pocket Workforce for Falcon Automatics (since Jan 2026), AWS Student Builder Campus Leader (since Feb 2026), Undergraduate Systems Administrator at FSU CS (since Jan 2026), VP of Administration at ColorStack FSU and Marketing Outreach Chair at ACM.",
-    projects: "My main projects: SmartGallery, a serverless image recognition app built with 40 developers across 5 teams in 10 weeks with zero production failures (React, AWS SAM, Lambda, Rekognition, DynamoDB, S3, API Gateway, Cognito). NoleQuest, an AI internship marketplace on Amazon Bedrock with Claude Sonnet. Cloud API, a Python REST API on EC2 with Flask, Gunicorn, and systemd. Plus a C++17 Pokemon battle engine and a C++ banking system on GitHub.",
-    skills: "My skills: Programming in Python, C++, C#, Java, SQL, Bash, JavaScript. Cloud and AWS: Lambda, EC2, S3, DynamoDB, API Gateway, IAM, VPC, serverless, CI/CD. Systems: Linux, Windows Server, Active Directory, distributed systems. AI/ML: LLM training and evaluation, fine-tuning, prompt engineering, Amazon Bedrock, Claude. Also React, Node.js, MySQL, SQLite, Git, GitHub, Docker, ServiceNow, SCCM.",
-    contact: "You can reach me at Jorge@JorgeFraile.com or 305-798-5261. LinkedIn: linkedin.com/in/jorge-fraile. GitHub: github.com/Jfraile05. My resume is at jorgefraile.com/resume.pdf.",
-    location: "Born in Madrid, home base in Miami, and in Tallahassee for school at Florida State. Open to remote work and relocation."
+    me: "Jorge Fraile Perez is a junior at FSU studying Computer Science and Applied Mathematics (Class of 2027, GPA 3.52, Dean's List, HSF Scholar, AWS Certified Cloud Practitioner), based in Tallahassee, Florida. He is currently Founding Engineer at Drafted (since Mar 2026), AI Research Intern and Network Operations Intern at FSU Information Technology Services (since Sep 2026), AWS Student Builder Campus Leader (since Feb 2026), Undergraduate Systems Administrator at FSU CS (since Jan 2026), VP of Administration at ColorStack FSU and Marketing Outreach Chair at ACM.",
+    experience: "Jorge's current roles: Founding Engineer at Drafted Labs (since Mar 2026, remote), where he redesigned the core platform architecture, leads the Drafted x Snorkel AI partnership across 10+ universities, and engineers Python LLM evaluation and data annotation pipelines for 100,000+ vetted contributors. AI Research Intern at FSU Information Technology Services (since Sep 2026), evaluating LLM and generative AI tools and building Python RAG workflows, benchmarking model accuracy, latency, and cost. Network Operations Intern at FSU Information Technology Services (since Sep 2026), configuring and troubleshooting Juniper switches through the Junos CLI, managing VLANs and ports, and monitoring network health with Juniper Mist and Marvis. Undergraduate Systems Administrator at FSU Computer Science (since Jan 2026), 200+ tickets across 300+ Linux and Windows nodes. AWS Student Builder Campus Leader (since Feb 2026), reaching 500+ students. Self employed device repair technician since Jan 2020. Leadership: VP of Administration at ColorStack FSU (since Apr 2026) and Marketing Outreach Chair at ACM FSU (since May 2026). Previously: DevOps Project Manager for the AWS Student Builder Group at FSU (Jan to May 2026), IT shadowing at the Florida Auditor General (Dec 2025), and research intern at the University of Miami Coral Reproduction Lab (Jun 2022 to Apr 2023).",
+    projects: "Jorge's main projects: SmartGallery, a serverless image recognition app built with 40 developers across 5 teams in 10 weeks with zero production failures (React, AWS SAM, Lambda, Rekognition, DynamoDB, S3, API Gateway, Cognito). NoleQuest, an AI internship marketplace on Amazon Bedrock with Claude Sonnet. Cloud API, a Python REST API on EC2 with Flask, Gunicorn, and systemd. Plus a C++17 Pokemon battle engine and a C++ banking system on GitHub.",
+    skills: "Jorge's skills: Programming in Python, C++, C#, Java, SQL, Bash, JavaScript. Cloud and AWS: Lambda, EC2, S3, DynamoDB, API Gateway, IAM, VPC, serverless, CI/CD. Systems: Linux, Windows Server, Active Directory, distributed systems. AI/ML: LLM training and evaluation, fine-tuning, prompt engineering, Amazon Bedrock, Claude. Also React, Node.js, MySQL, SQLite, Git, GitHub, Docker, ServiceNow, SCCM.",
+    contact: "Jorge can be reached at Jorge@JorgeFraile.com or 305-798-5261. LinkedIn: linkedin.com/in/jorge-fraile. GitHub: github.com/Jfraile05. His resume is at jorgefraile.com/resume.pdf.",
+    location: "Jorge was born in Madrid, his home base is Miami, and he is in Tallahassee for school at Florida State. He is open to remote work and relocation.",
+    decline: "I am not trained to answer personal questions. I can provide information about Jorge's professional background, experience, skills, and projects."
   };
 
   var routes = [
+    [/experience|intern\w*|career|employ\w*|work (at|for|with|history)|job|role|position|drafted|sysadmin|juniper|network\w*/i, "experience"],
     [/project|built|build|portfolio|smartgallery|nolequest|work/i, "projects"],
     [/skill|stack|tech|know|language/i, "skills"],
     [/contact|reach|email|phone|hire|linkedin|github|resume/i, "contact"],
@@ -1034,7 +1096,7 @@ window.initGlobe = function () {
       return r.json().then(function (j) { return { ok: r.ok, status: r.status, j: j }; });
     }).then(function (res) {
       if (res.status === 429) {
-        typeOut(target, "You're asking faster than I can keep up 😅 Give it a minute and ask again, or use the shortcut buttons below.");
+        typeOut(target, "That is more questions than I can take right now. Please wait a minute and ask again, or use the shortcut buttons below.");
         history.pop();
         return;
       }
@@ -1068,7 +1130,7 @@ window.initGlobe = function () {
     try { if (sessionStorage.getItem("introDone")) return; sessionStorage.setItem("introDone", "1"); } catch (e) {}
     var entry = appendEntry(
       '<form class="intro-card" novalidate>' +
-        '<p class="convo" style="margin-top:0">Want me to be able to follow up? Leave your name and email. Totally optional, only used so I can reply. 😊</p>' +
+        '<p class="convo" style="margin-top:0">If you would like Jorge to follow up, please leave your name and email. This is optional and is used only so that he can reply.</p>' +
         '<div class="cf-row">' +
           '<div class="cf-field"><label>Name</label><input name="name" type="text" autocomplete="name" /></div>' +
           '<div class="cf-field"><label>Email</label><input name="email" type="email" autocomplete="email" /></div>' +
@@ -1091,11 +1153,18 @@ window.initGlobe = function () {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ identify: true, visitor: visitor })
       }).catch(function () {});
-      form.innerHTML = '<p class="convo" style="margin:0">Thanks' + (name ? ", " + esc(name) : "") + '! 😊</p>';
+      form.innerHTML = '<p class="convo" style="margin:0">Thank you' + (name ? ", " + esc(name) : "") + '. Jorge will be in touch.</p>';
     });
   }
 
+  /* Personal and off-domain questions are declined, not answered with the bio
+     card. This path only runs when /api/chat is unreachable; the live model is
+     held to the same scope by its system prompt. */
+  var OFFTOPIC_RE = /\b(girlfriend|boyfriend|wife|husband|married|dating|single|relationship|family|parents|mom|dad|mother|father|sibling|brother|sister|kids|children|birthday|how old|your age|religio\w*|politic\w*|salary|net worth|weight|height|favou?rite|hobby|hobbies|food|eat|cook\w*|drink|astrolog\w*|zodiac|joke|weather)\b|do you like|what do you think/i;
+  var PROFESSIONAL_RE = /\b(project|work|job|role|intern\w*|skill|tech|stack|code|coding|program\w*|engineer\w*|experience|resume|cv|hire|hiring|contact|email|school|study|studies|degree|major|college|universit\w*|fsu|aws|cloud|company|drafted|github|linkedin|python|develop\w*|network\w*|juniper|research|rag)\b/i;
+
   function routeFor(text) {
+    if (OFFTOPIC_RE.test(text) && !PROFESSIONAL_RE.test(text)) return "decline";
     for (var i = 0; i < routes.length; i++) {
       if (routes[i][0].test(text)) return routes[i][1];
     }
@@ -1141,12 +1210,12 @@ window.initGlobe = function () {
       if (!r.ok) throw new Error("send failed");
       form.reset();
       btn.style.display = "none";
-      status.textContent = "Sent! I'll be in touch soon 😊";
+      status.textContent = "Message sent. Jorge will be in touch soon.";
       status.className = "cf-status ok";
     }).catch(function () {
       btn.disabled = false;
       btn.textContent = "Send Message";
-      status.textContent = "Something went wrong. Email me directly at Jorge@JorgeFraile.com";
+      status.textContent = "Something went wrong. Please email Jorge directly at Jorge@JorgeFraile.com";
       status.className = "cf-status err";
     });
   });
