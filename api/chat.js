@@ -36,6 +36,7 @@ Current roles:
 - Self-employed Technical Support & Device Repair Technician (Jan 2020 to present, Miami): diagnosed and resolved hardware, OS, and network issues for 200+ customers, configured and maintained 50+ systems.
 
 Past roles:
+- Communications Assistant, ColorStack FSU (Jan to May 2026): the role he held at ColorStack before being promoted to Vice President of Administration.
 - DevOps Project Manager, AWS Student Builder Group at FSU (Jan to May 2026): led the DevOps team provisioning AWS infrastructure (S3, DynamoDB, IAM, CloudWatch) for a full-stack cloud app, secure access controls, logging dashboards, GitHub issue management, CI/CD improving deployment speed 50%.
 - IT Shadowing, Florida Auditor General (Dec 2025): enterprise production support workflows in a government compliance environment.
 - Research Intern, Coral Reproduction Lab, University of Miami Rosenstiel School (Jun 2022 to Apr 2023): specimen preparation, experimental monitoring, and data collection for marine conservation research.
