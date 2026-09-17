@@ -172,6 +172,37 @@
   }
   .demo-note { margin-top: 1.6rem; color: var(--placeholder); font-size: 14.5px; }
 
+  /* ============ Pricing ============ */
+  .tiers { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); align-items: start; }
+  @media (max-width: 860px) { .tiers { grid-template-columns: 1fr; } }
+  .tier {
+    position: relative;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.6rem 1.5rem;
+  }
+  .tier.feature { border-color: var(--accent-line); background: linear-gradient(180deg, var(--accent-soft), var(--card) 42%); }
+  .tier .flag {
+    position: absolute; top: -10px; left: 1.5rem;
+    background: var(--accent); color: #17130B;
+    border-radius: 9999px; padding: 2px 10px;
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .tier h3 { margin: 0 0 0.2rem; font-size: 1.1rem; font-weight: 700; }
+  .tier .who { margin: 0 0 1.1rem; color: var(--placeholder); font-size: 13.8px; }
+  .tier .price { display: flex; align-items: baseline; gap: 7px; }
+  .tier .price b { font-size: 2.1rem; font-weight: 900; letter-spacing: -0.03em; }
+  .tier .price span { color: var(--placeholder); font-size: 13.5px; }
+  .tier .when { margin: 0.5rem 0 1.2rem; color: var(--accent); font-size: 13.5px; font-weight: 600; }
+  .tier ul { margin: 0 0 1.4rem; padding-left: 1.05rem; color: var(--muted-fg); font-size: 14.2px; line-height: 1.8; }
+  .tier .btn { width: 100%; }
+  .tier .btn.ghost { border-color: var(--border); }
+  .price-note {
+    margin-top: 1.8rem; padding: 1.15rem 1.3rem;
+    background: var(--card); border: 1px solid var(--border-soft); border-radius: 12px;
+    color: var(--muted-fg); font-size: 14.2px; line-height: 1.7;
+  }
+  .price-note b { color: var(--fg); font-weight: 600; }
+
   /* ============ Contact ============ */
   .contact-grid { display: grid; gap: 40px; grid-template-columns: 0.9fr 1.1fr; align-items: start; }
   @media (max-width: 860px) { .contact-grid { grid-template-columns: 1fr; gap: 28px; } }
@@ -225,6 +256,7 @@
       <a class="navlink" href="#services">Services</a>
       <a class="navlink" href="#process">Process</a>
       <a class="navlink" href="#work">Work</a>
+      <a class="navlink" href="#pricing">Pricing</a>
       <a class="btn" href="#contact">Start a project</a>
     </nav>
   </div>
@@ -366,6 +398,64 @@
 
       </div>
       <p class="demo-note">Try the assistant yourself at <a href="/">jorgefraile.com</a>. It is the clearest demo on this page.</p>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="kicker">Pricing</span>
+        <h2>What it costs</h2>
+        <p>Every project is quoted as a fixed price on the scope call, so you know the number before anything is built. These are the bands most work falls into.</p>
+      </div>
+      <div class="tiers">
+
+        <div class="tier">
+          <h3>Starter</h3>
+          <p class="who">One clear thing, done properly.</p>
+          <div class="price"><b>$500</b><span>and up</span></div>
+          <p class="when">1 to 2 weeks</p>
+          <ul>
+            <li>A landing page, or one automation</li>
+            <li>Site chat on your existing content</li>
+            <li>Deployed on your domain</li>
+            <li>Two rounds of revisions</li>
+          </ul>
+          <a class="btn ghost" href="#contact">Start here</a>
+        </div>
+
+        <div class="tier feature">
+          <span class="flag">Most projects</span>
+          <h3>Build</h3>
+          <p class="who">A real system wired into your tools.</p>
+          <div class="price"><b>$2,000</b><span>and up</span></div>
+          <p class="when">2 to 4 weeks</p>
+          <ul>
+            <li>Multi page site or web app</li>
+            <li>An agent that runs a full workflow</li>
+            <li>Voice or text assistant with booking</li>
+            <li>CRM connected to the rest of your stack</li>
+            <li>Documentation and a handover call</li>
+          </ul>
+          <a class="btn" href="#contact">Start a project</a>
+        </div>
+
+        <div class="tier">
+          <h3>Systems</h3>
+          <p class="who">Several pieces that have to work together.</p>
+          <div class="price"><b>$5,000</b><span>and up</span></div>
+          <p class="when">4 to 8 weeks</p>
+          <ul>
+            <li>Site, agents, and automations as one system</li>
+            <li>Multiple integrations and data migration</li>
+            <li>Brand identity and copy included</li>
+            <li>Staged rollout with your team</li>
+          </ul>
+          <a class="btn ghost" href="#contact">Talk it through</a>
+        </div>
+
+      </div>
+      <p class="price-note"><b>What is not in the price.</b> Model APIs, phone numbers, and hosting are billed to your own accounts at cost, so you keep them if we ever part ways. Typical running cost for a small business assistant is a few dollars a month, not hundreds. <b>Ongoing support</b> is optional at $150 a month for monitoring, small changes, and priority replies. No project requires it.</p>
     </div>
   </section>
 
