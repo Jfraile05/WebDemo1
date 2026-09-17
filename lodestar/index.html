@@ -8,7 +8,9 @@
 <link rel="icon" href="/favicon-32.png?v=2" type="image/png" sizes="32x32" />
 <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" sizes="any" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
+<meta name="color-scheme" content="light dark" />
 <link rel="preload" href="/lodestar/fonts/bodoni-moda.woff2" as="font" type="font/woff2" crossorigin />
+<script>try{var t=localStorage.getItem("lodestar-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
 <style>
 /* Self-hosted so the site CSP stays at default-src 'self'. */
 @font-face { font-family: "Bodoni Moda"; src: url("/lodestar/fonts/bodoni-moda.woff2") format("woff2"); font-weight: 400 700; font-display: swap; }
@@ -30,10 +32,42 @@
   --magenta-soft: #F3DCE8;
   --sounding: #2C6683;
   --hairline: #BCC7C6;
+  --grat: rgba(16,32,43,.055);
+  --btn-on: #fff;
   --measure: 1160px;
   --display: "Bodoni Moda", "Didot", "Times New Roman", serif;
   --body: "Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --mono: "Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+/* Night chart. Electronic chart displays dim the paper and land at night and
+   keep the magenta bright, rather than inverting the whole plate. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: #DBE4E3;
+    --ink-soft: #92A6A9;
+    --water: #0A1218;
+    --land: #141A15;
+    --paper: #101922;
+    --magenta: #FF5CA3;
+    --magenta-soft: #2A1220;
+    --sounding: #74B8D6;
+    --hairline: #24333E;
+    --grat: rgba(219,228,227,.055);
+    --btn-on: #08111A;
+  }
+}
+:root[data-theme="dark"] {
+  --ink: #DBE4E3;
+  --ink-soft: #92A6A9;
+  --water: #0A1218;
+  --land: #141A15;
+  --paper: #101922;
+  --magenta: #FF5CA3;
+  --magenta-soft: #2A1220;
+  --sounding: #74B8D6;
+  --hairline: #24333E;
+  --grat: rgba(219,228,227,.055);
+  --btn-on: #08111A;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
@@ -44,7 +78,7 @@ body {
   font: 400 17px/1.65 var(--body);
   -webkit-font-smoothing: antialiased;
 }
-::selection { background: var(--magenta); color: #fff; }
+::selection { background: var(--magenta); color: var(--btn-on); }
 a { color: var(--sounding); }
 :focus-visible { outline: 2px solid var(--magenta); outline-offset: 3px; }
 .wrap { max-width: var(--measure); margin: 0 auto; padding: 0 28px; }
@@ -87,8 +121,8 @@ h3 { font-size: 1.12rem; font-family: var(--body); font-weight: 500; letter-spac
 }
 .mast nav a:hover { color: var(--magenta); }
 /* .mast nav a outranks .act, so restate the button colors at that weight. */
-.mast nav a.act { color: #fff; }
-.mast nav a.act:hover { color: #fff; }
+.mast nav a.act { color: var(--btn-on); }
+.mast nav a.act:hover { color: var(--btn-on); }
 @media (max-width: 800px) { .mast nav .nl { display: none; } }
   .wordmark span, .mast nav a.act { white-space: nowrap; }
   @media (max-width: 520px) { .mast .act { padding: 0 14px; font-size: 11px; letter-spacing: .08em; } }
@@ -97,25 +131,43 @@ h3 { font-size: 1.12rem; font-family: var(--body); font-weight: 500; letter-spac
 .act {
   display: inline-flex; align-items: center; justify-content: center;
   min-height: 44px; padding: 0 22px;
-  background: var(--magenta); color: #fff;
+  background: var(--magenta); color: var(--btn-on);
   border: 1px solid var(--magenta); border-radius: 2px;
   font: 500 12px/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase;
   text-decoration: none; cursor: pointer;
   transition: background .18s ease, color .18s ease;
 }
-.act:hover { background: #8E004B; border-color: #8E004B; }
+.act:hover { filter: brightness(.88); }
 .act.line { background: transparent; color: var(--ink); border-color: var(--ink); }
 .act.line:hover { background: var(--ink); color: var(--water); }
 .mast .act { min-height: 38px; padding: 0 16px; }
 
-/* ============ Hero: the one place motion lives ============ */
+/* Day / night switch */
+.switch {
+  width: 40px; height: 40px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent; border: 1px solid var(--hairline); border-radius: 2px;
+  color: var(--ink-soft); cursor: pointer; padding: 0;
+  transition: border-color .18s ease, color .18s ease;
+}
+.switch:hover { border-color: var(--magenta); color: var(--magenta); }
+.switch svg { width: 17px; height: 17px; stroke: currentColor; fill: none; }
+.switch .moon { display: none; }
+:root[data-theme="dark"] .switch .moon { display: block; }
+:root[data-theme="dark"] .switch .sun { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .switch .moon { display: block; }
+  :root:not([data-theme="light"]) .switch .sun { display: none; }
+}
+
+  /* ============ Hero: the one place motion lives ============ */
 .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--hairline); }
 /* Graticule: the lat/long grid printed under everything on a chart. */
 .hero::before {
   content: ""; position: absolute; inset: 0;
   background-image:
-    repeating-linear-gradient(to right, rgba(16,32,43,.055) 0 1px, transparent 1px 84px),
-    repeating-linear-gradient(to bottom, rgba(16,32,43,.055) 0 1px, transparent 1px 84px);
+    repeating-linear-gradient(to right, var(--grat) 0 1px, transparent 1px 84px),
+    repeating-linear-gradient(to bottom, var(--grat) 0 1px, transparent 1px 84px);
   pointer-events: none;
 }
 .hero .wrap { position: relative; display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: center; padding-top: 88px; padding-bottom: 88px; }
@@ -129,7 +181,21 @@ h1 .q { display: inline-block; }
 .hero .acts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
 .terms { margin: 26px 0 0; font: 500 11px/1.8 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
 
-.rose { width: 100%; max-width: 420px; margin: 0 auto; display: block; overflow: visible; }
+.rose-stage {
+    position: relative; width: 100%; max-width: 420px; aspect-ratio: 1 / 1;
+    margin: 0 auto; perspective: 900px;
+  }
+  .rose-tilt {
+    position: absolute; inset: 0;
+    transform-style: preserve-3d;
+    transition: transform .5s cubic-bezier(.2,.7,.3,1);
+    will-change: transform;
+  }
+  .rose-layer { position: absolute; inset: 0; }
+  .lz-card { transform: translateZ(0); }
+  /* The needle rides above the card the way it does under a compass glass. */
+  .lz-needle { transform: translateZ(34px); }
+  .rose { width: 100%; height: 100%; display: block; overflow: visible; }
 .rose .rhumb { stroke: var(--ink); stroke-width: .5; opacity: .16; }
 .rose .ring { fill: none; stroke: var(--ink); stroke-width: .8; opacity: .55; }
 .rose .tick { stroke: var(--ink); stroke-width: .8; opacity: .5; }
@@ -140,12 +206,12 @@ h1 .q { display: inline-block; }
   .rose .needle-tail { fill: var(--paper); stroke: var(--ink); stroke-width: .8; stroke-linejoin: round; }
   .rose .pivot { fill: var(--magenta); stroke: var(--paper); stroke-width: 1; }
 .rose .cardinal { font: 500 9px var(--mono); letter-spacing: .1em; fill: var(--ink); }
-@media (max-width: 900px) { .rose { max-width: 300px; } }
+@media (max-width: 900px) { .rose-stage { max-width: 300px; } }
   @media (max-width: 640px) {
     .hero .wrap { padding-top: 40px; padding-bottom: 44px; gap: 30px; }
     .lede { margin-top: 20px; }
     .hero .acts { margin-top: 26px; }
-    .rose { max-width: 260px; }
+    .rose-stage { max-width: 260px; }
   }
 
 /* ============ Bands ============ */
@@ -191,7 +257,7 @@ h1 .q { display: inline-block; }
 .demo { margin: 28px 0 0; color: var(--ink-soft); font-size: 15.5px; }
 
 /* ============ Pricing as soundings ============ */
-.sound { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--ink); }
+.sound { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--ink); perspective: 1400px; transform-style: preserve-3d; }
 @media (max-width: 820px) { .sound { grid-template-columns: 1fr; } }
 .depth { padding: 30px 32px 34px 0; border-bottom: 1px solid var(--hairline); }
 .depth + .depth { border-left: 1px solid var(--hairline); padding-left: 32px; }
@@ -234,7 +300,7 @@ form { background: var(--paper); border: 1px solid var(--hairline); padding: 28p
 .f label em { font-style: normal; text-transform: none; letter-spacing: 0; color: var(--ink-soft); opacity: .8; }
 .f input, .f select, .f textarea {
   width: 100%; min-height: 46px; padding: 11px 13px;
-  background: #fff; color: var(--ink);
+  background: var(--water); color: var(--ink);
   border: 1px solid var(--hairline); border-radius: 2px;
   font: 400 16px/1.5 var(--body);
 }
@@ -254,7 +320,19 @@ footer { padding: 30px 0 40px; }
 .foot a { text-decoration: none; }
 .foot a:hover { color: var(--magenta); }
 
-/* ============ Load sequence: one orchestrated moment ============ */
+/* Depth on the surfaces you actually decide with. Pointer devices only. */
+@media (hover: hover) and (pointer: fine) {
+  .depth { transition: transform .22s cubic-bezier(.2,.7,.3,1), background-color .22s ease; }
+  .depth:hover { transform: translateZ(26px); background-color: var(--paper); }
+  .depth.common:hover { background-color: var(--magenta-soft); }
+  .act { transform: translateZ(0); transition: transform .16s ease, filter .18s ease, background-color .18s ease, color .18s ease; }
+  .act:active { transform: translateZ(-6px) scale(.985); }
+  .entry { transition: transform .22s cubic-bezier(.2,.7,.3,1); }
+  .legend { perspective: 1400px; }
+  .entry:hover { transform: translateZ(14px); }
+}
+
+  /* ============ Load sequence: one orchestrated moment ============ */
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @keyframes plate { from { opacity: 0; transform: scale(.94) rotate(-6deg); } to { opacity: 1; transform: none; } }
 @keyframes swing {
@@ -275,6 +353,8 @@ footer { padding: 30px 0 40px; }
   .hero .fix, .hero h1, .hero .lede, .hero .acts, .hero .terms,
   .rose .plate, .rose .needle-g { animation: none; }
   * { transition: none !important; }
+  .rose-tilt { transform: none !important; }
+  .depth:hover, .entry:hover, .act:active { transform: none !important; }
 }
 </style>
 </head>
@@ -288,6 +368,10 @@ footer { padding: 30px 0 40px; }
       <a class="nl" href="#process">Process</a>
       <a class="nl" href="#work">Work</a>
       <a class="nl" href="#pricing">Pricing</a>
+      <button class="switch" id="themeToggle" type="button" aria-label="Switch to night chart" title="Day / night">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M21.4 12h-2.2M4.8 12H2.6M18.6 5.4l-1.6 1.6M7 17l-1.6 1.6M18.6 18.6 17 17M7 7 5.4 5.4"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.2 8.2 0 1 0 10.2 10.2Z"/></svg>
+      </button>
       <a class="act" href="#contact">Start a project</a>
     </nav>
   </div>
@@ -307,7 +391,10 @@ footer { padding: 30px 0 40px; }
         </div>
         <p class="terms">Fixed scope &#183; No retainer &#183; A straight answer on whether AI is the right tool</p>
       </div>
-      <svg class="rose" viewBox="0 0 200 200" role="img" aria-label="Compass rose">
+      <div class="rose-stage" id="roseStage">
+        <div class="rose-tilt" id="roseTilt">
+          <div class="rose-layer lz-card">
+            <svg class="rose" viewBox="0 0 200 200" role="img" aria-label="Compass rose">
         <g class="plate">
 <line class="rhumb" x1="100" y1="100" x2="100.00" y2="-90.00"/>
 <line class="rhumb" x1="100" y1="100" x2="172.71" y2="-75.54"/>
@@ -385,10 +472,17 @@ footer { padding: 30px 0 40px; }
           <text class="cardinal" x="100" y="192" text-anchor="middle">S</text>
           <text class="cardinal" x="13" y="103" text-anchor="middle">W</text>
         </g>
+            </svg>
+          </div>
+          <div class="rose-layer lz-needle" aria-hidden="true">
+            <svg class="rose" viewBox="0 0 200 200">
         <g class="needle-g">
           <path class="needle-tail" d="M100,170 L96,100 L100,94 L104,100 Z"/><path class="needle" d="M100,22 L105,100 L100,110 L95,100 Z"/><circle class="pivot" cx="100" cy="100" r="3.2"/>
         </g>
-      </svg>
+            </svg>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -653,6 +747,52 @@ footer { padding: 30px 0 40px; }
 <script>
 (function () {
   "use strict";
+
+  /* ---- Day / night ---- */
+  var root = document.documentElement;
+  var toggle = document.getElementById("themeToggle");
+  function current() {
+    var set = root.getAttribute("data-theme");
+    if (set) return set;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  function label() {
+    toggle.setAttribute("aria-label", current() === "dark" ? "Switch to day chart" : "Switch to night chart");
+  }
+  label();
+  toggle.addEventListener("click", function () {
+    var next = current() === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("lodestar-theme", next); } catch (e) {}
+    label();
+  });
+
+  /* ---- The rose sits in a gimbal and answers the pointer ---- */
+  var stage = document.getElementById("roseStage");
+  var tilt = document.getElementById("roseTilt");
+  var fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (stage && tilt && fine && !still) {
+    var hero = document.querySelector(".hero");
+    var frame = 0, tx = 0, ty = 0;
+    function draw() {
+      frame = 0;
+      tilt.style.transform = "rotateX(" + ty.toFixed(2) + "deg) rotateY(" + tx.toFixed(2) + "deg)";
+    }
+    hero.addEventListener("pointermove", function (e) {
+      var r = stage.getBoundingClientRect();
+      var dx = (e.clientX - (r.left + r.width / 2)) / (window.innerWidth / 2);
+      var dy = (e.clientY - (r.top + r.height / 2)) / (window.innerHeight / 2);
+      tx = Math.max(-1, Math.min(1, dx)) * 11;
+      ty = Math.max(-1, Math.min(1, dy)) * -9;
+      if (!frame) frame = requestAnimationFrame(draw);
+    });
+    hero.addEventListener("pointerleave", function () {
+      tx = 0; ty = 0;
+      if (!frame) frame = requestAnimationFrame(draw);
+    });
+  }
+
   var form = document.getElementById("leadform");
   var status = document.getElementById("lstatus");
   var button = form.querySelector("button[type=submit]");
