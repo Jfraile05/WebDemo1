@@ -118,13 +118,6 @@
   .headline .w:nth-child(7) .wi { animation-delay: .64s; }
   .headline .w:nth-child(8) .wi { animation-delay: .71s; }
   .headline .w:nth-child(9) .wi { animation-delay: .78s; }
-  /* Breaks the headline after the middot once it has to wrap, so the
-     second role group stays on its own line instead of splitting. */
-  .headline .hbrk { display: none; }
-  @media (max-width: 860px) {
-    .headline .hbrk { display: block; width: 100%; height: 0; }
-    .headline .dot { display: none; }
-  }
   .avatar {
     width: clamp(160px, 29vh, 240px); height: clamp(160px, 29vh, 240px);
     border-radius: 2rem;
@@ -658,7 +651,7 @@
 
 <main class="stage" id="stage">
   <p class="hello">Hey, I'm Jorge <span class="wave">👋</span></p>
-  <h1 class="headline"><span class="w"><span class="wi">Founding</span></span> <span class="w"><span class="wi">Engineer</span></span> <span class="w dot"><span class="wi">&middot;</span></span> <span class="hbrk"></span> <span class="w"><span class="wi">AI</span></span> <span class="w"><span class="wi">&amp;</span></span> <span class="w"><span class="wi">Network</span></span> <span class="w"><span class="wi">Ops</span></span> <span class="w"><span class="wi">Intern</span></span></h1>
+  <h1 class="headline"><span class="w"><span class="wi">I</span></span> <span class="w"><span class="wi">build</span></span> <span class="w"><span class="wi">AI</span></span> <span class="w"><span class="wi">systems</span></span> <span class="w"><span class="wi">and</span></span> <span class="w"><span class="wi">the</span></span> <span class="w"><span class="wi">networks</span></span> <span class="w"><span class="wi">behind</span></span> <span class="w"><span class="wi">them</span></span></h1>
   <div class="avatar"><img src="jorge.jpeg?v=2" alt="Jorge Fraile Perez" /></div>
 
   <form class="askwrap" id="askform">
