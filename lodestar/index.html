@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Lodestar Systems</title>
+<meta name="description" content="Lodestar Systems builds custom AI for small teams: websites, agents, CRM automation, voice and text assistants, and brand identity. Built and shipped by one engineer." />
+<link rel="icon" href="/favicon-32.png?v=2" type="image/png" sizes="32x32" />
+<link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" sizes="any" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
+<style>
+  /* Same palette as jorgefraile.com so the two pages read as one family. */
+  :root {
+    --bg: #050507;
+    --fg: #F4F4F5;
+    --card: #101014;
+    --card-2: #16161B;
+    --border: #23232A;
+    --border-soft: #1C1C22;
+    --muted-fg: #A1A1AA;
+    --placeholder: #71717A;
+    --accent: #D4B886;
+    --accent-soft: #241F13;
+    --accent-line: #3A3222;
+    --radius: 16px;
+    --maxw: 1080px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation: none !important; transition: none !important; }
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+  /* ============ Header ============ */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(5, 5, 7, 0.82);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--fg); }
+  .brand svg { width: 22px; height: 22px; stroke: var(--accent); }
+  .brand b { font-size: 15px; font-weight: 700; letter-spacing: 0.01em; }
+  .brand span { color: var(--muted-fg); font-weight: 500; }
+  nav { display: flex; align-items: center; gap: 26px; }
+  nav a { color: var(--muted-fg); text-decoration: none; font-size: 14.5px; font-weight: 500; }
+  nav a:hover { color: var(--fg); }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--accent); color: #17130B;
+    border: 1px solid var(--accent); border-radius: 9999px;
+    padding: 0.62rem 1.25rem;
+    font: inherit; font-size: 14.5px; font-weight: 600;
+    text-decoration: none; cursor: pointer;
+    transition: transform .15s ease, opacity .15s ease;
+  }
+  .btn:hover { transform: translateY(-1px); opacity: .92; }
+  .btn.ghost { background: transparent; color: var(--fg); border-color: var(--border); }
+  .btn.ghost:hover { border-color: var(--accent); background: var(--accent-soft); }
+  @media (max-width: 720px) { nav .navlink { display: none; } }
+
+  /* ============ Hero ============ */
+  .hero { position: relative; padding: 5.5rem 0 4.5rem; overflow: hidden; }
+  .hero::before {
+    content: ""; position: absolute; inset: -30% 0 auto 50%;
+    width: 900px; height: 700px; transform: translateX(-50%);
+    background:
+      radial-gradient(45% 45% at 50% 40%, rgba(212, 184, 134, 0.10), transparent 70%),
+      radial-gradient(35% 35% at 25% 60%, rgba(90, 80, 160, 0.10), transparent 70%);
+    pointer-events: none;
+  }
+  .hero .wrap { position: relative; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--accent-line); background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 9999px; padding: 5px 13px;
+    font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  h1 {
+    margin: 1.3rem 0 0;
+    font-size: clamp(2.3rem, 5.4vw, 3.9rem);
+    line-height: 1.07;
+    letter-spacing: -0.035em;
+    font-weight: 900;
+    max-width: 16ch;
+  }
+  h1 .hl { color: var(--accent); }
+  .lede {
+    margin: 1.4rem 0 0; max-width: 60ch;
+    font-size: clamp(1.02rem, 1.5vw, 1.18rem);
+    color: var(--muted-fg);
+  }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 2.2rem; }
+  .assur { margin-top: 1.6rem; color: var(--placeholder); font-size: 14px; }
+
+  /* ============ Sections ============ */
+  section { padding: 4.5rem 0; border-top: 1px solid var(--border-soft); }
+  .sec-head { max-width: 62ch; margin-bottom: 2.6rem; }
+  .sec-head .kicker {
+    color: var(--accent); font-size: 13px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .sec-head h2 {
+    margin: 0.6rem 0 0;
+    font-size: clamp(1.7rem, 3vw, 2.3rem);
+    letter-spacing: -0.03em; font-weight: 800; line-height: 1.15;
+  }
+  .sec-head p { margin: 0.8rem 0 0; color: var(--muted-fg); }
+
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 620px) { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.4rem;
+    transition: border-color .18s ease, transform .18s ease;
+  }
+  .card:hover { border-color: var(--accent-line); transform: translateY(-2px); }
+  .card .ic {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: var(--accent-soft); border: 1px solid var(--accent-line);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1rem;
+  }
+  .card .ic svg { width: 19px; height: 19px; stroke: var(--accent); }
+  .card h3 { margin: 0 0 0.45rem; font-size: 1.08rem; font-weight: 700; letter-spacing: -0.01em; }
+  .card p { margin: 0; color: var(--muted-fg); font-size: 14.6px; line-height: 1.62; }
+  .card ul { margin: 0.85rem 0 0; padding-left: 1.05rem; color: var(--placeholder); font-size: 13.8px; line-height: 1.75; }
+
+  /* ============ Process ============ */
+  .steps { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); counter-reset: step; }
+  @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
+  .step { border-left: 2px solid var(--accent-line); padding: 0.2rem 0 0.2rem 1.15rem; }
+  .step .n {
+    color: var(--accent); font-size: 12.5px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .step h3 { margin: 0.4rem 0 0.4rem; font-size: 1.05rem; font-weight: 700; }
+  .step p { margin: 0; color: var(--muted-fg); font-size: 14.6px; }
+
+  /* ============ Work ============ */
+  .work { display: grid; gap: 16px; grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) { .work { grid-template-columns: 1fr; } }
+  .wcard { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem 1.4rem; }
+  .wcard .tag {
+    display: inline-block; color: var(--accent); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 0.7rem;
+  }
+  .wcard h3 { margin: 0 0 0.5rem; font-size: 1.12rem; font-weight: 700; letter-spacing: -0.01em; }
+  .wcard p { margin: 0; color: var(--muted-fg); font-size: 14.6px; }
+  .stack { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 1rem; }
+  .stack span {
+    background: var(--card-2); border: 1px solid var(--border-soft);
+    color: var(--muted-fg); border-radius: 9999px;
+    padding: 3px 10px; font-size: 12.5px;
+  }
+  .demo-note { margin-top: 1.6rem; color: var(--placeholder); font-size: 14.5px; }
+
+  /* ============ Contact ============ */
+  .contact-grid { display: grid; gap: 40px; grid-template-columns: 0.9fr 1.1fr; align-items: start; }
+  @media (max-width: 860px) { .contact-grid { grid-template-columns: 1fr; gap: 28px; } }
+  .contact-side h2 { margin: 0.6rem 0 0; font-size: clamp(1.7rem, 3vw, 2.3rem); letter-spacing: -0.03em; font-weight: 800; line-height: 1.15; }
+  .contact-side p { color: var(--muted-fg); }
+  .direct { margin-top: 1.4rem; display: flex; flex-direction: column; gap: 10px; }
+  .direct a { display: inline-flex; align-items: center; gap: 9px; color: var(--fg); text-decoration: none; font-size: 15px; }
+  .direct svg { width: 17px; height: 17px; stroke: var(--accent); flex: none; }
+  .direct a:hover { color: var(--accent); }
+
+  form { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.6rem 1.5rem; }
+  .row { display: flex; gap: 14px; }
+  @media (max-width: 620px) { .row { flex-direction: column; gap: 0; } }
+  .field { flex: 1; margin-bottom: 1rem; }
+  .field label { display: block; font-size: 13px; font-weight: 600; color: var(--muted-fg); margin-bottom: 0.4rem; }
+  .field input, .field select, .field textarea {
+    width: 100%; background: #0B0B0F;
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 0.7rem 0.85rem;
+    color: var(--fg); font: inherit; font-size: 15px;
+  }
+  .field textarea { min-height: 116px; resize: vertical; }
+  .field input::placeholder, .field textarea::placeholder { color: var(--placeholder); }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(212, 184, 134, 0.12);
+  }
+  .field select { appearance: none; cursor: pointer; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  form .btn { width: 100%; padding: 0.8rem 1.25rem; font-size: 15px; }
+  .status { margin: 0.9rem 0 0; min-height: 1.2em; font-size: 14.5px; color: var(--muted-fg); }
+  .status.ok { color: var(--accent); }
+  .status.err { color: #E8837A; }
+
+  /* ============ Footer ============ */
+  footer { border-top: 1px solid var(--border-soft); padding: 2.2rem 0 3rem; }
+  .foot { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; }
+  .foot p { margin: 0; color: var(--placeholder); font-size: 14px; }
+  .foot a { color: var(--muted-fg); text-decoration: none; font-size: 14px; }
+  .foot a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 14.2 9.8 21.5 12l-7.3 2.2L12 21.5l-2.2-7.3L2.5 12l7.3-2.2Z"/></svg>
+      <b>Lodestar <span>Systems</span></b>
+    </a>
+    <nav>
+      <a class="navlink" href="#services">Services</a>
+      <a class="navlink" href="#process">Process</a>
+      <a class="navlink" href="#work">Work</a>
+      <a class="btn" href="#contact">Start a project</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <div class="hero">
+    <div class="wrap">
+      <span class="eyebrow">AI studio</span>
+      <h1>AI that does the work your team keeps <span class="hl">putting&nbsp;off</span></h1>
+      <p class="lede">Lodestar Systems builds the websites, agents, and automations small teams need and rarely have time to build. One engineer, scoped in a call, shipped in weeks.</p>
+      <div class="cta-row">
+        <a class="btn" href="#contact">Start a project</a>
+        <a class="btn ghost" href="#work">See what I have built</a>
+      </div>
+      <p class="assur">Fixed scope per project. No retainers required. Straight answer on whether AI is even the right tool for your problem.</p>
+    </div>
+  </div>
+
+  <section id="services">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="kicker">Services</span>
+        <h2>Six things I build</h2>
+        <p>Most projects combine two or three of these. If you only need one, that is fine too.</p>
+      </div>
+      <div class="grid">
+
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="16" rx="2"/><path d="M2.5 9h19"/><path d="M6 6.5h.01M9 6.5h.01"/></svg></div>
+          <h3>Websites</h3>
+          <p>Marketing sites and web apps that load fast, read well on a phone, and are built to be changed later.</p>
+          <ul><li>Landing pages and full sites</li><li>Booking, forms, and payments</li><li>Deployed on your domain</li></ul>
+        </div>
+
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="14" height="12" rx="2.5"/><path d="M12 3.5V7"/><circle cx="12" cy="3" r="1"/><path d="M9.5 12v1.5M14.5 12v1.5"/><path d="M2.5 12v3M21.5 12v3"/></svg></div>
+          <h3>AI agents</h3>
+          <p>Agents that carry a real workflow end to end instead of producing a demo: research, outreach, triage, reporting.</p>
+          <ul><li>Tool use and multi step workflows</li><li>Answers grounded in your documents</li><li>Human approval where it matters</li></ul>
+        </div>
+
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h8.5M17.5 7.5H20M4 16.5h4.5M13.5 16.5H20"/><circle cx="15" cy="7.5" r="2.5"/><circle cx="11" cy="16.5" r="2.5"/></svg></div>
+          <h3>CRM and automation</h3>
+          <p>Your tools, connected. Leads land in the right place, get enriched, and nothing falls through a gap between apps.</p>
+          <ul><li>Pipelines and lead routing</li><li>Data cleanup and enrichment</li><li>Reports that build themselves</li></ul>
+        </div>
+
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3"/></svg></div>
+          <h3>Voice</h3>
+          <p>Phone agents that pick up every call, answer the same questions your staff answers all day, and book the ones worth booking.</p>
+          <ul><li>Inbound answering and qualifying</li><li>Calendar booking</li><li>Call summaries after every call</li></ul>
+        </div>
+
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12.5a7.5 7.5 0 0 1-10.8 6.7L4 20.5l1.4-5.4A7.5 7.5 0 1 1 20.5 12.5Z"/><path d="M9 11.5h6M9 14.5h3.5"/></svg></div>
+          <h3>Text and chat</h3>
+          <p>Assistants on your site and in SMS that answer from what you actually published, and hand off to you when they should not guess.</p>
+          <ul><li>Site chat trained on your content</li><li>SMS and WhatsApp follow up</li><li>Transcripts and lead alerts</li></ul>
+        </div>
+
+        <div class="card">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 1 9-9c0 2.1-1.7 3.2-3.4 3.2h-1.7a1.7 1.7 0 0 0-1.2 2.9c.3.3.4.7.4 1.1 0 1-.9 1.8-2.1 1.8Z"/><circle cx="8" cy="10" r="1"/><circle cx="12" cy="7.6" r="1"/><circle cx="16" cy="10" r="1"/></svg></div>
+          <h3>Branding</h3>
+          <p>Name, mark, palette, and the words that go with them, so the thing you just built does not look unfinished.</p>
+          <ul><li>Naming and identity</li><li>Logo and color system</li><li>Site and outreach copy</li></ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="process">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="kicker">Process</span>
+        <h2>How a project runs</h2>
+        <p>Small enough to move fast, structured enough that you know what you are getting before anything is built.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <span class="n">Step 01</span>
+          <h3>Scope call</h3>
+          <p>Thirty minutes on what the problem costs you today. You leave with a written scope, a price, and a timeline, or with an honest no if AI is the wrong tool.</p>
+        </div>
+        <div class="step">
+          <span class="n">Step 02</span>
+          <h3>Build</h3>
+          <p>You see working software early and often, not a slide deck. Most projects ship in two to six weeks depending on how many systems have to be touched.</p>
+        </div>
+        <div class="step">
+          <span class="n">Step 03</span>
+          <h3>Handover</h3>
+          <p>It runs on your accounts, under your domain, with documentation your team can follow. Support after launch is available, never assumed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="work">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="kicker">Work</span>
+        <h2>What I have built</h2>
+        <p>Production systems, not course projects. Some client work is covered by agreement and is described without naming names.</p>
+      </div>
+      <div class="work">
+
+        <div class="wcard">
+          <span class="tag">AI infrastructure</span>
+          <h3>Evaluation and annotation pipelines at scale</h3>
+          <p>As founding engineer at Drafted Labs, built the Python pipelines behind LLM evaluation and data annotation work supporting more than 100,000 vetted contributors, and redesigned the core platform architecture to cut production incidents.</p>
+          <div class="stack"><span>Python</span><span>LLM evaluation</span><span>Platform architecture</span></div>
+        </div>
+
+        <div class="wcard">
+          <span class="tag">Agents</span>
+          <h3>A multi tenant agent marketplace</h3>
+          <p>Client engagement. Decentralized services running six MCP servers and more than eight autonomous agents for content generation, CRM, publishing, and outreach, with retrieval grounded in a vector database.</p>
+          <div class="stack"><span>MCP</span><span>Multi-agent</span><span>RAG</span><span>Vector search</span></div>
+        </div>
+
+        <div class="wcard">
+          <span class="tag">Cloud</span>
+          <h3>Serverless image recognition app</h3>
+          <p>Coordinated forty developers across five teams to ship a serverless AWS application in ten weeks with zero production failures. Automated Lambda and Rekognition pipelines removed 95 percent of manual tagging.</p>
+          <div class="stack"><span>AWS Lambda</span><span>Rekognition</span><span>DynamoDB</span><span>React</span></div>
+        </div>
+
+        <div class="wcard">
+          <span class="tag">Live demo</span>
+          <h3>An assistant that answers for you</h3>
+          <p>The chat on my own site answers questions about my background, refuses anything outside its scope, falls back to a free model rather than going offline, and emails me a digest of what people asked. The same pattern fits a business.</p>
+          <div class="stack"><span>Serverless</span><span>Model fallback</span><span>Lead alerts</span></div>
+        </div>
+
+      </div>
+      <p class="demo-note">Try the assistant yourself at <a href="/">jorgefraile.com</a>. It is the clearest demo on this page.</p>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap contact-grid">
+      <div class="contact-side">
+        <span class="kicker" style="color:var(--accent);font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase">Contact</span>
+        <h2>Tell me what you are trying to fix</h2>
+        <p>The more concrete the better: what happens today, how often, and who it slows down. You get a real reply from me, not a sequence.</p>
+        <div class="direct">
+          <a href="mailto:Jorge@JorgeFraile.com"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7 7.4 5a2 2 0 0 0 2.2 0l7.4-5"/></svg>Jorge@JorgeFraile.com</a>
+          <a href="/"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20v-.5A5.5 5.5 0 0 1 10.5 14h3A5.5 5.5 0 0 1 19 19.5v.5"/></svg>About the engineer</a>
+        </div>
+      </div>
+
+      <form id="leadform" novalidate>
+        <div class="row">
+          <div class="field">
+            <label for="lname">Name</label>
+            <input id="lname" name="name" type="text" autocomplete="name" placeholder="Your name" required />
+          </div>
+          <div class="field">
+            <label for="lemail">Email</label>
+            <input id="lemail" name="email" type="email" autocomplete="email" placeholder="you@company.com" required />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="lcompany">Company <span style="color:var(--placeholder);font-weight:500">(optional)</span></label>
+            <input id="lcompany" name="company" type="text" autocomplete="organization" placeholder="Company name" />
+          </div>
+          <div class="field">
+            <label for="lservice">What do you need</label>
+            <select id="lservice" name="service">
+              <option value="Not sure yet">Not sure yet</option>
+              <option value="Website">Website</option>
+              <option value="AI agent">AI agent</option>
+              <option value="CRM and automation">CRM and automation</option>
+              <option value="Voice agent">Voice agent</option>
+              <option value="Text and chat">Text and chat</option>
+              <option value="Branding">Branding</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="lmsg">What are you trying to fix</label>
+          <textarea id="lmsg" name="message" placeholder="What happens today, how often, and what it costs you." required></textarea>
+        </div>
+        <div class="hp" aria-hidden="true"><label>Do not fill this in<input name="website" type="text" tabindex="-1" autocomplete="off" /></label></div>
+        <button class="btn" type="submit">Send it over</button>
+        <p class="status" id="lstatus" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <p>Lodestar Systems. An AI studio by Jorge Fraile Perez.</p>
+    <a href="/">jorgefraile.com</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var form = document.getElementById("leadform");
+  var status = document.getElementById("lstatus");
+  var button = form.querySelector("button[type=submit]");
+
+  function say(text, cls) {
+    status.textContent = text;
+    status.className = "status" + (cls ? " " + cls : "");
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var data = {
+      name: form.name.value.trim(),
+      email: form.email.value.trim(),
+      company: form.company.value.trim(),
+      service: form.service.value,
+      message: form.message.value.trim(),
+      website: form.website.value
+    };
+    if (!data.name || !data.email || !data.message) {
+      say("Please add your name, email, and a short description.", "err");
+      return;
+    }
+    button.disabled = true;
+    say("Sending...");
+    fetch("/api/lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    }).then(function (r) {
+      if (!r.ok) throw new Error(String(r.status));
+      form.reset();
+      say("Got it. Jorge will reply to you directly, usually within a day.", "ok");
+    }).catch(function () {
+      say("That did not send. Please email Jorge@JorgeFraile.com instead.", "err");
+    }).then(function () {
+      button.disabled = false;
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
