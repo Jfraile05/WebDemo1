@@ -1,12 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="2.5"/>
-    </filter>
-  </defs>
-  <rect width="64" height="64" rx="15" fill="#050507"/>
-  <g font-family="-apple-system, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif" font-weight="900" font-size="36" text-anchor="middle">
-    <text x="32" y="45" fill="#D4B886" filter="url(#glow)" opacity="0.85">JF</text>
-    <text x="32" y="45" fill="#D4B886">JF</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="12" fill="#351e37"/>
+  <g transform="translate(24 24) scale(1.12) translate(-24 -24)">
+    <path d="M11 35V19a9 9 0 0 1 9-9h17v7H21a3 3 0 0 0-3 3v15m9 3V26h10" fill="none" stroke="#f2e07c" stroke-width="6" stroke-linejoin="round"/>
   </g>
 </svg>
