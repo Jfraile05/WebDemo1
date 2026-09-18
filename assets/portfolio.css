@@ -1,5 +1,5 @@
 @font-face { font-family: Bricolage; src: url('/assets/fonts/bricolage.woff2') format('woff2'); font-weight: 400 800; font-display: swap; }
-@font-face { font-family: 'Plex Sans'; src: url('/lodestar/fonts/ibm-plex-sans.woff2') format('woff2'); font-weight: 100 700; font-display: swap; }
+@font-face { font-family: 'Plex Sans'; src: url('/fraileworks/fonts/ibm-plex-sans.woff2') format('woff2'); font-weight: 100 700; font-display: swap; }
 :root {
   color-scheme: light;
   --bg: #d7d6ed; --fg: #351e37; --card: #f6f5fa; --secondary: #e8e7f1;

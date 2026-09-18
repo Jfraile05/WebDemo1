@@ -1,5 +1,5 @@
 @font-face{font-family:Bricolage;src:url('/assets/fonts/bricolage.woff2') format('woff2');font-weight:400 800;font-display:swap}
-@font-face{font-family:Plex;src:url('/lodestar/fonts/ibm-plex-sans.woff2') format('woff2');font-weight:100 700;font-display:swap}
+@font-face{font-family:Plex;src:url('/fraileworks/fonts/ibm-plex-sans.woff2') format('woff2');font-weight:100 700;font-display:swap}
 :root{--lilac:#d7d6ed;--plum:#351e37;--butter:#f2e07c;--rust:#b44432;--white:#f6f5fa;--olive:#506048;--ink:#351e37;--muted:#635669;--surface:#eeedf6;--line:#bcb5c9;--button:#351e37;--button-text:#f6f5fa;--portrait-paper:#d7d6ed;--display:Bricolage,Arial,sans-serif;--body:Plex,Arial,sans-serif;color-scheme:light}
 :root[data-theme=dark]{--rust:#ed9e88;--lilac:#2d2436;--ink:#f1eaf5;--muted:#bfb4cb;--surface:#362b40;--white:#251d2e;--line:#5c4b69;--button:#f2e07c;--button-text:#351e37;--portrait-paper:#44344e;color-scheme:dark}
 @media(prefers-color-scheme:dark){:root:not([data-theme=light]){--rust:#ed9e88;--lilac:#2d2436;--ink:#f1eaf5;--muted:#bfb4cb;--surface:#362b40;--white:#251d2e;--line:#5c4b69;--button:#f2e07c;--button-text:#351e37;--portrait-paper:#44344e;color-scheme:dark}}
