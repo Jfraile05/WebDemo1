@@ -129,6 +129,7 @@ body.chat .chatview { visibility: visible; opacity: 1; }
 .chat-top p { color: var(--muted-fg); font-size: 13px; }
 .feed { flex: 1; min-height: 0; width: 100%; overflow-y: auto; overscroll-behavior: contain; padding: 32px 28px 20px; }
 .answer { max-width: 720px; margin: 0 auto 34px; overflow-wrap: anywhere; }
+.feed-pad { height: 0; pointer-events: none; }
 .bubble-user { display: table; max-width: 85%; margin: 0 0 24px auto; padding: 10px 17px; border-radius: 12px 12px 3px 12px; background: var(--bg); color: var(--fg); font-size: 15px; }
 .answer h2 { font-size: 2.4rem; margin: 8px 0 24px; }
 .answer h3 { letter-spacing: -.035em; }

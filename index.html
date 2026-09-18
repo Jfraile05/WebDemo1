@@ -110,7 +110,7 @@
     </button>
     <p>Jorge’s assistant</p>
   </div>
-  <div class="feed" id="feed" aria-live="polite"></div>
+  <div class="feed" id="feed" aria-live="polite"><div class="feed-pad" id="feedpad" aria-hidden="true"></div></div>
   <div class="chat-dock">
     <div class="quickrow" role="group" aria-label="Quick questions">
       <button data-tool="me"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20v-.5A5.5 5.5 0 0 1 10.5 14h3A5.5 5.5 0 0 1 19 19.5v.5"/></svg>Me</button>
@@ -443,6 +443,7 @@ window.initGlobe = function () {
   ];
 
   var feed = document.getElementById("feed");
+  var feedPad = document.getElementById("feedpad");
 
   function esc(s) {
     return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -472,15 +473,59 @@ window.initGlobe = function () {
     });
   }
 
-  function appendEntry(innerHTML) {
+  /* Every new exchange starts at the top of the feed so the view reads clean;
+     earlier ones stay above and are reached by scrolling up. feedPad is the
+     empty space below the last entry that makes that scroll possible when the
+     entry is shorter than the feed. */
+  var TOP_GAP = 10;
+  var pinned = null;
+  var watcher = null;
+
+  /* Layout position inside the feed, taken from offsetTop so an entry that is
+     animating in is measured where it lands. */
+  function topIn(el) {
+    return el.offsetTop - feed.offsetTop;
+  }
+
+  function sizePad() {
+    if (!pinned || !feed.contains(pinned)) { feedPad.style.height = "0px"; return; }
+    var below = parseFloat(getComputedStyle(feed).paddingBottom) || 0;
+    var room = topIn(pinned) - TOP_GAP + feed.clientHeight - topIn(feedPad) - below;
+    feedPad.style.height = Math.max(0, room) + "px";
+  }
+
+  function pinToTop(entry) {
+    pinned = entry;
+    sizePad();
+    feed.scrollTop = topIn(entry) - TOP_GAP;
+    if (watcher) watcher.disconnect();
+    if (window.ResizeObserver) {
+      /* The answer grows while it types, and the feed changes height when the
+         window or the mobile keyboard does; both need the pad resized. */
+      watcher = new ResizeObserver(sizePad);
+      watcher.observe(entry);
+      watcher.observe(feed);
+    }
+  }
+
+  /* Removing an entry shrinks the feed, which can clamp the scroll, so the
+     view is restored to the entry that was last pinned. */
+  function dropEntry(entry) {
+    entry.remove();
+    if (pinned && feed.contains(pinned)) pinToTop(pinned);
+    else sizePad();
+  }
+
+  function appendEntry(innerHTML, keepView) {
     retireIds();
     var entry = document.createElement("div");
     entry.className = "answer";
     entry.innerHTML = innerHTML;
-    feed.appendChild(entry);
+    feed.insertBefore(entry, feedPad);
     enterChat();
     requestAnimationFrame(function () {
-      feed.scrollTop = entry.offsetTop - 10;
+      if (keepView) { sizePad(); entry.scrollIntoView({ block: "nearest" }); }
+      else pinToTop(entry);
     });
     return entry;
   }
@@ -559,15 +604,16 @@ window.initGlobe = function () {
         '</div>' +
         '<button class="cf-send" type="submit">Share with Jorge</button>' +
         '<button class="cf-skip" type="button">No thanks</button>' +
-      '</form>'
+      '</form>',
+      true
     );
     var form = entry.querySelector(".intro-card");
-    form.querySelector(".cf-skip").addEventListener("click", function () { entry.remove(); });
+    form.querySelector(".cf-skip").addEventListener("click", function () { dropEntry(entry); });
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var name = form.querySelector('[name="name"]').value.trim();
       var email = form.querySelector('[name="email"]').value.trim();
-      if (!name && !email) { entry.remove(); return; }
+      if (!name && !email) { dropEntry(entry); return; }
       visitor = { name: name, email: email };
       try { sessionStorage.setItem("visitor", JSON.stringify(visitor)); } catch (err) {}
       fetch("/api/chat", {
@@ -575,7 +621,10 @@ window.initGlobe = function () {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ identify: true, visitor: visitor })
       }).catch(function () {});
+      var keep = feed.scrollTop;
       form.innerHTML = '<p class="convo" style="margin:0">Thank you' + (name ? ", " + esc(name) : "") + '. Jorge will be in touch.</p>';
+      sizePad();
+      feed.scrollTop = keep;
     });
   }
 
@@ -654,7 +703,7 @@ window.initGlobe = function () {
   });
 
   document.getElementById("drawerhint").addEventListener("click", function () {
-    if (feed.children.length) enterChat();
+    if (feed.querySelector(".answer")) enterChat();
     else answer("me");
   });
   document.getElementById("closechat").addEventListener("click", exitChat);
