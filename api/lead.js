@@ -1,5 +1,5 @@
 // Vercel serverless function: POST /api/lead { name, email, company?, service?, message, website? }
-// Delivers Lodestar Systems contact form submissions. Sends through Resend
+// Delivers Fraile Works contact form submissions. Sends through Resend
 // (RESEND_API_KEY + ALERT_EMAIL) and falls back to the shared Formspree form,
 // which has a small monthly quota the chat digest already draws on.
 
@@ -70,7 +70,7 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'Invalid email' });
   }
 
-  const subject = 'Lodestar lead: ' + lead.name + (lead.company ? ' (' + lead.company + ')' : '');
+  const subject = 'Fraile Works lead: ' + lead.name + (lead.company ? ' (' + lead.company + ')' : '');
   const text = [
     'Name: ' + lead.name,
     'Email: ' + lead.email,
@@ -90,7 +90,7 @@ module.exports = async (req, res) => {
         method: 'POST',
         headers: { Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          from: 'Lodestar Systems <onboarding@resend.dev>',
+          from: 'Fraile Works <onboarding@resend.dev>',
           to: [to],
           reply_to: lead.email,
           subject: subject,
