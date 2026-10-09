@@ -225,7 +225,7 @@ body.modal-open .modal { display: flex; }
   .personal-wordmark { gap: 8px; font-size: 1.16rem; }
   .personal-wordmark svg { width: 24px; height: 29px; }
   .site-header nav { gap: 12px; }
-  .site-header nav > a:first-child { display: none; }
+  .site-header nav > a[href='#selected-work'] { display: none; }
   .site-header nav .studio-link { font-size: 12px; padding: 8px 10px; }
   .studio-link span { padding-left: 4px; }
   .theme-toggle { width: 44px; height: 44px; }
@@ -295,4 +295,27 @@ body.modal-open .modal { display: flex; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* Make professional experience the primary reading path. */
+.intro { padding-block: 54px 76px; }
+.intro h1 { font-size: clamp(3.5rem, 6.1vw, 6.3rem); line-height: 1.03; }
+.intro-description { max-width: 52ch; }
+.experience-heading { display: grid; grid-template-columns: 1.2fr 1fr; align-items: end; gap: 48px; margin-bottom: 42px; }
+.experience-heading > p { max-width: 36ch; color: var(--muted-fg); }
+.now-section { padding-block: 36px 60px; }
+.now-list { gap: 0 48px; }
+.now-list li { padding: 28px 0; border-top: 1px solid var(--border); gap: 14px; align-content: start; }
+.now-list .experience-featured { grid-column: 1 / -1; padding: 34px; margin-bottom: 14px; background: var(--card); border-top: 4px solid var(--rust); }
+.role-meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px; }
+.now-list .role-meta span { font-size: 14px; }
+.now-list h3 { font-size: clamp(1.7rem, 2.8vw, 2.6rem); }
+.now-list p { font-size: 17px; line-height: 1.65; max-width: 75ch; }
+.now-list .role-tools { font-size: 14px; margin-top: 4px; color: var(--fg); }
+.work-section { padding-top: 48px; }
+@media (max-width: 700px) {
+  .experience-heading { grid-template-columns: 1fr; gap: 20px; }
+  .now-list { grid-template-columns: 1fr; }
+  .now-list .experience-featured { padding: 24px; }
+  .intro h1 { font-size: clamp(2.5rem, 8.5vw, 3.8rem); }
 }
